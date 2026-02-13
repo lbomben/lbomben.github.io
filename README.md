@@ -5,7 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratori online di matematica e fisica</title>
     
     <style>
         body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
@@ -24,6 +23,7 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 mathjax-process">
 
+<title>Laboratori online di matematica e fisica</title>
 <a href="./prodottiNotevoli.html">Prodotti notevoli 2D e 3D</a>
 
 
