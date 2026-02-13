@@ -10,6 +10,13 @@
 <a href="./planckLed.html">Misura della costante di Planck<br></a>
 <a href="./simCosmici.html">Simulazione grafica di rivelatore di raggi cosmici<br></a>
 
+<!-- COMMENTI:
+per linkare un'altra pag: <a href="./mioFile.html">testo del link</a>
+per andare a capo usa <br>
+ricordati di mettere in ogni pag un link per tornare a questa:
+<a href="./README.md">Homepage</a>
+
+-->
 
 
 </body>
