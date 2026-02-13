@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometria Interattiva: Binomio, Trinomio e Cubo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            options: {
+                processHtmlClass: 'mathjax-process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
+        canvas { 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 12px; 
+            cursor: move;
+            touch-action: none;
+        }
+        .control-panel { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+        .mode-btn.active { background-color: #1e293b; color: white; border-color: #1e293b; }
+        .hidden-element { display: none; }
+        .mode-btn mjx-container { margin: 0 !important; display: inline-block !important; vertical-align: middle; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 mathjax-process">
+
+    <div class="max-w-6xl w-full">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Prodotti Notevoli 2D e 3D</h1>
+            <div id="math-header" class="text-xl text-blue-600 font-semibold h-16 flex items-center justify-center"></div>
+        </header>
+
+        <div class="flex flex-wrap justify-center mb-6 gap-3">
+            <button id="btnBinomio" class="mode-btn active px-5 py-2 rounded-full border border-slate-300 hover:bg-slate-100 transition shadow-sm flex items-center">
+                <span class="mr-1">Binomio:</span> <span>$(a+b)^2$</span>
+            </button>
+            <button id="btnTrinomio" class="mode-btn px-5 py-2 rounded-full border border-slate-300 hover:bg-slate-100 transition shadow-sm flex items-center">
+                <span class="mr-1">Trinomio:</span> <span>$(a+b+c)^2$</span>
+            </button>
+            <button id="btnCubo" class="mode-btn px-5 py-2 rounded-full border border-slate-300 hover:bg-slate-100 transition shadow-sm flex items-center">
+                <span class="mr-1">Cubo:</span> <span>$(a+b)^3$</span>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <div class="flex flex-col items-center bg-white p-4 rounded-xl shadow-inner relative">
+                <canvas id="geometryCanvas" width="500" height="500"></canvas>
+                <p id="canvasCaption" class="mt-4 text-sm text-gray-500 italic"></p>
+                <div id="rotationHint" class="absolute bottom-6 right-6 text-xs bg-slate-100 px-2 py-1 rounded border hidden"> Trascina per ruotare </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Dimensione <strong>a</strong>: <span id="valA" class="text-blue-600 font-bold"></span></label>
+                    <input type="range" id="sliderA" min="80" max="220" value="160" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Dimensione <strong>b</strong>: <span id="valB" class="text-red-600 font-bold"></span></label>
+                    <input type="range" id="sliderB" min="40" max="140" value="90" class="w-full h-2 bg-red-100 rounded-lg appearance-none cursor-pointer accent-red-600">
+                </div>
+
+                <div id="containerC" class="mb-6 hidden-element">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Dimensione <strong>c</strong>: <span id="valC" class="text-green-600 font-bold"></span></label>
+                    <input type="range" id="sliderC" min="30" max="100" value="60" class="w-full h-2 bg-green-100 rounded-lg appearance-none cursor-pointer accent-green-600">
+                </div>
+
+                <div id="resultsTable" class="space-y-2 border-t pt-4 text-sm mb-4"></div>
+
+                <div class="p-4 bg-slate-800 rounded-lg shadow-lg text-white">
+                    <div id="math-result" class="text-center text-lg overflow-x-auto min-h-[4rem] flex items-center justify-center"></div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="mt-8 text-center text-gray-500 text-sm max-w-2xl mx-auto">
+            <p id="explanationText"></p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('geometryCanvas');
+        const ctx = canvas.getContext('2d');
+        const sliders = { a: document.getElementById('sliderA'), b: document.getElementById('sliderB'), c: document.getElementById('sliderC') };
+        const mathHeader = document.getElementById('math-header');
+        const mathResult = document.getElementById('math-result');
+        const resultsTable = document.getElementById('resultsTable');
+        const explanationText = document.getElementById('explanationText');
+        const canvasCaption = document.getElementById('canvasCaption');
+        const containerC = document.getElementById('containerC');
+
+        let mode = 'binomio';
+        let angleX = -0.5, angleY = 0.5; // Angoli iniziali per il cubo
+        let isDragging = false, lastMouseX, lastMouseY;
+
+        const COLORS = {
+            a: 'rgba(59, 130, 246, 0.75)', b: 'rgba(239, 68, 68, 0.75)', c: 'rgba(34, 197, 94, 0.75)',
+            ab: 'rgba(234, 179, 8, 0.65)', ac: 'rgba(168, 85, 247, 0.65)', bc: 'rgba(249, 115, 22, 0.65)',
+            a3: 'rgba(59, 130, 246, 0.8)', b3: 'rgba(239, 68, 68, 0.8)',
+            a2b: 'rgba(234, 179, 8, 0.7)', ab2: 'rgba(249, 115, 22, 0.7)',
+            stroke: '#0f172a'
+        };
+
+        function updateUI() {
+            const a = parseInt(sliders.a.value), b = parseInt(sliders.b.value), c = parseInt(sliders.c.value);
+            document.getElementById('valA').textContent = a;
+            document.getElementById('valB').textContent = b;
+            document.getElementById('valC').textContent = c;
+
+            const hint = document.getElementById('rotationHint');
+            hint.classList.toggle('hidden', mode !== 'cubo');
+
+            if (mode === 'binomio') {
+                containerC.classList.add('hidden-element');
+                mathHeader.innerHTML = "$$(a + b)^2 = a^2 + 2ab + b^2$$";
+                explanationText.textContent = "Scomposizione dell'area in due quadrati e due rettangoli.";
+                canvasCaption.textContent = "Vista 2D: Area del Quadrato";
+                resultsTable.innerHTML = `<div class="flex justify-between"><span>Area $a^2$:</span> <strong>${a*a}</strong></div><div class="flex justify-between"><span>Area $b^2$:</span> <strong>${b*b}</strong></div><div class="flex justify-between"><span>Area $2ab$:</span> <strong>${2*a*b}</strong></div>`;
+                mathResult.innerHTML = `$$(${a}+${b})^2 = ${a*a}+${b*b}+${2*a*b} = ${(a+b)**2}$$`;
+            } else if (mode === 'trinomio') {
+                containerC.classList.remove('hidden-element');
+                mathHeader.innerHTML = "$$(a + b + c)^2 = a^2 + b^2 + c^2 + 2ab + 2ac + 2bc$$";
+                explanationText.textContent = "Scomposizione in tre quadrati e tre coppie di rettangoli.";
+                canvasCaption.textContent = "Vista 2D: Area del Quadrato";
+                resultsTable.innerHTML = `<div class="flex justify-between"><span>Quadrati:</span> <strong>${a*a+b*b+c*c}</strong></div><div class="flex justify-between"><span>Doppi prodotti:</span> <strong>${2*(a*b+a*c+b*c)}</strong></div>`;
+                mathResult.innerHTML = `$$(${a}+${b}+${c})^2 = ${(a+b+c)**2}$$`;
+            } else {
+                containerC.classList.add('hidden-element');
+                mathHeader.innerHTML = "$$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$$";
+                explanationText.textContent = "Scomposizione del volume in due cubi e sei parallelepipedi.";
+                canvasCaption.textContent = "Vista 3D: Volume del Cubo (Trascina per ruotare)";
+                resultsTable.innerHTML = `<div class="flex justify-between"><span>$a^3$ + $b^3$:</span> <strong>${a**3 + b**3}</strong></div><div class="flex justify-between"><span>$3a^2b$ + $3ab^2$:</span> <strong>${3*(a**2)*b + 3*a*(b**2)}</strong></div>`;
+                mathResult.innerHTML = `$$(${a}+${b})^3 = ${(a+b)**3}$$`;
+            }
+
+            if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const a = parseInt(sliders.a.value), b = parseInt(sliders.b.value);
+            const c = (mode === 'trinomio') ? parseInt(sliders.c.value) : 0;
+
+            if (mode === 'cubo') draw3D(a, b);
+            else draw2D(a, b, c);
+        }
+
+        function draw2D(a, b, c) {
+            const scale = 360 / (a + b + c);
+            const sA = a * scale, sB = b * scale, sC = c * scale;
+            const x = [70, 70 + sA, 70 + sA + sB, 70 + sA + sB + sC];
+            const y = [70, 70 + sA, 70 + sA + sB, 70 + sA + sB + sC];
+
+            const drawBox = (ix, iy, w, h, color, label) => {
+                if (w <= 1 || h <= 1) return;
+                ctx.fillStyle = color;
+                ctx.fillRect(ix, iy, w, h);
+                ctx.strokeStyle = COLORS.stroke;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(ix, iy, w, h);
+                ctx.fillStyle = '#000';
+                ctx.font = "bold 12px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(label, ix + w/2, iy + h/2 + 4);
+            };
+
+            drawBox(x[0], y[0], sA, sA, COLORS.a, "a²");
+            drawBox(x[1], y[0], sB, sA, COLORS.ab, "ab");
+            drawBox(x[0], y[1], sA, sB, COLORS.ab, "ab");
+            drawBox(x[1], y[1], sB, sB, COLORS.b, "b²");
+
+            if (mode === 'trinomio') {
+                drawBox(x[2], y[0], sC, sA, COLORS.ac, "ac");
+                drawBox(x[2], y[1], sC, sB, COLORS.bc, "bc");
+                drawBox(x[0], y[2], sA, sC, COLORS.ac, "ac");
+                drawBox(x[1], y[2], sB, sC, COLORS.bc, "bc");
+                drawBox(x[2], y[2], sC, sC, COLORS.c, "c²");
+            }
+        }
+
+        function draw3D(a, b) {
+            const scale = 180 / (a + b);
+            const sA = a * scale, sB = b * scale;
+            
+            // Definiamo i blocchi (posizione x,y,z e dimensioni w,h,d)
+            const blocks = [
+                { x: 0, y: sB, z: 0, w: sA, h: sA, d: sA, col: COLORS.a3, label: "a³" },
+                { x: sA, y: sB, z: 0, w: sB, h: sA, d: sA, col: COLORS.a2b, label: "a²b" },
+                { x: 0, y: 0, z: 0, w: sA, h: sB, d: sA, col: COLORS.a2b, label: "a²b" },
+                { x: sA, y: 0, z: 0, w: sB, h: sB, d: sA, col: COLORS.ab2, label: "ab²" },
+                { x: 0, y: sB, z: sA, w: sA, h: sA, d: sB, col: COLORS.a2b, label: "a²b" },
+                { x: sA, y: sB, z: sA, w: sB, h: sA, d: sB, col: COLORS.ab2, label: "ab²" },
+                { x: 0, y: 0, z: sA, w: sA, h: sB, d: sB, col: COLORS.ab2, label: "ab²" },
+                { x: sA, y: 0, z: sA, w: sB, h: sB, d: sB, col: COLORS.b3, label: "b³" }
+            ];
+
+            // Calcolo profondità media per ordinamento Z-buffer
+            blocks.forEach(blk => {
+                const cx = blk.x + blk.w/2 - (sA+sB)/2;
+                const cy = blk.y + blk.h/2 - (sA+sB)/2;
+                const cz = blk.z + blk.d/2 - (sA+sB)/2;
+                // Rotazione coordinate per calcolo profondità
+                blk.depth = cz * Math.cos(angleX) * Math.cos(angleY) - cx * Math.sin(angleY) + cy * Math.sin(angleX);
+            });
+            blocks.sort((a, b) => a.depth - b.depth);
+
+            blocks.forEach(blk => drawIsoBox(blk, (sA+sB)/2));
+        }
+
+        function drawIsoBox(blk, offset) {
+            const project = (x, y, z) => {
+                // Trasla al centro
+                let nx = x - offset, ny = y - offset, nz = z - offset;
+                // Rotazione Y
+                let tx = nx * Math.cos(angleY) + nz * Math.sin(angleY);
+                let tz = -nx * Math.sin(angleY) + nz * Math.cos(angleY);
+                // Rotazione X
+                let ty = ny * Math.cos(angleX) - tz * Math.sin(angleX);
+                let finalZ = ny * Math.sin(angleX) + tz * Math.cos(angleX);
+                
+                return { x: 250 + tx, y: 250 - ty };
+            };
+
+            const p = [
+                project(blk.x, blk.y, blk.z), project(blk.x+blk.w, blk.y, blk.z),
+                project(blk.x+blk.w, blk.y+blk.h, blk.z), project(blk.x, blk.y+blk.h, blk.z),
+                project(blk.x, blk.y, blk.z+blk.d), project(blk.x+blk.w, blk.y, blk.z+blk.d),
+                project(blk.x+blk.w, blk.y+blk.h, blk.z+blk.d), project(blk.x, blk.y+blk.h, blk.z+blk.d)
+            ];
+
+            const drawFace = (indices, brightness) => {
+                ctx.fillStyle = blk.col;
+                ctx.beginPath();
+                ctx.moveTo(p[indices[0]].x, p[indices[0]].y);
+                indices.slice(1).forEach(i => ctx.lineTo(p[i].x, p[i].y));
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = COLORS.stroke;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            };
+
+            // Disegno facce visibili in base all'orientamento (semplificato)
+            [ [0,1,2,3], [4,5,6,7], [0,1,5,4], [2,3,7,6], [0,3,7,4], [1,2,6,5] ].forEach(f => drawFace(f));
+            
+            // Testo al centro del blocco
+            const center = project(blk.x + blk.w/2, blk.y + blk.h/2, blk.z + blk.d/2);
+            ctx.fillStyle = "#000";
+            ctx.font = "bold 11px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(blk.label, center.x, center.y + 4);
+        }
+
+        // Mouse Interaction
+        canvas.onmousedown = (e) => { isDragging = true; lastMouseX = e.clientX; lastMouseY = e.clientY; };
+        window.onmouseup = () => isDragging = false;
+        window.onmousemove = (e) => {
+            if (!isDragging || mode !== 'cubo') return;
+            angleY += (e.clientX - lastMouseX) * 0.01;
+            angleX += (e.clientY - lastMouseY) * 0.01;
+            lastMouseX = e.clientX; lastMouseY = e.clientY;
+            draw();
+        };
+
+        // Touch Interaction
+        canvas.ontouchstart = (e) => { isDragging = true; lastMouseX = e.touches[0].clientX; lastMouseY = e.touches[0].clientY; };
+        canvas.ontouchend = () => isDragging = false;
+        canvas.ontouchmove = (e) => {
+            if (!isDragging || mode !== 'cubo') return;
+            angleY += (e.touches[0].clientX - lastMouseX) * 0.01;
+            angleX += (e.touches[0].clientY - lastMouseY) * 0.01;
+            lastMouseX = e.touches[0].clientX; lastMouseY = e.touches[0].clientY;
+            draw();
+        };
+
+        const setActiveBtn = (id) => {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        };
+
+        document.getElementById('btnBinomio').onclick = () => { mode = 'binomio'; setActiveBtn('btnBinomio'); updateUI(); };
+        document.getElementById('btnTrinomio').onclick = () => { mode = 'trinomio'; setActiveBtn('btnTrinomio'); updateUI(); };
+        document.getElementById('btnCubo').onclick = () => { mode = 'cubo'; setActiveBtn('btnCubo'); updateUI(); };
+
+        Object.values(sliders).forEach(s => s.oninput = updateUI);
+        window.onload = updateUI;
+    </script>
+</body>
+</html>
