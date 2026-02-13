@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Misura della costante di Planck con LED</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#f5f7fa; padding:20px; }
+    h1 { text-align:center; }
+    .container { max-width:1000px; margin:auto; background:white; padding:20px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.1); }
+    canvas { display:block; margin:20px auto; border-radius:8px; }
+    #scene { background:#111; }
+    #graph { background:#fff; border:1px solid #ddd; }
+    .controls { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    button { padding:10px 14px; border:none; border-radius:8px; font-size:15px; cursor:pointer; color:white; }
+    .info { margin-top:15px; background:#f0f4ff; padding:12px; border-radius:8px; line-height:1.5; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Simulatore: misura della costante di Planck con LED</h1>
+  <h1>L. Bomben, 2026</h1>
+
+  <canvas id="scene" width="800" height="240"></canvas>
+  <canvas id="graph" width="800" height="320"></canvas>
+
+  <div class="controls">
+    <button style="background:#dc2626" data-color="red">LED Rosso</button>
+    <button style="background:#f97316" data-color="orange">LED Arancione</button>
+    <button style="background:#eab308" data-color="yellow">LED Giallo</button>
+    <button style="background:#22c55e" data-color="green">LED Verde</button>
+    <button style="background:#2563eb" data-color="blue">LED Blu</button>
+  </div>
+
+  <div class="controls">
+    <label for="voltage"><strong>Tensione applicata</strong></label>
+    <input type="range" id="voltage" min="0" max="5" step="0.01" value="0" style="width:300px;">
+    <span id="vread">0.00 V</span>
+  </div>
+
+  <div class="info" id="info"></div>
+</div>
+
+<script>
+const ledCanvas = document.getElementById('scene');
+const ledCtx = ledCanvas.getContext('2d');
+const graphCanvas = document.getElementById('graph');
+const gCtx = graphCanvas.getContext('2d');
+const info = document.getElementById('info');
+
+const leds = {
+  red:    { lambda: 630, color: '#dc2626' },
+  orange: { lambda: 605, color: '#f97316' },
+  yellow: { lambda: 590, color: '#eab308' },
+  green:  { lambda: 530, color: '#22c55e' },
+  blue:   { lambda: 470, color: '#2563eb' }
+};
+
+const c = 3.0e8;
+const e = 1.602e-19;
+const hTeorico = 6.626e-34;
+
+const sigmaV = 0.05;
+const sigmaLambda = 5e-9;
+
+let misure = [];
+let ledSelezionato = null;
+let misuraEseguita = false;
+
+function gauss(sigma) {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function drawLED(color, on=false) {
+  ledCtx.clearRect(0, 0, ledCanvas.width, ledCanvas.height);
+  ledCtx.fillStyle = on ? color : '#333';
+  ledCtx.beginPath();
+  ledCtx.arc(400, 120, 60, 0, Math.PI * 2);
+  ledCtx.fill();
+}
+
+function stimaPlanck() {
+  let num = 0, den = 0;
+  misure.forEach(m => {
+    num += m.f * m.V;
+    den += m.f * m.f;
+  });
+  return (num / den) * e;
+}
+
+function drawGraph() {
+  gCtx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+  const left = 70, right = 760, top = 20, bottom = 280;
+
+  gCtx.strokeStyle = '#e5e7eb';
+  gCtx.lineWidth = 1;
+  for (let i = 0; i <= 10; i++) {
+    const x = left + (i / 10) * (right - left);
+    const y = top + (i / 10) * (bottom - top);
+    gCtx.beginPath(); gCtx.moveTo(x, top); gCtx.lineTo(x, bottom); gCtx.stroke();
+    gCtx.beginPath(); gCtx.moveTo(left, y); gCtx.lineTo(right, y); gCtx.stroke();
+  }
+
+  gCtx.strokeStyle = '#333';
+  gCtx.lineWidth = 2;
+  gCtx.beginPath();
+  gCtx.moveTo(left, top);
+  gCtx.lineTo(left, bottom);
+  gCtx.lineTo(right, bottom);
+  gCtx.stroke();
+
+  gCtx.fillStyle = '#111';
+  gCtx.font = '14px system-ui';
+  gCtx.fillText('frequenza f (Hz)', 330, 315);
+  gCtx.save();
+  gCtx.translate(20, 190);
+  gCtx.rotate(-Math.PI / 2);
+  gCtx.fillText('tensione di soglia V (V)', 0, 0);
+  gCtx.restore();
+
+  if (misure.length === 0) return;
+
+  const fMax = Math.max(...misure.map(m => m.f));
+  const VMax = Math.max(...misure.map(m => m.V + m.sigmaV));
+
+  misure.forEach(m => {
+    const x = left + (m.f / fMax) * (right - left);
+    const y = bottom - (m.V / VMax) * (bottom - top);
+    const dy = (m.sigmaV / VMax) * (bottom - top);
+
+    gCtx.strokeStyle = '#6b7280';
+    gCtx.beginPath();
+    gCtx.moveTo(x, y - dy);
+    gCtx.lineTo(x, y + dy);
+    gCtx.stroke();
+
+    gCtx.fillStyle = m.color;
+    gCtx.beginPath();
+    gCtx.arc(x, y, 3, 0, Math.PI * 2);
+    gCtx.fill();
+  });
+
+  if (misure.length >= 2) {
+    const hStimato = stimaPlanck();
+    const slope = hStimato / e;
+
+    gCtx.setLineDash([6, 4]);
+    gCtx.strokeStyle = '#111';
+    gCtx.lineWidth = 2;
+    gCtx.beginPath();
+    gCtx.moveTo(left, bottom);
+    gCtx.lineTo(right, bottom - (slope * fMax / VMax) * (bottom - top));
+    gCtx.stroke();
+    gCtx.setLineDash([]);
+  }
+}
+
+function aggiornaInfo() {
+  let html = '<strong>Misure con incertezza</strong><br>';
+
+  misure.forEach((m, i) => {
+    html += `LED ${i + 1}: f = ${m.f.toExponential(2)} Hz, V = ${m.V.toFixed(2)} ± ${m.sigmaV.toFixed(2)} V<br>`;
+  });
+
+  if (misure.length >= 2) {
+    const hStimato = stimaPlanck();
+    const err = ((hStimato - hTeorico) / hTeorico) * 100;
+
+    html += `<br><strong>h stimata</strong> = ${hStimato.toExponential(3)} J·s`;
+    html += `<br><strong>h teorica</strong> = ${hTeorico.toExponential(3)} J·s`;
+    html += `<br><strong>Errore relativo</strong> ≈ ${err.toFixed(2)} %`;
+    html += '<br><em>Nota: l\'errore è dovuto al rumore sperimentale simulato.</em>';
+  }
+
+  info.innerHTML = html;
+}
+
+Array.from(document.querySelectorAll('button')).forEach(btn => {
+  btn.addEventListener('click', () => {
+    ledSelezionato = btn.dataset.color;
+    misuraEseguita = false;
+    drawLED(leds[ledSelezionato].color, false);
+  });
+});
+
+drawLED('#333', false);
+
+const slider = document.getElementById('voltage');
+const vread = document.getElementById('vread');
+
+slider.addEventListener('input', () => {
+  const Vapp = Number(slider.value);
+  vread.textContent = `${Vapp.toFixed(2)} V`;
+  if (!ledSelezionato) return;
+
+  const led = leds[ledSelezionato];
+  const lambda = led.lambda * 1e-9 + gauss(sigmaLambda);
+  const f = c / lambda;
+  const Vth = (hTeorico * f) / e;
+
+  if (Vapp >= Vth && !misuraEseguita) {
+    drawLED(led.color, true);
+    const Vmis = Vth + gauss(sigmaV);
+    misure.push({ f, V: Vmis, sigmaV, color: led.color });
+    misuraEseguita = true;
+    aggiornaInfo();
+    drawGraph();
+  }
+
+  if (Vapp < 0.05) {
+    misuraEseguita = false;
+    drawLED(led.color, false);
+  }
+});
+
+info.innerHTML = 'Seleziona un LED, poi aumenta lentamente la tensione fino all\'accensione. Quando supera la tensione di soglia, viene registrata una misura.';
+</script>
+</body>
+</html>
