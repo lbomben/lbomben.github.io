@@ -25,8 +25,7 @@
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
-    <a href="https://lbomben.github.io">Homepage</a>
-
+ <a href="https://lbomben.github.io">Homepage</a>
     <div class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
         <!-- Header -->
         <div class="bg-slate-800 p-6 text-white text-center">
@@ -61,7 +60,7 @@
             <canvas id="geoCanvas" width="800" height="450" class="rounded-lg shadow-inner border border-slate-200 w-full h-auto max-w-full"></canvas>
             
             <div id="tutorial" class="absolute bottom-6 left-6 bg-black/70 text-white px-4 py-2 rounded-full text-xs pointer-events-none transition-opacity duration-500">
-                💡 Trascina i vertici di ABC. In modalità ALA, il vertice F è calcolato matematicamente tramite la Regola dei Seni.
+                💡 Trascina i vertici di ABC. In modalità Libera, svincola i parametri per rompere la congruenza.
             </div>
         </div>
 
@@ -169,6 +168,7 @@
 
             let curDAB, curDAC, curDBC, curAngD, curAngE;
 
+            // Logica di determinazione vincoli
             if (mode === 'LAL') {
                 curDAB = dAB; curDAC = dAC; curAngD = angA; curAngE = null;
             } else if (mode === 'ALA') {
@@ -187,7 +187,8 @@
             const curOffsetX = OFFSET_X * (1 - overlapFactor);
             const curD = { x: pA.x + curOffsetX, y: pA.y };
             
-            let finalDAB = curDAB !== null ? curDAB : dAB * 0.8;
+            // Se libero, usa una base fissa (non dipendente da ABC) per rompere la similitudine
+            let finalDAB = curDAB !== null ? curDAB : 150; 
             const curE = { x: curD.x + finalDAB * Math.cos(currentBaseAngle), y: curD.y + finalDAB * Math.sin(currentBaseAngle) };
 
             let curF;
@@ -195,35 +196,41 @@
             const isLLL = mode === 'LLL' || (curDAC !== null && curDBC !== null);
 
             if (isLLL && !isALA) {
-                const s1 = curDAC || dAC;
+                const s1 = curDAC !== null ? curDAC : 120; // Default fisso se libero
                 const s2 = finalDAB;
-                const s3 = curDBC || dBC;
-                const cosD = (s1**2 + s2**2 - s3**2) / (2 * s1 * s2);
-                const solvedAngD = Math.acos(Math.max(-1, Math.min(1, cosD)));
-                const sign = Math.sign(angA) || 1;
-                curF = { 
-                    x: curD.x + s1 * Math.cos(currentBaseAngle + solvedAngD * sign), 
-                    y: curD.y + s1 * Math.sin(currentBaseAngle + solvedAngD * sign) 
-                };
-            } else if (isALA) {
-                // COSTRUZIONE ALA TRAMITE REGOLA DEI SENI (ESTREMAMENTE STABILE)
-                const alpha = Math.abs(curAngD !== null ? curAngD : angA);
-                const beta = Math.abs(curAngE !== null ? curAngE : angB);
-                const gamma = Math.PI - alpha - beta;
+                const s3 = curDBC !== null ? curDBC : 100; // Default fisso se libero
                 
-                // Lato DF via regola dei seni: DF / sin(beta) = DE / sin(gamma)
-                let sDF;
-                if (Math.sin(gamma) === 0) sDF = 50;
-                else sDF = (finalDAB * Math.sin(beta)) / Math.sin(gamma);
+                // Controllo esistenza triangolo (disuguaglianza triangolare)
+                if (s1 + s2 > s3 && s1 + s3 > s2 && s2 + s3 > s1) {
+                    const cosD = (s1**2 + s2**2 - s3**2) / (2 * s1 * s2);
+                    const solvedAngD = Math.acos(Math.max(-1, Math.min(1, cosD)));
+                    const sign = Math.sign(angA) || 1;
+                    curF = { 
+                        x: curD.x + s1 * Math.cos(currentBaseAngle + solvedAngD * sign), 
+                        y: curD.y + s1 * Math.sin(currentBaseAngle + solvedAngD * sign) 
+                    };
+                } else {
+                    // Fallback se i lati liberi non formano un triangolo
+                    curF = { x: curD.x + 50, y: curD.y - 80 };
+                }
+            } else if (isALA) {
+                const alpha = Math.abs(curAngD !== null ? curAngD : 0.785); // 45 gradi se libero
+                const beta = Math.abs(curAngE !== null ? curAngE : 0.785);  // 45 gradi se libero
+                let gamma = Math.PI - alpha - beta;
+                
+                if (gamma <= 0.1) gamma = 0.1; // Impedisce angoli piatti/impossibili
 
+                const sDF = (finalDAB * Math.sin(beta)) / Math.sin(gamma);
                 const sign = Math.sign(curAngD !== null ? curAngD : angA) || 1;
+                
                 curF = { 
                     x: curD.x + sDF * Math.cos(currentBaseAngle + alpha * sign), 
                     y: curD.y + sDF * Math.sin(currentBaseAngle + alpha * sign) 
                 };
             } else {
-                const s1 = curDAC !== null ? curDAC : dAC * 0.8;
-                const alpha = curAngD !== null ? curAngD : angA;
+                // Modalità LAL o parziale: un lato e un angolo
+                const s1 = curDAC !== null ? curDAC : 120; // Default fisso se libero
+                const alpha = curAngD !== null ? curAngD : 0.8; // Default fisso se libero
                 curF = { 
                     x: curD.x + s1 * Math.cos(currentBaseAngle + alpha), 
                     y: curD.y + s1 * Math.sin(currentBaseAngle + alpha) 
