@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rivelatore 3D con Proiezioni 2D</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: #0f172a;
+      --accent: #3b82f6;
+      --text: #f1f5f9;
+      --copper: #b87333;
+    }
+    body { 
+      font-family: 'Segoe UI', system-ui, sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .main-layout {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 1300px;
+      justify-content: center;
+    }
+    .container-3d { 
+      flex: 2;
+      background: var(--panel); 
+      padding: 20px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .container-2d {
+      flex: 1;
+      background: var(--panel);
+      padding: 20px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+    canvas#detector3d { 
+      width: 100%;
+      height: auto;
+      background: #000; 
+      border-radius: 12px;
+    }
+    .projection-canvas {
+      background: #000;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      width: 100%;
+    }
+    .proj-label {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .controls { 
+      display: flex; 
+      justify-content: center; 
+      gap: 10px; 
+      margin-top: 20px;
+      flex-wrap: wrap; 
+    }
+    .slider-container {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .filter-controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .btn {
+      padding: 10px 15px; 
+      border: none; 
+      border-radius: 8px; 
+      font-weight: 600;
+      cursor: pointer; 
+      font-size: 11px;
+    }
+    #start { background: #10b981; color: white; }
+    #stop { background: #ef4444; color: white; }
+    #single { background: #6366f1; color: white; }
+    #toggleMode { background: #f59e0b; color: white; }
+    .toggle-preshower { background: var(--copper); color: white; }
+    
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+      background: rgba(0,0,0,0.3);
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .stat { font-size: 11px; text-align: center; }
+    .stat span { display: block; font-weight: bold; color: var(--accent); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="main-layout">
+  <!-- Rendering 3D -->
+  <div class="container-3d">
+    <h2 id="titleText" style="margin-top:0; font-weight:300;">Rivelatore Cosmico 3D</h2>
+    <div class="stats-bar">
+      <div class="stat">Muoni<span>~70%</span><span id="count-mu">0</span></div>
+      <div class="stat">Elettroni<span>~25%</span><span id="count-e">0</span></div>
+      <div class="stat">Protoni<span>~2%</span><span id="count-p">0</span></div>
+      <div class="stat">Neutroni<span>~3%</span><span id="count-n">0</span></div>
+    </div>
+    <canvas id="detector3d" width="800" height="550"></canvas>
+    
+    <div class="controls">
+      <button id="start" class="btn">▶ START</button>
+      <button id="stop" class="btn">⏸ STOP</button>
+      <button id="single" class="btn">🎯 SINGOLA</button>
+      <button id="toggleMode" class="btn">🔄 CAMBIA RIVELATORE</button>
+      <button id="btnPreshower" class="btn toggle-preshower">📦 PRESHOWER: OFF</button>
+      
+      <div class="slider-container">
+        <label>Flusso:</label>
+        <input type="range" id="flowRate" min="0.01" max="0.5" step="0.01" value="0.18">
+      </div>
+    </div>
+
+    <!-- Filtri specie -->
+    <div class="filter-controls">
+      <label class="filter-item">
+        <input type="checkbox" id="checkMu" checked>
+        <div class="dot" style="background: #38bdf8"></div> Muoni
+      </label>
+      <label class="filter-item">
+        <input type="checkbox" id="checkE" checked>
+        <div class="dot" style="background: #facc15"></div> Elettroni
+      </label>
+      <label class="filter-item">
+        <input type="checkbox" id="checkP" checked>
+        <div class="dot" style="background: #f87171"></div> Protoni
+      </label>
+      <label class="filter-item">
+        <input type="checkbox" id="checkN" checked>
+        <div class="dot" style="background: #e2e8f0"></div> Neutroni
+      </label>
+    </div>
+  </div>
+
+  <!-- Proiezioni 2D -->
+  <div class="container-2d" id="projectionsContainer">
+    <h3 style="margin:0 0 10px 0; font-weight:400; font-size:16px;">Proiezioni Piani (XY)</h3>
+    <div id="canvasList"></div>
+  </div>
+</div>
+
+<script>
+{
+  const canvas3d = document.getElementById('detector3d');
+  const ctx3d = canvas3d.getContext('2d');
+  const canvasList = document.getElementById('canvasList');
+  
+  const startBtn = document.getElementById('start');
+  const stopBtn = document.getElementById('stop');
+  const singleBtn = document.getElementById('single');
+  const modeBtn = document.getElementById('toggleMode');
+  const preshowerBtn = document.getElementById('btnPreshower');
+  const flowSlider = document.getElementById('flowRate');
+
+  const checkMu = document.getElementById('checkMu');
+  const checkE = document.getElementById('checkE');
+  const checkP = document.getElementById('checkP');
+  const checkN = document.getElementById('checkN');
+
+  let running = false;
+  let currentMode = 0; // 0: Pixel, 1: Volume, 2: Calorimetro
+  let hasPreshower = false;
+  let particles = [];
+  let stats = { mu: 0, e: 0, p: 0, n: 0 };
+  
+  const PIX_COUNT = 10;
+  const PIX_SIZE = 20; 
+  const BOX_SIZE = PIX_COUNT * PIX_SIZE;
+
+  let dataPlanes = []; 
+
+  function initDataStructure() {
+    canvasList.innerHTML = '';
+    dataPlanes = [];
+    let numPlanes = (currentMode === 0) ? 2 : (currentMode === 1 ? 3 : 5);
+    let labels = (currentMode === 0) ? ["Piano Superiore", "Piano Inferiore"] : 
+                 (currentMode === 1 ? ["Layer Top", "Layer Mid", "Layer Bottom"] : 
+                 ["Layer 1 (Fe+Sc)", "Layer 2 (Fe+Sc)", "Layer 3 (Fe+Sc)", "Layer 4 (Fe+Sc)", "Layer 5 (Fe+Sc)"]);
+
+    for(let i=0; i<numPlanes; i++) {
+      let planeData = Array.from({length: PIX_COUNT}, () => Array(PIX_COUNT).fill(0));
+      dataPlanes.push(planeData);
+
+      const wrap = document.createElement('div');
+      const lbl = document.createElement('div');
+      lbl.className = 'proj-label';
+      lbl.innerText = labels[i];
+      const cvs = document.createElement('canvas');
+      cvs.className = 'projection-canvas';
+      cvs.width = 150;
+      cvs.height = 150;
+      wrap.appendChild(lbl);
+      wrap.appendChild(cvs);
+      canvasList.appendChild(wrap);
+    }
+  }
+
+  function project(x, y, z) {
+    const cx = x - BOX_SIZE/2;
+    const cy = y - BOX_SIZE/2;
+    const isoX = (cx - cy) * 0.8;
+    const isoY = (cx + cy) * 0.4 + (z - 100) * 0.6; 
+    return { x: canvas3d.width / 2 + isoX, y: canvas3d.height / 2 + isoY };
+  }
+
+  function spawnParticle(isSingle = false) {
+    const enabled = [];
+    if (checkMu.checked) enabled.push('mu');
+    if (checkE.checked) enabled.push('e');
+    if (checkP.checked) enabled.push('p');
+    if (checkN.checked) enabled.push('n');
+    
+    if (enabled.length === 0) return;
+
+    if (isSingle) {
+      dataPlanes.forEach(p => p.forEach(r => r.fill(0)));
+    }
+    
+    // Raggi cosmici a 200m slm: Muoni ~70%, Elettroni/Gamma ~25%, Neutroni ~3%, Protoni ~2%
+    let type;
+    if (isSingle) {
+        type = enabled[Math.floor(Math.random() * enabled.length)];
+    } else {
+        const rand = Math.random() * 100;
+        if (rand < 70 && checkMu.checked) type = 'mu';
+        else if (rand < 95 && checkE.checked) type = 'e';
+        else if (rand < 98 && checkN.checked) type = 'n';
+        else if (checkP.checked) type = 'p';
+        else type = enabled[0];
+    }
+
+    stats[type]++;
+    document.getElementById(`count-${type}`).innerText = stats[type];
+
+    // Energia variabile per simulare stopping power
+    const energy = type === 'mu' ? 1.0 : (Math.random() * 0.5 + 0.5);
+
+    particles.push({
+      type,
+      x: Math.random() * BOX_SIZE,
+      y: Math.random() * BOX_SIZE,
+      z: -100,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: (Math.random() - 0.5) * 1.5,
+      vz: 5,
+      path: [],
+      interacted: false,
+      isStopped: false,
+      stopTime: 0,
+      energy: energy
+    });
+  }
+
+  function createShower(p, count) {
+    if (p.energy < 0.15 || p.isStopped) return;
+    for(let i=0; i<count; i++) {
+      particles.push({
+        type: p.type === 'n' ? (Math.random() > 0.5 ? 'p' : 'e') : p.type,
+        x: p.x,
+        y: p.y,
+        z: p.z,
+        vx: p.vx + (Math.random() - 0.5) * 4.5,
+        vy: p.vy + (Math.random() - 0.5) * 4.5,
+        vz: p.vz * 0.8,
+        path: [],
+        interacted: true,
+        isStopped: false,
+        stopTime: 0,
+        energy: p.energy * 0.5
+      });
+    }
+  }
+
+  function update() {
+    ctx3d.clearRect(0, 0, canvas3d.width, canvas3d.height);
+    
+    if (running && Math.random() < parseFloat(flowSlider.value)) spawnParticle();
+
+    const zLayers = (currentMode === 0) ? [0, 250] : (currentMode === 1 ? [50, 100, 150, 200] : [50, 90, 130, 170, 210, 250]);
+    
+    if(hasPreshower) {
+      const pZ = (currentMode === 0) ? -80 : -20;
+      const pts = [project(0,0,pZ), project(BOX_SIZE,0,pZ), project(BOX_SIZE,BOX_SIZE,pZ), project(0,BOX_SIZE,pZ)];
+      ctx3d.fillStyle = 'rgba(184, 115, 51, 0.4)';
+      ctx3d.beginPath(); ctx3d.moveTo(pts[0].x, pts[0].y); pts.forEach(p => ctx3d.lineTo(p.x, p.y)); ctx3d.closePath(); ctx3d.fill();
+      ctx3d.strokeStyle = 'rgba(184, 115, 51, 0.7)';
+      ctx3d.stroke();
+    }
+
+    zLayers.forEach((z, idx) => {
+      const pts = [project(0,0,z), project(BOX_SIZE,0,z), project(BOX_SIZE,BOX_SIZE,z), project(0,BOX_SIZE,z)];
+      if (currentMode === 2 && idx < zLayers.length - 1) {
+        ctx3d.fillStyle = 'rgba(100, 116, 139, 0.1)'; 
+        ctx3d.beginPath(); ctx3d.moveTo(pts[0].x, pts[0].y); pts.forEach(p => ctx3d.lineTo(p.x, p.y)); ctx3d.closePath(); ctx3d.fill();
+      }
+      ctx3d.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx3d.beginPath(); ctx3d.moveTo(pts[0].x, pts[0].y); pts.forEach(p => ctx3d.lineTo(p.x, p.y)); ctx3d.closePath(); ctx3d.stroke();
+    });
+
+    const now = Date.now();
+
+    particles.forEach((p) => {
+      if (p.isStopped) return;
+
+      const prevZ = p.z;
+      p.x += p.vx; p.y += p.vy; p.z += p.vz;
+      
+      // I neutroni non lasciano traccia continua se non interagiscono
+      if (p.type !== 'n' || p.interacted) {
+        p.path.push({x: p.x, y: p.y, z: p.z});
+      }
+      if(p.path.length > 20) p.path.shift();
+
+      // Preshower interaction
+      if(hasPreshower && p.z > -80 && prevZ <= -80 && !p.interacted) {
+        p.interacted = true;
+        if(p.type === 'mu') {
+          p.vx += (Math.random()-0.5) * 0.1;
+        } else if (p.type === 'n') {
+          if (Math.random() < 0.3) createShower(p, 2); 
+        } else {
+          p.vx += (Math.random()-0.5) * 1.5;
+          createShower(p, p.type === 'e' ? 3 : 2);
+          if (Math.random() < 0.1) {
+            p.isStopped = true;
+            p.stopTime = now;
+          }
+        }
+      }
+
+      // Detector Layer interaction
+      let layerIdx = -1;
+      const layersZ = (currentMode === 0) ? [0, 250] : (currentMode === 1 ? [50, 125, 200] : [50, 90, 130, 170, 210]);
+      
+      layersZ.forEach((lz, li) => {
+        if(p.z >= lz && prevZ < lz) {
+          layerIdx = li;
+          
+          if (currentMode === 2 && !p.isStopped) {
+            const stopProb = p.type === 'mu' ? 0.01 : (p.type === 'e' ? 0.3 : 0.45);
+            if (Math.random() < stopProb) {
+                p.isStopped = true;
+                p.stopTime = now;
+                p.energy *= 0.5;
+            }
+
+            if (p.type === 'e') {
+               p.vx += (Math.random()-0.5) * 2.5;
+               createShower(p, 3);
+            } else if (p.type === 'p' || p.type === 'n') {
+               p.vx += (Math.random()-0.5) * 3.5;
+               createShower(p, 2);
+               p.interacted = true;
+            }
+          }
+        }
+      });
+
+      // Map to 2D
+      if (layerIdx !== -1 && p.type !== 'n') {
+        const ix = Math.floor(p.x / PIX_SIZE);
+        const iy = Math.floor(p.y / PIX_SIZE);
+        if (ix >= 0 && ix < PIX_COUNT && iy >= 0 && iy < PIX_COUNT) {
+          dataPlanes[layerIdx][ix][iy] = Math.min(1.0, dataPlanes[layerIdx][ix][iy] + p.energy);
+        }
+      }
+    });
+
+    particles.forEach(p => {
+      if(p.path.length < 2) return;
+      
+      let alpha = Math.max(0.15, p.energy);
+      
+      // Dissolvenza se la particella è ferma
+      if (p.isStopped && p.stopTime > 0) {
+        const elapsed = now - p.stopTime;
+        const fade = Math.max(0, 1 - elapsed / 1000);
+        alpha *= fade;
+      }
+
+      ctx3d.beginPath();
+      ctx3d.strokeStyle = p.type === 'mu' ? `rgba(56, 189, 248, ${alpha})` : 
+                          p.type === 'p' ? `rgba(248, 113, 113, ${alpha})` : 
+                          p.type === 'e' ? `rgba(250, 204, 21, ${alpha})` : `rgba(226, 232, 240, ${alpha})`;
+      ctx3d.lineWidth = (p.type === 'mu' || p.type === 'n') ? 2 : 1.2;
+      
+      if (p.type === 'n' && !p.interacted) ctx3d.setLineDash([2, 8]);
+      else ctx3d.setLineDash([]);
+
+      const start = project(p.path[0].x, p.path[0].y, p.path[0].z);
+      ctx3d.moveTo(start.x, start.y);
+      p.path.forEach(pt => { const pos = project(pt.x, pt.y, pt.z); ctx3d.lineTo(pos.x, pos.y); });
+      ctx3d.stroke();
+      ctx3d.setLineDash([]);
+      
+      if (p.isStopped) {
+          const last = project(p.x, p.y, p.z);
+          ctx3d.fillStyle = ctx3d.strokeStyle;
+          ctx3d.beginPath();
+          ctx3d.arc(last.x, last.y, 3, 0, Math.PI*2);
+          ctx3d.fill();
+      }
+    });
+
+    const canvases = document.querySelectorAll('.projection-canvas');
+    dataPlanes.forEach((plane, idx) => {
+      const c2d = canvases[idx];
+      if(!c2d) return;
+      const ctx2d = c2d.getContext('2d');
+      const step = c2d.width / PIX_COUNT;
+      ctx2d.fillStyle = '#000';
+      ctx2d.fillRect(0,0,c2d.width, c2d.height);
+      ctx2d.strokeStyle = '#1e293b';
+      ctx2d.lineWidth = 0.5;
+      for(let i=0; i<=PIX_COUNT; i++) {
+        ctx2d.beginPath(); ctx2d.moveTo(i*step, 0); ctx2d.lineTo(i*step, c2d.height); ctx2d.stroke();
+        ctx2d.beginPath(); ctx2d.moveTo(0, i*step); ctx2d.lineTo(c2d.width, i*step); ctx2d.stroke();
+      }
+      for(let x=0; x<PIX_COUNT; x++) {
+        for(let y=0; y<PIX_COUNT; y++) {
+          if(plane[x][y] > 0) {
+            ctx2d.fillStyle = `rgba(56, 189, 248, ${plane[x][y]})`;
+            ctx2d.fillRect(x*step + 1, y*step + 1, step - 2, step - 2);
+            if (running) plane[x][y] *= 0.95; 
+          }
+        }
+      }
+    });
+
+    // Filtro per rimuovere particelle fuori bound, senza energia o ferme da più di 1 secondo
+    particles = particles.filter(p => {
+        const ageInStop = p.isStopped ? (now - p.stopTime) : 0;
+        return p.z < 400 && p.energy > 0.05 && ageInStop < 1000;
+    });
+    
+    requestAnimationFrame(update);
+  }
+
+  startBtn.onclick = () => { running = true; startBtn.style.opacity = 0.5; stopBtn.style.opacity = 1; };
+  stopBtn.onclick = () => { running = false; startBtn.style.opacity = 1; stopBtn.style.opacity = 0.5; };
+  singleBtn.onclick = () => spawnParticle(true);
+  
+  modeBtn.onclick = () => {
+    currentMode = (currentMode + 1) % 3;
+    const names = ["Piani Pixel", "Volume Scintillatore", "Calorimetro Fe/Scint"];
+    document.getElementById('titleText').innerText = names[currentMode];
+    initDataStructure();
+    particles = [];
+  };
+
+  preshowerBtn.onclick = () => {
+    hasPreshower = !hasPreshower;
+    preshowerBtn.innerText = hasPreshower ? "📦 PRESHOWER: ON" : "📦 PRESHOWER: OFF";
+  };
+
+  initDataStructure();
+  update();
+}
+</script>
+</body>
+</html>
