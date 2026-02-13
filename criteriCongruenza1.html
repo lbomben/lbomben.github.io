@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Criteri di Congruenza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f1f5f9; touch-action: none; }
+        canvas { 
+            touch-action: none; 
+            background: #ffffff; 
+            cursor: default;
+        }
+        .active-tab { border-bottom: 4px solid #4f46e5; color: #4f46e5; }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
+
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="bg-slate-800 p-6 text-white text-center">
+            <h1 id="mainTitle" class="text-2xl md:text-3xl font-extrabold mb-2">Primo Criterio (LAL)</h1>
+            <p id="mainDesc" class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto italic text-balance">
+                "Due triangoli sono congruenti se hanno uguali due lati e l'angolo tra essi compreso."
+            </p>
+        </div>
+
+        <!-- Selettore Modalità -->
+        <div class="flex border-b border-slate-200 overflow-x-auto">
+            <button id="tabLAL" class="flex-1 min-w-[120px] py-4 font-bold text-xs sm:text-sm uppercase tracking-wider active-tab">LAL (1°)</button>
+            <button id="tabALA" class="flex-1 min-w-[120px] py-4 font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors">ALA (2°)</button>
+            <button id="tabLLL" class="flex-1 min-w-[120px] py-4 font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors">LLL (3°)</button>
+        </div>
+
+        <!-- Pannello Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 border-b border-slate-200">
+            <div class="p-4 bg-blue-50/50 flex flex-col items-center text-center">
+                <span class="text-blue-700 font-bold text-xs uppercase tracking-widest mb-2">Triangolo ABC</span>
+                <div id="stats1" class="text-slate-700 font-mono text-xs space-y-1"></div>
+            </div>
+            <div class="p-4 bg-rose-50/50 flex flex-col items-center text-center border-t md:border-t-0 md:border-l border-slate-200">
+                <span class="text-rose-700 font-bold text-xs uppercase tracking-widest mb-2">Triangolo DEF</span>
+                <div id="stats2" class="text-slate-700 font-mono text-xs space-y-1"></div>
+            </div>
+        </div>
+
+        <!-- Area Canvas -->
+        <div class="relative w-full bg-slate-50 flex items-center justify-center p-2 md:p-4 overflow-hidden">
+            <canvas id="geoCanvas" width="800" height="450" class="rounded-lg shadow-inner border border-slate-200 w-full h-auto max-w-full"></canvas>
+            
+            <div id="tutorial" class="absolute bottom-6 left-6 bg-black/60 text-white px-4 py-2 rounded-full text-xs pointer-events-none transition-opacity duration-500">
+                💡 Trascina i vertici del triangolo blu per testare la congruenza.
+            </div>
+        </div>
+
+        <!-- Bottoni -->
+        <div class="p-6 bg-white flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button id="overlapBtn" class="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg active:scale-95">
+                Verifica Sovrapposizione
+            </button>
+            <button id="resetBtn" class="w-full sm:w-auto px-8 py-3 bg-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-300 transition-all">
+                Cambia Orientamento
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('geoCanvas');
+        const ctx = canvas.getContext('2d');
+        const stats1 = document.getElementById('stats1');
+        const stats2 = document.getElementById('stats2');
+        const overlapBtn = document.getElementById('overlapBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const tabs = {
+            LAL: document.getElementById('tabLAL'),
+            ALA: document.getElementById('tabALA'),
+            LLL: document.getElementById('tabLLL')
+        };
+        const mainTitle = document.getElementById('mainTitle');
+        const mainDesc = document.getElementById('mainDesc');
+
+        let mode = 'LAL'; 
+        let pA, pB, pC;
+        let redTriangleRotationOffset = 0; 
+        const OFFSET_X = 380;
+        let overlapFactor = 0; 
+        let isAnimating = false;
+        let activePoint = null;
+
+        function initPoints() {
+            pA = { x: 120, y: 320 };
+            pB = { x: 320, y: 320 };
+            pC = { x: 160, y: 150 };
+            overlapFactor = 0;
+            redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
+            overlapBtn.innerText = "Verifica Sovrapposizione";
+        }
+
+        function getDistance(p1, p2) {
+            return Math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2);
+        }
+
+        function drawTick(p1, p2, color, count = 1) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI/2;
+            const len = 8;
+            const gap = 4;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            
+            for(let i = 0; i < count; i++) {
+                const shift = (i - (count-1)/2) * gap;
+                const ox = Math.cos(angle-Math.PI/2) * shift;
+                const oy = Math.sin(angle-Math.PI/2) * shift;
+                
+                ctx.beginPath();
+                ctx.moveTo(midX + ox + Math.cos(angle) * len, midY + oy + Math.sin(angle) * len);
+                ctx.lineTo(midX + ox - Math.cos(angle) * len, midY + oy - Math.sin(angle) * len);
+                ctx.stroke();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const dAB = getDistance(pA, pB);
+            const dAC = getDistance(pA, pC);
+            const dBC = getDistance(pB, pC);
+            const angleAB = Math.atan2(pB.y - pA.y, pB.x - pA.x);
+            
+            let angA, angB;
+            angA = Math.atan2(pC.y - pA.y, pC.x - pA.x) - angleAB;
+            angB = Math.PI - (Math.atan2(pC.y - pB.y, pC.x - pB.x) - angleAB);
+
+            const currentBaseAngle = angleAB + (redTriangleRotationOffset * (1 - overlapFactor));
+            const curOffsetX = OFFSET_X * (1 - overlapFactor);
+
+            const curD = { x: pA.x + curOffsetX, y: pA.y };
+            
+            const getRedPoint = (dist, relativeAngle) => {
+                return {
+                    x: curD.x + dist * Math.cos(currentBaseAngle + relativeAngle),
+                    y: curD.y + dist * Math.sin(currentBaseAngle + relativeAngle)
+                };
+            };
+
+            const curE = getRedPoint(dAB, 0);
+            
+            let curF;
+            if (mode === 'LAL') {
+                curF = getRedPoint(dAC, angA);
+            } else if (mode === 'ALA') {
+                const a1 = currentBaseAngle + angA;
+                const a2 = currentBaseAngle + Math.PI - angB;
+                const dx1 = Math.cos(a1), dy1 = Math.sin(a1);
+                const dx2 = Math.cos(a2), dy2 = Math.sin(a2);
+                const det = dx2 * dy1 - dy2 * dx1;
+                const t = (dx2 * (curE.y - curD.y) - dy2 * (curE.x - curD.x)) / det;
+                curF = { x: curD.x + t * dx1, y: curD.y + t * dy1 };
+            } else {
+                // LLL: Costruzione via Teorema del Coseno
+                const cosA = (dAC**2 + dAB**2 - dBC**2) / (2 * dAC * dAB);
+                const angA_LLL = Math.acos(Math.max(-1, Math.min(1, cosA)));
+                const sign = Math.sign(angA);
+                curF = getRedPoint(dAC, angA_LLL * sign);
+            }
+
+            // UI Separator
+            ctx.beginPath();
+            ctx.setLineDash([10, 10]);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.moveTo(canvas.width / 2, 20); ctx.lineTo(canvas.width / 2, canvas.height - 20);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Triangoli
+            drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0);
+            drawTriangle(curD, curE, curF, '#e11d48', ['D', 'E', 'F'], false);
+
+            updateStats(dAB, dAC, dBC, angA, angB);
+        }
+
+        function drawTriangle(p1, p2, p3, color, labels, canDrag) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
+            ctx.fillStyle = color + '10'; ctx.fill();
+            ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+
+            // Evidenziazione Lati Ipotesi
+            ctx.lineWidth = 4;
+            // Lato 1: Base (Sempre presente)
+            ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+            drawTick(p1, p2, color, 1);
+
+            if (mode === 'LAL' || mode === 'LLL') {
+                // Lato 2: AC/DF
+                ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p3.x, p3.y); ctx.stroke();
+                drawTick(p1, p3, color, 2);
+            }
+            
+            if (mode === 'LLL') {
+                // Lato 3: BC/EF
+                ctx.beginPath(); ctx.moveTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.stroke();
+                drawTick(p2, p3, color, 3);
+            }
+
+            ctx.lineWidth = 2;
+
+            // Archi Angoli
+            const drawArc = (p, pPrev, pNext, radius, isHypothesis) => {
+                const a1 = Math.atan2(pPrev.y - p.y, pPrev.x - p.x);
+                const a2 = Math.atan2(pNext.y - p.y, pNext.x - p.x);
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, radius, a1, a2, (a2 - a1 + Math.PI * 4) % (Math.PI * 2) > Math.PI);
+                ctx.fillStyle = color + (isHypothesis ? '40' : '10'); ctx.fill();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = isHypothesis ? 3 : 1;
+                ctx.stroke();
+            };
+
+            if (mode === 'LAL' || mode === 'ALA') drawArc(p1, p2, p3, 35, true); 
+            if (mode === 'ALA') drawArc(p2, p3, p1, 35, true); 
+
+            // Vertici
+            [p1, p2, p3].forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, canDrag ? 10 : 4, 0, Math.PI * 2);
+                ctx.fillStyle = canDrag ? 'white' : color;
+                ctx.fill();
+                ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+                ctx.fillStyle = '#1e293b'; ctx.font = 'bold 15px sans-serif';
+                ctx.fillText(labels[i], p.x - 5, p.y - 15);
+            });
+        }
+
+        function updateStats(dAB, dAC, dBC, angA, angB) {
+            const degA = Math.abs(angA * 180 / Math.PI).toFixed(1);
+            const degB = Math.abs(angB * 180 / Math.PI).toFixed(1);
+            const u = (v) => (v/25).toFixed(2);
+            
+            let s1 = "", s2 = "";
+            if (mode === 'LAL') {
+                s1 = `<div>Lato AB = ${u(dAB)}</div><div>Lato AC = ${u(dAC)}</div><div>Angolo A = ${degA}°</div>`;
+                s2 = `<div>Lato DE = ${u(dAB)}</div><div>Lato DF = ${u(dAC)}</div><div>Angolo D = ${degA}°</div>`;
+            } else if (mode === 'ALA') {
+                s1 = `<div>Angolo A = ${degA}°</div><div>Lato AB = ${u(dAB)}</div><div>Angolo B = ${degB}°</div>`;
+                s2 = `<div>Angolo D = ${degA}°</div><div>Lato DE = ${u(dAB)}</div><div>Angolo E = ${degB}°</div>`;
+            } else {
+                s1 = `<div>Lato AB = ${u(dAB)}</div><div>Lato AC = ${u(dAC)}</div><div>Lato BC = ${u(dBC)}</div>`;
+                s2 = `<div>Lato DE = ${u(dAB)}</div><div>Lato DF = ${u(dAC)}</div><div>Lato EF = ${u(dBC)}</div>`;
+            }
+            stats1.innerHTML = s1;
+            stats2.innerHTML = s2;
+        }
+
+        function getPos(e) {
+            const r = canvas.getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: (cx - r.left) * (canvas.width / r.width), y: (cy - r.top) * (canvas.height / r.height) };
+        }
+
+        const handleDown = (e) => {
+            if (overlapFactor > 0) return;
+            const m = getPos(e);
+            [pA, pB, pC].forEach(p => { if (getDistance(m, p) < 30) activePoint = p; });
+        };
+
+        const handleMove = (e) => {
+            if (!activePoint) return;
+            const m = getPos(e);
+            activePoint.x = Math.max(20, Math.min(380, m.x));
+            activePoint.y = Math.max(20, Math.min(430, m.y));
+            draw();
+        };
+
+        canvas.addEventListener('mousedown', handleDown);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', () => activePoint = null);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleDown(e); }, {passive: false});
+        window.addEventListener('touchmove', (e) => { if(activePoint) e.preventDefault(); handleMove(e); }, {passive: false});
+        window.addEventListener('touchend', () => activePoint = null);
+
+        function switchTab(m) {
+            mode = m;
+            Object.keys(tabs).forEach(k => {
+                tabs[k].className = (k === m) 
+                    ? "flex-1 min-w-[120px] py-4 font-bold text-xs sm:text-sm uppercase tracking-wider active-tab"
+                    : "flex-1 min-w-[120px] py-4 font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors";
+            });
+            
+            if (m === 'LAL') {
+                mainTitle.innerText = "Primo Criterio (LAL)";
+                mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."';
+            } else if (m === 'ALA') {
+                mainTitle.innerText = "Secondo Criterio (ALA)";
+                mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."';
+            } else {
+                mainTitle.innerText = "Terzo Criterio (LLL)";
+                mainDesc.innerText = '"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."';
+            }
+            draw();
+        }
+
+        tabs.LAL.onclick = () => switchTab('LAL');
+        tabs.ALA.onclick = () => switchTab('ALA');
+        tabs.LLL.onclick = () => switchTab('LLL');
+
+        overlapBtn.onclick = () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            const start = overlapFactor, end = overlapFactor === 0 ? 1 : 0;
+            const startTime = performance.now();
+            const animate = (t) => {
+                const p = Math.min((t - startTime) / 1600, 1);
+                const ease = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+                overlapFactor = start + (end - start) * ease;
+                draw();
+                if (p < 1) requestAnimationFrame(animate);
+                else { isAnimating = false; overlapBtn.innerText = end === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione"; }
+            };
+            requestAnimationFrame(animate);
+        };
+
+        resetBtn.onclick = () => { initPoints(); draw(); };
+        window.onload = () => { initPoints(); draw(); };
+    </script>
+</body>
+</html>
