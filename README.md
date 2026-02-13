@@ -10,7 +10,7 @@
 <a href="./criteriCongruenza1.html">Criteri di congruenza dei triangoli<br></a>
 <a href="./planckLed.html">Misura della costante di Planck<br></a>
 <a href="./simCosmici.html">Simulazione grafica di rivelatore di raggi cosmici<br></a>
-<a href="./esPolinomiGeom.html">Esercizi di geometria con i polinomi<br></a>
+<a href="./esPolionomiGeom.html">Esercizi di geometria con i polinomi<br></a>
 
 <!-- COMMENTI:
 per linkare un'altra pag: <a href="./mioFile.html">testo del link</a>
