@@ -7,10 +7,16 @@
 
 <h1 class="text-3xl font-bold text-gray-800 mb-2">Progetti html</h1>
 <a href="./prodottiNotevoli.html">Prodotti notevoli 2D e 3D<br></a>
-<a href="./criteriCongruenza1.html">Criteri di congruenza dei triangoli<br></a>
 <a href="./planckLed.html">Misura della costante di Planck<br></a>
 <a href="./simCosmici.html">Simulazione grafica di rivelatore di raggi cosmici<br></a>
+
+
+<h1 class="text-3xl font-bold text-gray-800 mb-2">Esercizi</h1>
 <a href="./esPolinomiGeom.html">Esercizi di geometria con i polinomi<br></a>
+
+<h1 class="text-3xl font-bold text-gray-800 mb-2">Work in progress</h1>
+<a href="./criteriCongruenza1.html">Criteri di congruenza dei triangoli<br></a>
+
 
 <!-- COMMENTI:
 per linkare un'altra pag: <a href="./mioFile.html">testo del link</a>
