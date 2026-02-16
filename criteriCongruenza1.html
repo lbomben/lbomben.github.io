@@ -25,7 +25,6 @@
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
- <a href="https://lbomben.github.io">Homepage</a>
     <div class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
         <!-- Header -->
         <div class="bg-slate-800 p-6 text-white text-center">
@@ -60,7 +59,7 @@
             <canvas id="geoCanvas" width="800" height="450" class="rounded-lg shadow-inner border border-slate-200 w-full h-auto max-w-full"></canvas>
             
             <div id="tutorial" class="absolute bottom-6 left-6 bg-black/70 text-white px-4 py-2 rounded-full text-xs pointer-events-none transition-opacity duration-500">
-                💡 Trascina i vertici di ABC. In modalità Libera, svincola i parametri per rompere la congruenza.
+                💡 Trascina i vertici di ABC. Verifica la congruenza con il tasto in basso.
             </div>
         </div>
 
@@ -123,7 +122,7 @@
             return Math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2);
         }
 
-        function getSignedAngle(pCenter, p1, p2) {
+        function getAngle(pCenter, p1, p2) {
             const a1 = Math.atan2(p1.y - pCenter.y, p1.x - pCenter.x);
             const a2 = Math.atan2(p2.y - pCenter.y, p2.x - pCenter.x);
             let angle = a2 - a1;
@@ -156,93 +155,55 @@
             const dAB = getDistance(pA, pB);
             const dAC = getDistance(pA, pC);
             const dBC = getDistance(pB, pC);
-            
-            const angA = getSignedAngle(pA, pB, pC);
-            const angB = getSignedAngle(pB, pC, pA);
-            const angC = getSignedAngle(pC, pA, pB);
+            const angA = getAngle(pA, pB, pC);
+            const angB = getAngle(pB, pC, pA);
+            const angC = getAngle(pC, pA, pB);
 
             const abcData = {
                 sideAB: dAB, sideAC: dAC, sideBC: dBC,
                 angleA: angA, angleB: angB, angleC: angC
             };
 
-            let curDAB, curDAC, curDBC, curAngD, curAngE;
-
-            // Logica di determinazione vincoli
-            if (mode === 'LAL') {
-                curDAB = dAB; curDAC = dAC; curAngD = angA; curAngE = null;
-            } else if (mode === 'ALA') {
-                curDAB = dAB; curAngD = angA; curAngE = angB; curDAC = null;
-            } else if (mode === 'LLL') {
-                curDAB = dAB; curDAC = dAC; curDBC = dBC; curAngD = null; curAngE = null;
-            } else {
-                curDAB = mapping.sideDE === 'free' ? null : abcData[mapping.sideDE];
-                curDAC = mapping.sideDF === 'free' ? null : abcData[mapping.sideDF];
-                curDBC = mapping.sideEF === 'free' ? null : abcData[mapping.sideEF];
-                curAngD = mapping.angleD === 'free' ? null : abcData[mapping.angleD];
-                curAngE = mapping.angleE === 'free' ? null : abcData[mapping.angleE];
-            }
-
-            const currentBaseAngle = Math.atan2(pB.y - pA.y, pB.x - pA.x) + (redTriangleRotationOffset * (1 - overlapFactor));
+            // Calcolo posizione Triangolo DEF
+            const currentRot = (Math.atan2(pB.y - pA.y, pB.x - pA.x)) + (redTriangleRotationOffset * (1 - overlapFactor));
             const curOffsetX = OFFSET_X * (1 - overlapFactor);
             const curD = { x: pA.x + curOffsetX, y: pA.y };
-            
-            // Se libero, usa una base fissa (non dipendente da ABC) per rompere la similitudine
-            let finalDAB = curDAB !== null ? curDAB : 150; 
-            const curE = { x: curD.x + finalDAB * Math.cos(currentBaseAngle), y: curD.y + finalDAB * Math.sin(currentBaseAngle) };
 
-            let curF;
-            const isALA = mode === 'ALA' || (curAngD !== null && curAngE !== null);
-            const isLLL = mode === 'LLL' || (curDAC !== null && curDBC !== null);
+            let curE, curF;
 
-            if (isLLL && !isALA) {
-                const s1 = curDAC !== null ? curDAC : 120; // Default fisso se libero
-                const s2 = finalDAB;
-                const s3 = curDBC !== null ? curDBC : 100; // Default fisso se libero
-                
-                // Controllo esistenza triangolo (disuguaglianza triangolare)
-                if (s1 + s2 > s3 && s1 + s3 > s2 && s2 + s3 > s1) {
-                    const cosD = (s1**2 + s2**2 - s3**2) / (2 * s1 * s2);
-                    const solvedAngD = Math.acos(Math.max(-1, Math.min(1, cosD)));
-                    const sign = Math.sign(angA) || 1;
-                    curF = { 
-                        x: curD.x + s1 * Math.cos(currentBaseAngle + solvedAngD * sign), 
-                        y: curD.y + s1 * Math.sin(currentBaseAngle + solvedAngD * sign) 
-                    };
-                } else {
-                    // Fallback se i lati liberi non formano un triangolo
-                    curF = { x: curD.x + 50, y: curD.y - 80 };
-                }
-            } else if (isALA) {
-                const alpha = Math.abs(curAngD !== null ? curAngD : 0.785); // 45 gradi se libero
-                const beta = Math.abs(curAngE !== null ? curAngE : 0.785);  // 45 gradi se libero
-                let gamma = Math.PI - alpha - beta;
-                
-                if (gamma <= 0.1) gamma = 0.1; // Impedisce angoli piatti/impossibili
-
-                const sDF = (finalDAB * Math.sin(beta)) / Math.sin(gamma);
-                const sign = Math.sign(curAngD !== null ? curAngD : angA) || 1;
-                
-                curF = { 
-                    x: curD.x + sDF * Math.cos(currentBaseAngle + alpha * sign), 
-                    y: curD.y + sDF * Math.sin(currentBaseAngle + alpha * sign) 
-                };
+            if (mode === 'LAL') {
+                curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
+                curF = { x: curD.x + dAC * Math.cos(currentRot + angA), y: curD.y + dAC * Math.sin(currentRot + angA) };
+            } else if (mode === 'ALA') {
+                curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
+                // Intersezione semirette da D ed E
+                const alpha = angA;
+                const beta = -angB; // Segno opposto perché ruotiamo dall'altro lato del segmento
+                const gamma = Math.PI - Math.abs(alpha) - Math.abs(beta);
+                const distDF = (dAB * Math.sin(Math.abs(beta))) / Math.sin(gamma);
+                curF = { x: curD.x + distDF * Math.cos(currentRot + alpha), y: curD.y + distDF * Math.sin(currentRot + alpha) };
+            } else if (mode === 'LLL') {
+                curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
+                // Usiamo Carnot per trovare l'angolo in D
+                const cosD = (dAC**2 + dAB**2 - dBC**2) / (2 * dAC * dAB);
+                const angleD = Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angA);
+                curF = { x: curD.x + dAC * Math.cos(currentRot + angleD), y: curD.y + dAC * Math.sin(currentRot + angleD) };
             } else {
-                // Modalità LAL o parziale: un lato e un angolo
-                const s1 = curDAC !== null ? curDAC : 120; // Default fisso se libero
-                const alpha = curAngD !== null ? curAngD : 0.8; // Default fisso se libero
-                curF = { 
-                    x: curD.x + s1 * Math.cos(currentBaseAngle + alpha), 
-                    y: curD.y + s1 * Math.sin(currentBaseAngle + alpha) 
-                };
+                // Modalità Libera
+                const baseLen = mapping.sideDE === 'free' ? 180 : abcData[mapping.sideDE];
+                curE = { x: curD.x + baseLen * Math.cos(currentRot), y: curD.y + baseLen * Math.sin(currentRot) };
+                
+                const side2Len = mapping.sideDF === 'free' ? 140 : abcData[mapping.sideDF];
+                const angleD = mapping.angleD === 'free' ? 0.8 : abcData[mapping.angleD];
+                curF = { x: curD.x + side2Len * Math.cos(currentRot + angleD), y: curD.y + side2Len * Math.sin(currentRot + angleD) };
             }
 
             const actualDE = getDistance(curD, curE);
             const actualDF = getDistance(curD, curF);
             const actualEF = getDistance(curE, curF);
-            const actualAngD = getSignedAngle(curD, curE, curF);
-            const actualAngE = getSignedAngle(curE, curF, curD);
-            const actualAngF = getSignedAngle(curF, curD, curE);
+            const actualAngD = getAngle(curD, curE, curF);
+            const actualAngE = getAngle(curE, curF, curD);
+            const actualAngF = getAngle(curF, curD, curE);
 
             drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0, true);
             drawTriangle(curD, curE, curF, '#e11d48', ['D', 'E', 'F'], false, false);
@@ -265,6 +226,7 @@
                 return mapping[id] && mapping[id] !== 'free';
             };
 
+            // Evidenzia elementi congruenti
             ctx.lineWidth = 4;
             if (isConstrained('side', 'sideDE')) { ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); drawTick(p1, p2, color, 1); }
             if (isConstrained('side', 'sideDF')) { ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p3.x, p3.y); ctx.stroke(); drawTick(p1, p3, color, 2); }
@@ -365,6 +327,22 @@
         });
         window.addEventListener('mouseup', () => activePoint = null);
 
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            if (overlapFactor > 0) return;
+            const m = getPos(e);
+            [pA, pB, pC].forEach(p => { if (getDistance(m, p) < 40) activePoint = p; });
+            if(activePoint) e.preventDefault();
+        }, {passive: false});
+        canvas.addEventListener('touchmove', (e) => {
+            if (!activePoint) return;
+            const m = getPos(e);
+            activePoint.x = Math.max(20, Math.min(380, m.x));
+            activePoint.y = Math.max(20, Math.min(430, m.y));
+            draw();
+            e.preventDefault();
+        }, {passive: false});
+
         function switchTab(m) {
             mode = m;
             Object.keys(tabs).forEach(k => tabs[k].className = (k === m) ? "flex-1 min-w-[90px] py-4 font-bold text-xs uppercase tracking-wider active-tab" : "flex-1 min-w-[90px] py-4 font-bold text-xs uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors");
@@ -386,8 +364,9 @@
             const start = overlapFactor, end = overlapFactor === 0 ? 1 : 0;
             const startTime = performance.now();
             const animate = (t) => {
-                const p = Math.min((t - startTime) / 1500, 1);
-                overlapFactor = start + (end - start) * (p < .5 ? 2*p*p : -1+(4-2*p)*p);
+                const p = Math.min((t - startTime) / 1000, 1);
+                const ease = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+                overlapFactor = start + (end - start) * ease;
                 draw();
                 if (p < 1) requestAnimationFrame(animate);
                 else { isAnimating = false; overlapBtn.innerText = end === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione"; }
