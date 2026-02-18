@@ -32,14 +32,28 @@
         .mode-btn.active { background-color: #1e293b; color: white; border-color: #1e293b; }
         .hidden-element { display: none; }
         .mode-btn mjx-container { margin: 0 !important; display: inline-block !important; vertical-align: middle; }
+        
+        /* Evidenziatori con colori fedeli al grafico (Alpha 0.4 per leggibilità testo) */
+        .term-a2, .term-a3 { background-color: rgba(59, 130, 246, 0.4); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.6); }
+        .term-b2, .term-b3 { background-color: rgba(239, 68, 68, 0.4); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.6); }
+        .term-c2 { background-color: rgba(34, 197, 94, 0.4); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.6); }
+        .term-ab, .term-a2b { background-color: rgba(234, 179, 8, 0.4); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(234, 179, 8, 0.6); }
+        .term-ac { background-color: rgba(168, 85, 247, 0.4); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(168, 85, 247, 0.6); }
+        .term-bc, .term-ab2 { background-color: rgba(249, 115, 22, 0.4); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(249, 115, 22, 0.6); }
+        
+        /* Correzione per MathJax inline dentro gli span evidenziati */
+        .mathjax-process span mjx-container { margin: 0 !important; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 mathjax-process">
-<a href="https://lbomben.github.io">Homepage</a>
+    <a href="https://lbomben.github.io" class="text-blue-500 hover:underline mb-4">Homepage</a>
+    
     <div class="max-w-6xl w-full">
         <header class="text-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Prodotti Notevoli 2D e 3D</h1>
-            <div id="math-header" class="text-xl text-blue-600 font-semibold h-16 flex items-center justify-center"></div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Prodotti Notevoli Interattivi</h1>
+            <div id="math-header" class="text-xl text-gray-900 font-semibold h-24 flex items-center justify-center">
+                <!-- Caricato via JS -->
+            </div>
         </header>
 
         <div class="flex flex-wrap justify-center mb-6 gap-3">
@@ -102,7 +116,7 @@
         const containerC = document.getElementById('containerC');
 
         let mode = 'binomio';
-        let angleX = -0.5, angleY = 0.5; // Angoli iniziali per il cubo
+        let angleX = -0.5, angleY = 0.5;
         let isDragging = false, lastMouseX, lastMouseY;
 
         const COLORS = {
@@ -124,29 +138,61 @@
 
             if (mode === 'binomio') {
                 containerC.classList.add('hidden-element');
-                mathHeader.innerHTML = "$$(a + b)^2 = a^2 + 2ab + b^2$$";
+                mathHeader.innerHTML = `$(a + b)^2 = $ <span class="term-a2">$a^2$</span> $+$ <span class="term-ab">$2ab$</span> $+$ <span class="term-b2">$b^2$</span>`;
                 explanationText.textContent = "Scomposizione dell'area in due quadrati e due rettangoli.";
                 canvasCaption.textContent = "Vista 2D: Area del Quadrato";
                 resultsTable.innerHTML = `<div class="flex justify-between"><span>Area $a^2$:</span> <strong>${a*a}</strong></div><div class="flex justify-between"><span>Area $b^2$:</span> <strong>${b*b}</strong></div><div class="flex justify-between"><span>Area $2ab$:</span> <strong>${2*a*b}</strong></div>`;
-                mathResult.innerHTML = `$$(${a}+${b})^2 = ${a*a}+${b*b}+${2*a*b} = ${(a+b)**2}$$`;
+                mathResult.innerHTML = `$$(${a}+${b})^2 = ${a*a}+${2*a*b}+${b*b} = ${(a+b)**2}$$`;
             } else if (mode === 'trinomio') {
                 containerC.classList.remove('hidden-element');
-                mathHeader.innerHTML = "$$(a + b + c)^2 = a^2 + b^2 + c^2 + 2ab + 2ac + 2bc$$";
+                mathHeader.innerHTML = `$(a + b + c)^2 = $ <span class="term-a2">$a^2$</span> $+$ <span class="term-b2">$b^2$</span> $+$ <span class="term-c2">$c^2$</span> $+$ <span class="term-ab">$2ab$</span> $+$ <span class="term-ac">$2ac$</span> $+$ <span class="term-bc">$2bc$</span>`;
                 explanationText.textContent = "Scomposizione in tre quadrati e tre coppie di rettangoli.";
                 canvasCaption.textContent = "Vista 2D: Area del Quadrato";
-                resultsTable.innerHTML = `<div class="flex justify-between"><span>Quadrati:</span> <strong>${a*a+b*b+c*c}</strong></div><div class="flex justify-between"><span>Doppi prodotti:</span> <strong>${2*(a*b+a*c+b*c)}</strong></div>`;
+                resultsTable.innerHTML = `<div class="flex justify-between"><span>Quadrati ($a^2+b^2+c^2$):</span> <strong>${a*a+b*b+c*c}</strong></div><div class="flex justify-between"><span>Doppi prodotti:</span> <strong>${2*(a*b+a*c+b*c)}</strong></div>`;
                 mathResult.innerHTML = `$$(${a}+${b}+${c})^2 = ${(a+b+c)**2}$$`;
             } else {
                 containerC.classList.add('hidden-element');
-                mathHeader.innerHTML = "$$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$$";
+                mathHeader.innerHTML = `$(a + b)^3 = $ <span class="term-a3">$a^3$</span> $+$ <span class="term-a2b">$3a^2b$</span> $+$ <span class="term-ab2">$3ab^2$</span> $+$ <span class="term-b3">$b^3$</span>`;
                 explanationText.textContent = "Scomposizione del volume in due cubi e sei parallelepipedi.";
                 canvasCaption.textContent = "Vista 3D: Volume del Cubo (Trascina per ruotare)";
-                resultsTable.innerHTML = `<div class="flex justify-between"><span>$a^3$ + $b^3$:</span> <strong>${a**3 + b**3}</strong></div><div class="flex justify-between"><span>$3a^2b$ + $3ab^2$:</span> <strong>${3*(a**2)*b + 3*a*(b**2)}</strong></div>`;
+                resultsTable.innerHTML = `<div class="flex justify-between"><span>Somma cubi ($a^3 + b^3$):</span> <strong>${a**3 + b**3}</strong></div><div class="flex justify-between"><span>Somma parallelepipedi:</span> <strong>${3*(a**2)*b + 3*a*(b**2)}</strong></div>`;
                 mathResult.innerHTML = `$$(${a}+${b})^3 = ${(a+b)**3}$$`;
             }
 
-            if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+            // Forza il ricaricamento di MathJax per gli elementi dinamici
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([mathHeader, mathResult, resultsTable]);
+            }
             draw();
+        }
+
+        function drawDimension(x1, y1, x2, y2, label, side = 'top') {
+            ctx.strokeStyle = '#64748b';
+            ctx.fillStyle = '#64748b';
+            ctx.lineWidth = 1;
+            ctx.font = "italic 13px serif";
+            ctx.textAlign = "center";
+            
+            const offset = 30;
+            ctx.beginPath();
+            
+            if (side === 'top') {
+                ctx.moveTo(x1, y1 - 5); ctx.lineTo(x1, y1 - offset);
+                ctx.moveTo(x2, y1 - 5); ctx.lineTo(x2, y1 - offset);
+                ctx.moveTo(x1, y1 - offset + 8); ctx.lineTo(x2, y1 - offset + 8);
+                ctx.stroke();
+                ctx.fillText(label, (x1 + x2) / 2, y1 - offset - 2);
+            } else if (side === 'left') {
+                ctx.moveTo(x1 - 5, y1); ctx.lineTo(x1 - offset, y1);
+                ctx.moveTo(x1 - 5, y2); ctx.lineTo(x1 - offset, y2);
+                ctx.moveTo(x1 - offset + 8, y1); ctx.lineTo(x1 - offset + 8, y2);
+                ctx.stroke();
+                ctx.save();
+                ctx.translate(x1 - offset - 5, (y1 + y2) / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText(label, 0, 0);
+                ctx.restore();
+            }
         }
 
         function draw() {
@@ -172,10 +218,21 @@
                 ctx.lineWidth = 2;
                 ctx.strokeRect(ix, iy, w, h);
                 ctx.fillStyle = '#000';
-                ctx.font = "bold 12px sans-serif";
+                ctx.font = "bold 13px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(label, ix + w/2, iy + h/2 + 4);
+                ctx.fillText(label, ix + w/2, iy + h/2 + 5);
             };
+
+            // Disegno quote lati esterne
+            drawDimension(x[0], y[0], x[1], y[0], "a", "top");
+            drawDimension(x[1], y[0], x[2], y[0], "b", "top");
+            drawDimension(x[0], y[0], x[0], y[1], "a", "left");
+            drawDimension(x[0], y[1], x[0], y[2], "b", "left");
+
+            if (mode === 'trinomio') {
+                drawDimension(x[2], y[0], x[3], y[0], "c", "top");
+                drawDimension(x[0], y[2], x[0], y[3], "c", "left");
+            }
 
             drawBox(x[0], y[0], sA, sA, COLORS.a, "a²");
             drawBox(x[1], y[0], sB, sA, COLORS.ab, "ab");
@@ -195,7 +252,6 @@
             const scale = 180 / (a + b);
             const sA = a * scale, sB = b * scale;
             
-            // Definiamo i blocchi (posizione x,y,z e dimensioni w,h,d)
             const blocks = [
                 { x: 0, y: sB, z: 0, w: sA, h: sA, d: sA, col: COLORS.a3, label: "a³" },
                 { x: sA, y: sB, z: 0, w: sB, h: sA, d: sA, col: COLORS.a2b, label: "a²b" },
@@ -207,12 +263,10 @@
                 { x: sA, y: 0, z: sA, w: sB, h: sB, d: sB, col: COLORS.b3, label: "b³" }
             ];
 
-            // Calcolo profondità media per ordinamento Z-buffer
             blocks.forEach(blk => {
                 const cx = blk.x + blk.w/2 - (sA+sB)/2;
                 const cy = blk.y + blk.h/2 - (sA+sB)/2;
                 const cz = blk.z + blk.d/2 - (sA+sB)/2;
-                // Rotazione coordinate per calcolo profondità
                 blk.depth = cz * Math.cos(angleX) * Math.cos(angleY) - cx * Math.sin(angleY) + cy * Math.sin(angleX);
             });
             blocks.sort((a, b) => a.depth - b.depth);
@@ -222,15 +276,10 @@
 
         function drawIsoBox(blk, offset) {
             const project = (x, y, z) => {
-                // Trasla al centro
                 let nx = x - offset, ny = y - offset, nz = z - offset;
-                // Rotazione Y
                 let tx = nx * Math.cos(angleY) + nz * Math.sin(angleY);
                 let tz = -nx * Math.sin(angleY) + nz * Math.cos(angleY);
-                // Rotazione X
                 let ty = ny * Math.cos(angleX) - tz * Math.sin(angleX);
-                let finalZ = ny * Math.sin(angleX) + tz * Math.cos(angleX);
-                
                 return { x: 250 + tx, y: 250 - ty };
             };
 
@@ -241,7 +290,7 @@
                 project(blk.x+blk.w, blk.y+blk.h, blk.z+blk.d), project(blk.x, blk.y+blk.h, blk.z+blk.d)
             ];
 
-            const drawFace = (indices, brightness) => {
+            const drawFace = (indices) => {
                 ctx.fillStyle = blk.col;
                 ctx.beginPath();
                 ctx.moveTo(p[indices[0]].x, p[indices[0]].y);
@@ -253,10 +302,8 @@
                 ctx.stroke();
             };
 
-            // Disegno facce visibili in base all'orientamento (semplificato)
             [ [0,1,2,3], [4,5,6,7], [0,1,5,4], [2,3,7,6], [0,3,7,4], [1,2,6,5] ].forEach(f => drawFace(f));
             
-            // Testo al centro del blocco
             const center = project(blk.x + blk.w/2, blk.y + blk.h/2, blk.z + blk.d/2);
             ctx.fillStyle = "#000";
             ctx.font = "bold 11px sans-serif";
@@ -264,7 +311,6 @@
             ctx.fillText(blk.label, center.x, center.y + 4);
         }
 
-        // Mouse Interaction
         canvas.onmousedown = (e) => { isDragging = true; lastMouseX = e.clientX; lastMouseY = e.clientY; };
         window.onmouseup = () => isDragging = false;
         window.onmousemove = (e) => {
@@ -275,7 +321,6 @@
             draw();
         };
 
-        // Touch Interaction
         canvas.ontouchstart = (e) => { isDragging = true; lastMouseX = e.touches[0].clientX; lastMouseY = e.touches[0].clientY; };
         canvas.ontouchend = () => isDragging = false;
         canvas.ontouchmove = (e) => {
@@ -296,7 +341,11 @@
         document.getElementById('btnCubo').onclick = () => { mode = 'cubo'; setActiveBtn('btnCubo'); updateUI(); };
 
         Object.values(sliders).forEach(s => s.oninput = updateUI);
-        window.onload = updateUI;
+        
+        // Inizializzazione
+        window.onload = () => {
+            updateUI();
+        };
     </script>
 </body>
 </html>
