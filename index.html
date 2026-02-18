@@ -1,6 +1,123 @@
 
 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progetti HTML</title>
+    <!-- Inclusione di Tailwind CSS per lo styling rapido tramite classi utility -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Personalizzazione del colore di sfondo con una tonalità lilla */
+        body {
+            background-color: #f3e8ff; 
+        }
+        /* Transizione fluida per le card dei progetti */
+        .project-card {
+            transition: all 0.3s ease;
+        }
+        /* Effetto al passaggio del mouse: sollevamento e ombra soffusa */
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.2);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen p-6 md:p-12 mathjax-process">
 
+    <!-- Contenitore principale centrato con larghezza massima controllata -->
+    <div class="max-w-2xl w-full">
+        
+        <!-- Intestazione della pagina (Header) -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-purple-900 mb-2">Archivio dei progetti</h1>
+            <p class="text-purple-700 font-medium">L. Bomben, 2026</p>
+        </header>
+
+        <!-- Sezione dedicata ai Progetti HTML interattivi -->
+        <section class="mb-10">
+            <!-- Titolo della sezione con decorazione laterale viola -->
+            <div class="flex items-center mb-6">
+                <div class="h-8 w-1 bg-purple-500 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-purple-800">Progetti HTML</h2>
+            </div>
+            
+            <!-- Griglia dei link ai progetti, formattati come card interattive -->
+            <div class="grid gap-4">
+                <a href="./prodottiNotevoli.html" class="project-card bg-white p-4 rounded-xl border border-purple-100 flex items-center justify-between group">
+                    <span class="text-purple-900 font-semibold group-hover:text-purple-600">Prodotti notevoli 2D e 3D</span>
+                    <span class="text-purple-300 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+                <a href="./criteriCongruenza1.html" class="project-card bg-white p-4 rounded-xl border border-purple-100 flex items-center justify-between group">
+                    <span class="text-purple-900 font-semibold group-hover:text-purple-600">Criteri di congruenza dei triangoli</span>
+                    <span class="text-purple-300 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+                <a href="./planckLed.html" class="project-card bg-white p-4 rounded-xl border border-purple-100 flex items-center justify-between group">
+                    <span class="text-purple-900 font-semibold group-hover:text-purple-600">Misura della costante di Planck</span>
+                    <span class="text-purple-300 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+                <a href="./simCosmici.html" class="project-card bg-white p-4 rounded-xl border border-purple-100 flex items-center justify-between group">
+                    <span class="text-purple-900 font-semibold group-hover:text-purple-600">Simulazione grafica di rivelatore di raggi cosmici</span>
+                    <span class="text-purple-300 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Sezione dedicata agli Esercizi didattici -->
+        <section class="mb-10">
+            <div class="flex items-center mb-6">
+                <div class="h-8 w-1 bg-purple-500 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-purple-800">Esercizi</h2>
+            </div>
+            
+            <div class="grid gap-4">
+                <a href="./esPolinomiGeom.html" class="project-card bg-white p-4 rounded-xl border border-purple-100 flex items-center justify-between group">
+                    <span class="text-purple-900 font-semibold group-hover:text-purple-600">Esercizi di geometria con i polinomi</span>
+                    <span class="text-purple-300 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Sezione Segnaposto per progetti futuri -->
+        <section>
+            <div class="flex items-center mb-4">
+                <div class="h-8 w-1 bg-purple-300 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-purple-400">Work in progress</h2>
+            </div>
+            <div class="bg-purple-100/50 border-2 border-dashed border-purple-200 rounded-xl p-8 text-center">
+                <p class="text-purple-400 italic">Nuovi contenuti in arrivo...</p>
+            </div>
+        </section>
+
+    </div>
+
+<!-- 
+    NOTE DI SVILUPPO:
+    - Per aggiungere una nuova pagina: crea un tag <a> con la classe "project-card"
+    - Per i link esterni: ricordati di usare target="_blank" se vuoi aprire in una nuova scheda
+    - Il layout è responsive: si adatta automaticamente a smartphone e desktop grazie a Tailwind
+-->
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- OLD
 <html lang="it">
 
 <body class="flex flex-col items-center justify-center min-h-screen p-4 mathjax-process">
@@ -27,3 +144,6 @@ ricordati di mettere in ogni pag un link per tornare a questa: <a href="https://
 
 </body>
 </html>
+
+
+-->
