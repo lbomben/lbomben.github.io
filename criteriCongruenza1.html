@@ -25,7 +25,7 @@
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
-    <a href="https://lbomben.github.io">Homepage</a>
+    <a href="https://lbomben.github.io" class="mb-4 text-indigo-600 hover:underline">Homepage</a>
 
     <div class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
         <!-- Header -->
@@ -101,9 +101,8 @@
         let isAnimating = false;
         let activePoint = null;
         
-        // Salviamo lo stato "congelato" di ABC all'inizio dell'animazione per evitare ricalcoli errati
-        let frozenABC = null;
-        let frozenRotationOffset = 0;
+        // Snapshot completo dello stato per l'animazione
+        let frozenState = null;
 
         let mapping = {
             sideDE: 'sideAB',
@@ -121,6 +120,7 @@
             overlapFactor = 0;
             redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
             overlapBtn.innerText = "Verifica Sovrapposizione";
+            frozenState = null;
             draw();
         }
 
@@ -158,31 +158,39 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Se stiamo animando, usiamo le coordinate salvate all'inizio dell'overlap
-            // per mantenere il triangolo DEF fisso rispetto alla sua trasformazione iniziale
-            const sourceA = (isAnimating && frozenABC) ? frozenABC.pA : pA;
-            const sourceB = (isAnimating && frozenABC) ? frozenABC.pB : pB;
-            const sourceC = (isAnimating && frozenABC) ? frozenABC.pC : pC;
-            const rotOffset = (isAnimating && frozenABC) ? frozenRotationOffset : redTriangleRotationOffset;
-
-            const dAB = getDistance(sourceA, sourceB);
-            const dAC = getDistance(sourceA, sourceC);
-            const dBC = getDistance(sourceB, sourceC);
-            const angA = getAngle(sourceA, sourceB, sourceC);
-            const angB = getAngle(sourceB, sourceC, sourceA);
-            const angC = getAngle(sourceC, sourceA, sourceB);
-
-            // Per le statistiche usiamo sempre i punti reali correnti
-            const abcData = {
-                sideAB: getDistance(pA, pB), sideAC: getDistance(pA, pC), sideBC: getDistance(pB, pC),
-                angleA: getAngle(pA, pB, pC), angleB: getAngle(pB, pC, pA), angleC: getAngle(pC, pA, pB)
+            // Calcola i dati correnti di ABC
+            const currentAbcData = {
+                sideAB: getDistance(pA, pB),
+                sideAC: getDistance(pA, pC),
+                sideBC: getDistance(pB, pC),
+                angleA: getAngle(pA, pB, pC),
+                angleB: getAngle(pB, pC, pA),
+                angleC: getAngle(pC, pA, pB),
+                pA: { ...pA }, pB: { ...pB }, pC: { ...pC }
             };
 
-            // Calcolo posizione Triangolo DEF
-            // Durante l'animazione, pA target è sempre pA reale corrente
-            const currentRot = (Math.atan2(sourceB.y - sourceA.y, sourceB.x - sourceA.x)) + (rotOffset * (1 - overlapFactor));
+            // Snapshot logico: se stiamo animando, usiamo solo dati congelati
+            const state = (frozenState) ? frozenState : {
+                abc: currentAbcData,
+                rotOffset: redTriangleRotationOffset
+            };
+
+            const dAB = state.abc.sideAB;
+            const dAC = state.abc.sideAC;
+            const dBC = state.abc.sideBC;
+            const angA = state.abc.angleA;
+            const angB = state.abc.angleB;
+
+            // pA reale di riferimento per il target della sovrapposizione
+            const targetA = pA; 
+            const currentRot = (Math.atan2(state.abc.pB.y - state.abc.pA.y, state.abc.pB.x - state.abc.pA.x)) + (state.rotOffset * (1 - overlapFactor));
             const curOffsetX = OFFSET_X * (1 - overlapFactor);
-            const curD = { x: pA.x + curOffsetX, y: pA.y };
+            
+            // Il vertice D si muove verso la posizione REALE di A
+            const curD = { 
+                x: (state.abc.pA.x * (1 - overlapFactor) + targetA.x * overlapFactor) + curOffsetX, 
+                y: (state.abc.pA.y * (1 - overlapFactor) + targetA.y * overlapFactor) 
+            };
 
             let curE, curF;
 
@@ -202,11 +210,31 @@
                 const angleD = Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angA);
                 curF = { x: curD.x + dAC * Math.cos(currentRot + angleD), y: curD.y + dAC * Math.sin(currentRot + angleD) };
             } else {
-                const baseLen = mapping.sideDE === 'free' ? 180 : abcData[mapping.sideDE];
-                curE = { x: curD.x + baseLen * Math.cos(currentRot), y: curD.y + baseLen * Math.sin(currentRot) };
-                const side2Len = mapping.sideDF === 'free' ? 140 : abcData[mapping.sideDF];
-                const angleD = mapping.angleD === 'free' ? 0.8 : abcData[mapping.angleD];
-                curF = { x: curD.x + side2Len * Math.cos(currentRot + angleD), y: curD.y + side2Len * Math.sin(currentRot + angleD) };
+                // MODALITÀ LIBERA - Risolutore completo per garantire similitudine
+                const getVal = (key, fallback) => (mapping[key] === 'free' ? fallback : state.abc[mapping[key]]);
+                
+                const sDE = getVal('sideDE', 180);
+                const sDF = getVal('sideDF', 140);
+                const aD = getVal('angleD', 0.8);
+                const aE = mapping.angleE === 'free' ? null : state.abc[mapping.angleE];
+                
+                curE = { x: curD.x + sDE * Math.cos(currentRot), y: curD.y + sDE * Math.sin(currentRot) };
+                
+                if (aE !== null) {
+                    // Se abbiamo Angolo D e Angolo E (ALA), ricalcoliamo DF per chiudere il triangolo
+                    const absD = Math.abs(aD);
+                    const absE = Math.abs(aE);
+                    const absF = Math.PI - absD - absE;
+                    if (absF > 0) {
+                        const distDF = (sDE * Math.sin(absE)) / Math.sin(absF);
+                        curF = { x: curD.x + distDF * Math.cos(currentRot + aD), y: curD.y + distDF * Math.sin(currentRot + aD) };
+                    } else {
+                        curF = { x: curD.x + sDF * Math.cos(currentRot + aD), y: curD.y + sDF * Math.sin(currentRot + aD) };
+                    }
+                } else {
+                    // Default LAL
+                    curF = { x: curD.x + sDF * Math.cos(currentRot + aD), y: curD.y + sDF * Math.sin(currentRot + aD) };
+                }
             }
 
             const actualDE = getDistance(curD, curE);
@@ -216,10 +244,12 @@
             const actualAngE = getAngle(curE, curF, curD);
             const actualAngF = getAngle(curF, curD, curE);
 
+            // ABC usa sempre le coordinate vive
             drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0, true);
+            // DEF usa le coordinate calcolate dallo stato (congelato o meno)
             drawTriangle(curD, curE, curF, '#e11d48', ['D', 'E', 'F'], false, false);
 
-            updateStats(abcData, {
+            updateStats(currentAbcData, {
                 sideDE: actualDE, sideDF: actualDF, sideEF: actualEF,
                 angleD: actualAngD, angleE: actualAngE, angleF: actualAngF
             });
@@ -314,7 +344,11 @@
             }
         }
 
-        window.updateMapping = (key, value) => { mapping[key] = value; draw(); };
+        window.updateMapping = (key, value) => { 
+            if (isAnimating) return;
+            mapping[key] = value; 
+            draw(); 
+        };
 
         function getPos(e) {
             const r = canvas.getBoundingClientRect();
@@ -324,7 +358,7 @@
         }
 
         canvas.addEventListener('mousedown', (e) => {
-            if (overlapFactor > 0) return;
+            if (overlapFactor > 0 || isAnimating) return;
             const m = getPos(e);
             [pA, pB, pC].forEach(p => { if (getDistance(m, p) < 30) activePoint = p; });
         });
@@ -338,7 +372,7 @@
         window.addEventListener('mouseup', () => activePoint = null);
 
         canvas.addEventListener('touchstart', (e) => {
-            if (overlapFactor > 0) return;
+            if (overlapFactor > 0 || isAnimating) return;
             const m = getPos(e);
             [pA, pB, pC].forEach(p => { if (getDistance(m, p) < 40) activePoint = p; });
             if(activePoint) e.preventDefault();
@@ -353,12 +387,15 @@
         }, {passive: false});
 
         function switchTab(m) {
+            if (isAnimating) return;
             mode = m;
             Object.keys(tabs).forEach(k => tabs[k].className = (k === m) ? "flex-1 min-w-[90px] py-4 font-bold text-xs uppercase tracking-wider active-tab" : "flex-1 min-w-[90px] py-4 font-bold text-xs uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors");
             if (m === 'LAL') { mainTitle.innerText = "Primo Criterio (LAL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."'; }
             else if (m === 'ALA') { mainTitle.innerText = "Secondo Criterio (ALA)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."'; }
             else if (m === 'LLL') { mainTitle.innerText = "Terzo Criterio (LLL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."'; }
             else { mainTitle.innerText = "Esplorazione Libera"; mainDesc.innerText = "Mappa ogni elemento di DEF su un elemento di ABC per testare configurazioni personalizzate."; }
+            overlapFactor = 0;
+            frozenState = null;
             draw();
         }
 
@@ -370,35 +407,49 @@
         overlapBtn.onclick = () => {
             if (isAnimating) return;
             
-            // Congeliamo i punti attuali e la rotazione prima di iniziare l'animazione
-            // Questo evita "salti" o ricalcoli errati dovuti a eventi di movimento contemporanei
-            frozenABC = {
-                pA: { ...pA },
-                pB: { ...pB },
-                pC: { ...pC }
+            // Crea uno SNAPSHOT atomico dello stato prima di iniziare l'animazione
+            frozenState = {
+                abc: {
+                    sideAB: getDistance(pA, pB),
+                    sideAC: getDistance(pA, pC),
+                    sideBC: getDistance(pB, pC),
+                    angleA: getAngle(pA, pB, pC),
+                    angleB: getAngle(pB, pC, pA),
+                    angleC: getAngle(pC, pA, pB),
+                    pA: { ...pA }, pB: { ...pB }, pC: { ...pC }
+                },
+                rotOffset: redTriangleRotationOffset
             };
-            frozenRotationOffset = redTriangleRotationOffset;
-            
+
             isAnimating = true;
-            const start = overlapFactor, end = overlapFactor === 0 ? 1 : 0;
+            const start = overlapFactor;
+            const end = (overlapFactor === 0) ? 1 : 0;
             const startTime = performance.now();
+            const duration = 800; // ms
+
             const animate = (t) => {
-                const p = Math.min((t - startTime) / 1000, 1);
+                const elapsed = t - startTime;
+                const p = Math.min(elapsed / duration, 1);
                 const ease = p < .5 ? 2*p*p : -1+(4-2*p)*p;
+                
                 overlapFactor = start + (end - start) * ease;
                 draw();
-                if (p < 1) requestAnimationFrame(animate);
-                else { 
+
+                if (p < 1) {
+                    requestAnimationFrame(animate);
+                } else { 
                     isAnimating = false; 
                     overlapBtn.innerText = end === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
-                    // Se abbiamo finito di separare (overlapFactor = 0), resettiamo il fermo immagine
-                    if (end === 0) frozenABC = null;
+                    if (end === 0) frozenState = null; 
                 }
             };
             requestAnimationFrame(animate);
         };
 
-        resetBtn.onclick = () => initPoints();
+        resetBtn.onclick = () => {
+            if (isAnimating) return;
+            initPoints();
+        };
         window.onload = initPoints;
     </script>
 </body>
