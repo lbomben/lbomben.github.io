@@ -25,7 +25,7 @@
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
-    <a href="https://lbomben.github.io" class="mb-4 text-indigo-600 hover:underline">Homepage</a>
+    <a href="https://lbomben.github.io">Homepage</a>
 
     <div class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
         <!-- Header -->
@@ -101,6 +101,7 @@
         let isAnimating = false;
         let activePoint = null;
         
+        // Salviamo lo stato "congelato" di ABC all'inizio dell'animazione per evitare ricalcoli errati
         let frozenABC = null;
         let frozenRotationOffset = 0;
 
@@ -157,6 +158,8 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Se stiamo animando, usiamo le coordinate salvate all'inizio dell'overlap
+            // per mantenere il triangolo DEF fisso rispetto alla sua trasformazione iniziale
             const sourceA = (isAnimating && frozenABC) ? frozenABC.pA : pA;
             const sourceB = (isAnimating && frozenABC) ? frozenABC.pB : pB;
             const sourceC = (isAnimating && frozenABC) ? frozenABC.pC : pC;
@@ -169,11 +172,14 @@
             const angB = getAngle(sourceB, sourceC, sourceA);
             const angC = getAngle(sourceC, sourceA, sourceB);
 
+            // Per le statistiche usiamo sempre i punti reali correnti
             const abcData = {
                 sideAB: getDistance(pA, pB), sideAC: getDistance(pA, pC), sideBC: getDistance(pB, pC),
                 angleA: getAngle(pA, pB, pC), angleB: getAngle(pB, pC, pA), angleC: getAngle(pC, pA, pB)
             };
 
+            // Calcolo posizione Triangolo DEF
+            // Durante l'animazione, pA target è sempre pA reale corrente
             const currentRot = (Math.atan2(sourceB.y - sourceA.y, sourceB.x - sourceA.x)) + (rotOffset * (1 - overlapFactor));
             const curOffsetX = OFFSET_X * (1 - overlapFactor);
             const curD = { x: pA.x + curOffsetX, y: pA.y };
@@ -196,43 +202,11 @@
                 const angleD = Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angA);
                 curF = { x: curD.x + dAC * Math.cos(currentRot + angleD), y: curD.y + dAC * Math.sin(currentRot + angleD) };
             } else {
-                // MODALITÀ LIBERA: Logica di calcolo dinamica
-                const getVal = (id, fallback) => {
-                    const mapped = mapping[id];
-                    if (mapped === 'free') return fallback;
-                    return abcData[mapped];
-                };
-
-                const lenDE = getVal('sideDE', 180);
-                curE = { x: curD.x + lenDE * Math.cos(currentRot), y: curD.y + lenDE * Math.sin(currentRot) };
-
-                // Calcolo di F basato sui vincoli disponibili
-                const lenDF = getVal('sideDF', 140);
-                const angD = getVal('angleD', 0.8);
-                const angE = getVal('angleE', null);
-                const lenEF = getVal('sideEF', null);
-
-                if (angE !== null) {
-                    // Risoluzione Triangolo ALA (L: DE, A1: D, A2: E)
-                    const aD = Math.abs(angD);
-                    const aE = Math.abs(angE);
-                    const aF = Math.PI - aD - aE;
-                    if (aF > 0) {
-                        const distDF = (lenDE * Math.sin(aE)) / Math.sin(aF);
-                        curF = { x: curD.x + distDF * Math.cos(currentRot + angD), y: curD.y + distDF * Math.sin(currentRot + angD) };
-                    } else {
-                        // Fallback se gli angoli non chiudono il triangolo
-                        curF = { x: curD.x + lenDF * Math.cos(currentRot + angD), y: curD.y + lenDF * Math.sin(currentRot + angD) };
-                    }
-                } else if (lenEF !== null) {
-                    // Risoluzione Triangolo LLL o LAL (Dato DE, DF e EF)
-                    const cosD = (lenDF**2 + lenDE**2 - lenEF**2) / (2 * lenDF * lenDE);
-                    const finalAngD = isNaN(cosD) ? angD : Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angD);
-                    curF = { x: curD.x + lenDF * Math.cos(currentRot + finalAngD), y: curD.y + lenDF * Math.sin(currentRot + finalAngD) };
-                } else {
-                    // Fallback Standard LAL
-                    curF = { x: curD.x + lenDF * Math.cos(currentRot + angD), y: curD.y + lenDF * Math.sin(currentRot + angD) };
-                }
+                const baseLen = mapping.sideDE === 'free' ? 180 : abcData[mapping.sideDE];
+                curE = { x: curD.x + baseLen * Math.cos(currentRot), y: curD.y + baseLen * Math.sin(currentRot) };
+                const side2Len = mapping.sideDF === 'free' ? 140 : abcData[mapping.sideDF];
+                const angleD = mapping.angleD === 'free' ? 0.8 : abcData[mapping.angleD];
+                curF = { x: curD.x + side2Len * Math.cos(currentRot + angleD), y: curD.y + side2Len * Math.sin(currentRot + angleD) };
             }
 
             const actualDE = getDistance(curD, curE);
@@ -395,8 +369,16 @@
 
         overlapBtn.onclick = () => {
             if (isAnimating) return;
-            frozenABC = { pA: { ...pA }, pB: { ...pB }, pC: { ...pC } };
+            
+            // Congeliamo i punti attuali e la rotazione prima di iniziare l'animazione
+            // Questo evita "salti" o ricalcoli errati dovuti a eventi di movimento contemporanei
+            frozenABC = {
+                pA: { ...pA },
+                pB: { ...pB },
+                pC: { ...pC }
+            };
             frozenRotationOffset = redTriangleRotationOffset;
+            
             isAnimating = true;
             const start = overlapFactor, end = overlapFactor === 0 ? 1 : 0;
             const startTime = performance.now();
@@ -409,6 +391,7 @@
                 else { 
                     isAnimating = false; 
                     overlapBtn.innerText = end === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
+                    // Se abbiamo finito di separare (overlapFactor = 0), resettiamo il fermo immagine
                     if (end === 0) frozenABC = null;
                 }
             };
