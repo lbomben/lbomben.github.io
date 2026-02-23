@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida: Pubblica il tuo sito su GitHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .step-card {
+            transition: transform 0.2s;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+        .note-box {
+            border-left: 4px solid #f59e0b;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white py-12 px-4 shadow-lg mb-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                <i class="fab fa-github mr-4"></i>Il Tuo Sito Web Gratis
+            </h1>
+            <p class="text-xl text-slate-300">Guida passo-passo per pubblicare i tuoi progetti su GitHub Pages</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pb-20">
+        
+        <!-- Step 1 -->
+        <section class="step-card bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex items-center mb-4">
+                <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">1</span>
+                <h2 class="text-2xl font-semibold">Crea un account GitHub</h2>
+            </div>
+            <p class="mb-4">Vai su <a href="https://github.com" target="_blank" class="text-blue-600 font-medium hover:underline">github.com</a> e crea un nuovo account. Puoi registrarti velocemente usando il tuo account Google.</p>
+            <div class="note-box bg-amber-50 p-4 rounded-r-lg">
+                <p class="text-sm text-amber-800 italic">
+                    <strong>NOTA BENE:</strong> Lo username del tuo account sarà parte dell'indirizzo del tuo sito web. Non scegliere uno username troppo complesso! 
+                    <br>Esempi consigliati: <em>tizio-caio, tcaio, tizioc...</em> (es. lbomben).
+                </p>
+            </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section class="step-card bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex items-center mb-4">
+                <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">2</span>
+                <h2 class="text-2xl font-semibold">Crea una Repository</h2>
+            </div>
+            <p class="mb-4">La repository (o "repo") è il contenitore per tutti i file che formeranno il tuo sito.</p>
+            <ul class="list-disc ml-6 space-y-2 text-gray-700">
+                <li>Clicca sul pulsante <strong>"Create a repository"</strong>.</li>
+                <li>In <strong>"Repository name"</strong> scrivi esattamente: <code class="bg-gray-100 px-2 py-1 rounded">tuo_username.github.io</code> (es. <em>lbomben.github.io</em>). Questo sarà l'indirizzo pubblico del tuo sito.</li>
+                <li>Completa il processo di creazione. Ora potrai accedere alla repo dalla barra laterale sinistra della tua Home di GitHub.</li>
+            </ul>
+        </section>
+
+        <!-- Step 3 -->
+        <section class="step-card bg-white rounded-xl shadow-md p-6 mb-8 border-l-8 border-blue-600">
+            <div class="flex items-center mb-4">
+                <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">3</span>
+                <h2 class="text-2xl font-semibold">Crea la Landing Page (index.html)</h2>
+            </div>
+            <p class="mb-4">È la pagina che compare digitando il tuo indirizzo.</p>
+            <ol class="list-decimal ml-6 space-y-3 text-gray-700">
+                <li>Nella pagina della repo, clicca su <strong>"creating a new file"</strong> nel riquadro Quick Setup.</li>
+                <li>Chiama il file <code class="bg-gray-100 px-2 py-1 rounded font-bold">index.html</code>.</li>
+                <li>Inserisci questo codice di base nell'editor:
+                    <pre class="bg-slate-800 text-gray-300 p-4 rounded-lg mt-2 overflow-x-auto text-sm"><code>&lt;body&gt;
+    Ciao mondo
+&lt;/body&gt;</code></pre>
+                </li>
+                <li>Clicca su <strong>"Commit changes"</strong> e conferma.</li>
+                <li>Visita <code class="text-blue-600">https://tuo_username.github.io</code>. Potrebbero servire 1-2 minuti prima che diventi visibile.</li>
+            </ol>
+        </section>
+
+        <!-- Step 4 -->
+        <section class="step-card bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex items-center mb-4">
+                <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">4</span>
+                <h2 class="text-2xl font-semibold">Carica i tuoi progetti HTML5</h2>
+            </div>
+            <p class="mb-2">Hai già un codice pronto? Caricalo così:</p>
+            <ul class="list-disc ml-6 space-y-2 text-gray-700">
+                <li>Dalla tua repo, clicca sul tasto <strong>"+"</strong> (in alto a destra) o <strong>"Add file"</strong> > <strong>"Create new file"</strong>.</li>
+                <li>Dai al file un nome con estensione .html, ad esempio: <code class="bg-gray-100 px-1">demoTriangoli.html</code>.</li>
+                <li>Incolla il tuo codice HTML, clicca su <strong>"Commit changes"</strong> e conferma.</li>
+            </ul>
+        </section>
+
+        <!-- Step 5 -->
+        <section class="step-card bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex items-center mb-4">
+                <span class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4">5</span>
+                <h2 class="text-2xl font-semibold">Aggiungi il link nella Homepage</h2>
+            </div>
+            <p class="mb-4 text-gray-700">Per rendere il nuovo file raggiungibile, devi modificarlo in <code class="font-bold">index.html</code>:</p>
+            <ol class="list-decimal ml-6 space-y-2 text-gray-700">
+                <li>Apri <code class="bg-gray-100 px-1">index.html</code> e clicca sull'icona della <strong>matita</strong> (Edit).</li>
+                <li>Inserisci una riga simile a questa:
+                    <div class="bg-gray-100 p-3 rounded mt-2 font-mono text-sm">
+                        &lt;a href="./nome_file.html"&gt; Titolo del link &lt;/a&gt;
+                    </div>
+                </li>
+                <li><em>Suggerimento:</em> aggiungi <code class="bg-gray-100 px-1">&lt;br&gt;</code> dopo "Ciao mondo" per andare a capo.</li>
+            </ol>
+        </section>
+
+        <!-- Step 6 -->
+        <section class="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center">
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">🎨 Personalizza il tuo sito</h2>
+            <p class="text-blue-800 mb-6 italic">"Puoi farti aiutare dall'AI per migliorare l'estetica. Prendi spunto dal mio repository!"</p>
+            <a href="https://github.com/lbomben/lbomben.github.io" target="_blank" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg">
+                <i class="fab fa-github mr-2"></i>Guarda l'esempio di lbomben
+            </a>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-gray-400 py-6 text-center text-sm">
+        <p>Creato per supportare la tua avventura nel web development.</p>
+    </footer>
+
+</body>
+</html>
