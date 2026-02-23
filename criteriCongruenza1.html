@@ -25,9 +25,8 @@
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
-    <a href="https://lbomben.github.io">Homepage</a>
+    <a href="https://lbomben.github.io" class="mb-4 text-indigo-600 hover:underline">Homepage</a>
 
-    
     <div class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
         <!-- Header -->
         <div class="bg-slate-800 p-6 text-white text-center">
@@ -101,6 +100,9 @@
         let overlapFactor = 0; 
         let isAnimating = false;
         let activePoint = null;
+        
+        let frozenABC = null;
+        let frozenRotationOffset = 0;
 
         let mapping = {
             sideDE: 'sideAB',
@@ -155,20 +157,24 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const dAB = getDistance(pA, pB);
-            const dAC = getDistance(pA, pC);
-            const dBC = getDistance(pB, pC);
-            const angA = getAngle(pA, pB, pC);
-            const angB = getAngle(pB, pC, pA);
-            const angC = getAngle(pC, pA, pB);
+            const sourceA = (isAnimating && frozenABC) ? frozenABC.pA : pA;
+            const sourceB = (isAnimating && frozenABC) ? frozenABC.pB : pB;
+            const sourceC = (isAnimating && frozenABC) ? frozenABC.pC : pC;
+            const rotOffset = (isAnimating && frozenABC) ? frozenRotationOffset : redTriangleRotationOffset;
+
+            const dAB = getDistance(sourceA, sourceB);
+            const dAC = getDistance(sourceA, sourceC);
+            const dBC = getDistance(sourceB, sourceC);
+            const angA = getAngle(sourceA, sourceB, sourceC);
+            const angB = getAngle(sourceB, sourceC, sourceA);
+            const angC = getAngle(sourceC, sourceA, sourceB);
 
             const abcData = {
-                sideAB: dAB, sideAC: dAC, sideBC: dBC,
-                angleA: angA, angleB: angB, angleC: angC
+                sideAB: getDistance(pA, pB), sideAC: getDistance(pA, pC), sideBC: getDistance(pB, pC),
+                angleA: getAngle(pA, pB, pC), angleB: getAngle(pB, pC, pA), angleC: getAngle(pC, pA, pB)
             };
 
-            // Calcolo posizione Triangolo DEF
-            const currentRot = (Math.atan2(pB.y - pA.y, pB.x - pA.x)) + (redTriangleRotationOffset * (1 - overlapFactor));
+            const currentRot = (Math.atan2(sourceB.y - sourceA.y, sourceB.x - sourceA.x)) + (rotOffset * (1 - overlapFactor));
             const curOffsetX = OFFSET_X * (1 - overlapFactor);
             const curD = { x: pA.x + curOffsetX, y: pA.y };
 
@@ -179,26 +185,54 @@
                 curF = { x: curD.x + dAC * Math.cos(currentRot + angA), y: curD.y + dAC * Math.sin(currentRot + angA) };
             } else if (mode === 'ALA') {
                 curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
-                // Intersezione semirette da D ed E
                 const alpha = angA;
-                const beta = -angB; // Segno opposto perché ruotiamo dall'altro lato del segmento
+                const beta = -angB;
                 const gamma = Math.PI - Math.abs(alpha) - Math.abs(beta);
                 const distDF = (dAB * Math.sin(Math.abs(beta))) / Math.sin(gamma);
                 curF = { x: curD.x + distDF * Math.cos(currentRot + alpha), y: curD.y + distDF * Math.sin(currentRot + alpha) };
             } else if (mode === 'LLL') {
                 curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
-                // Usiamo Carnot per trovare l'angolo in D
                 const cosD = (dAC**2 + dAB**2 - dBC**2) / (2 * dAC * dAB);
                 const angleD = Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angA);
                 curF = { x: curD.x + dAC * Math.cos(currentRot + angleD), y: curD.y + dAC * Math.sin(currentRot + angleD) };
             } else {
-                // Modalità Libera
-                const baseLen = mapping.sideDE === 'free' ? 180 : abcData[mapping.sideDE];
-                curE = { x: curD.x + baseLen * Math.cos(currentRot), y: curD.y + baseLen * Math.sin(currentRot) };
-                
-                const side2Len = mapping.sideDF === 'free' ? 140 : abcData[mapping.sideDF];
-                const angleD = mapping.angleD === 'free' ? 0.8 : abcData[mapping.angleD];
-                curF = { x: curD.x + side2Len * Math.cos(currentRot + angleD), y: curD.y + side2Len * Math.sin(currentRot + angleD) };
+                // MODALITÀ LIBERA: Logica di calcolo dinamica
+                const getVal = (id, fallback) => {
+                    const mapped = mapping[id];
+                    if (mapped === 'free') return fallback;
+                    return abcData[mapped];
+                };
+
+                const lenDE = getVal('sideDE', 180);
+                curE = { x: curD.x + lenDE * Math.cos(currentRot), y: curD.y + lenDE * Math.sin(currentRot) };
+
+                // Calcolo di F basato sui vincoli disponibili
+                const lenDF = getVal('sideDF', 140);
+                const angD = getVal('angleD', 0.8);
+                const angE = getVal('angleE', null);
+                const lenEF = getVal('sideEF', null);
+
+                if (angE !== null) {
+                    // Risoluzione Triangolo ALA (L: DE, A1: D, A2: E)
+                    const aD = Math.abs(angD);
+                    const aE = Math.abs(angE);
+                    const aF = Math.PI - aD - aE;
+                    if (aF > 0) {
+                        const distDF = (lenDE * Math.sin(aE)) / Math.sin(aF);
+                        curF = { x: curD.x + distDF * Math.cos(currentRot + angD), y: curD.y + distDF * Math.sin(currentRot + angD) };
+                    } else {
+                        // Fallback se gli angoli non chiudono il triangolo
+                        curF = { x: curD.x + lenDF * Math.cos(currentRot + angD), y: curD.y + lenDF * Math.sin(currentRot + angD) };
+                    }
+                } else if (lenEF !== null) {
+                    // Risoluzione Triangolo LLL o LAL (Dato DE, DF e EF)
+                    const cosD = (lenDF**2 + lenDE**2 - lenEF**2) / (2 * lenDF * lenDE);
+                    const finalAngD = isNaN(cosD) ? angD : Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angD);
+                    curF = { x: curD.x + lenDF * Math.cos(currentRot + finalAngD), y: curD.y + lenDF * Math.sin(currentRot + finalAngD) };
+                } else {
+                    // Fallback Standard LAL
+                    curF = { x: curD.x + lenDF * Math.cos(currentRot + angD), y: curD.y + lenDF * Math.sin(currentRot + angD) };
+                }
             }
 
             const actualDE = getDistance(curD, curE);
@@ -229,7 +263,6 @@
                 return mapping[id] && mapping[id] !== 'free';
             };
 
-            // Evidenzia elementi congruenti
             ctx.lineWidth = 4;
             if (isConstrained('side', 'sideDE')) { ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); drawTick(p1, p2, color, 1); }
             if (isConstrained('side', 'sideDF')) { ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p3.x, p3.y); ctx.stroke(); drawTick(p1, p3, color, 2); }
@@ -330,7 +363,6 @@
         });
         window.addEventListener('mouseup', () => activePoint = null);
 
-        // Touch events
         canvas.addEventListener('touchstart', (e) => {
             if (overlapFactor > 0) return;
             const m = getPos(e);
@@ -363,6 +395,8 @@
 
         overlapBtn.onclick = () => {
             if (isAnimating) return;
+            frozenABC = { pA: { ...pA }, pB: { ...pB }, pC: { ...pC } };
+            frozenRotationOffset = redTriangleRotationOffset;
             isAnimating = true;
             const start = overlapFactor, end = overlapFactor === 0 ? 1 : 0;
             const startTime = performance.now();
@@ -372,7 +406,11 @@
                 overlapFactor = start + (end - start) * ease;
                 draw();
                 if (p < 1) requestAnimationFrame(animate);
-                else { isAnimating = false; overlapBtn.innerText = end === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione"; }
+                else { 
+                    isAnimating = false; 
+                    overlapBtn.innerText = end === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
+                    if (end === 0) frozenABC = null;
+                }
             };
             requestAnimationFrame(animate);
         };
