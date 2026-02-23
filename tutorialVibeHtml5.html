@@ -7,133 +7,162 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f4f7f6;
+            color: #1a202c;
+            background-color: #f7fafc;
         }
         .container {
-            max-width: 800px;
+            max-width: 850px;
             margin: 40px auto;
             background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            color: #2d3748;
+            border-bottom: 3px solid #3182ce;
+            padding-bottom: 12px;
             text-transform: uppercase;
-            font-weight: bold;
+            letter-spacing: 0.05em;
+            font-weight: 800;
         }
         .step {
-            margin-bottom: 30px;
-            padding: 20px;
-            border-left: 4px solid #3498db;
-            background: #fcfcfc;
+            margin-bottom: 40px;
+            padding: 25px;
+            border-left: 5px solid #3182ce;
+            background: #f8fbff;
+            border-radius: 0 8px 8px 0;
+            transition: transform 0.2s ease;
+        }
+        .step:hover {
+            transform: translateX(5px);
         }
         .step-title {
-            font-weight: bold;
-            font-size: 1.25rem;
-            color: #2980b9;
-            margin-bottom: 10px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #2b6cb0;
+            margin-bottom: 15px;
             display: block;
         }
         .example {
             font-style: italic;
-            background: #eef2f3;
-            padding: 10px;
-            border-radius: 6px;
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
             display: block;
-            margin: 10px 0;
-            color: #555;
+            margin: 15px 0;
+            color: #4a5568;
+            border: 1px dashed #cbd5e0;
         }
         .note {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 10px;
+            background: #fffaf0;
+            border: 1px solid #feebc8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
         }
         ul {
-            list-style-type: disc;
-            margin-left: 20px;
+            list-style-type: none;
+            padding-left: 5px;
         }
         li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+        li::before {
+            content: "•";
+            color: #3182ce;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        .link-tutorial {
+            color: #3182ce;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        .link-tutorial:hover {
+            color: #2c5282;
+        }
+        .highlight-text {
+            color: #2d3748;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header class="mb-8">
-        <h1 class="text-3xl">GUIDA: creare applicazioni html5 con l'AI</h1>
+    <header class="mb-12">
+        <h1 class="text-4xl text-center">GUIDA: creare applicazioni html5 con l'AI</h1>
     </header>
 
-    <section class="mb-10">
-        <p class="text-lg">
-            In questa guida mostrerò brevemente un metodo per creare dei piccoli "laboratori virtuali" interattivi. Queste applicazioni possono essere caricate su un sito internet e utilizzate da te come supporto alla lezione, o direttamente agli studenti. Non è necessaria una conoscenza tecnica approfondita dell'html, in quanto useremo il metodo del "vibe coding": ci faremo aiutare dall'AI per generare il codice. La procedura è basata su quella mostratami da prof. M. Sabella di EFT Lombardia durante il corso di formazione "Stem e AI".
+    <section class="mb-12 border-b border-gray-100 pb-8">
+        <p class="text-xl text-gray-700 leading-relaxed">
+            In questa guida mostrerò brevemente un metodo per creare dei piccoli <span class="italic">"laboratori virtuali"</span> interattivi. Queste applicazioni possono essere caricate su un sito internet e utilizzate da te come <strong>supporto alla lezione</strong>, o direttamente agli studenti. Non è necessaria una conoscenza tecnica approfondita dell'html, in quanto useremo il metodo del <strong>"vibe coding"</strong>: ci faremo aiutare dall'AI per generare il codice. La procedura è basata su quella mostratami da prof. <em>M. Sabella</em> di <em>EFT Lombardia</em> durante il corso di formazione <strong>"Stem e AI"</strong>.
         </p>
     </section>
 
     <div class="step">
         <span class="step-title">1) Scegli un chatbot e inizia una nuova chat.</span>
-        <p>Suggerisco di utilizzare google Gemini. Io ho provato anche ChatGPT, ma non lo ho trovato molto funzionale.</p>
-        <ul class="mt-2">
-            <li>Prima di iniziare la chat, vai su "strumenti" e attiva l'opzione "canvas". Il canvas è uno strumento che permette di lavorare direttamente sul codice che faremo generare all'AI.</li>
+        <p>Suggerisco di utilizzare <strong>google Gemini</strong>. Io ho provato anche ChatGPT, ma non lo ho trovato molto funzionale.</p>
+        <ul class="mt-4">
+            <li>Prima di iniziare la chat, vai su <strong>"strumenti"</strong> e attiva l'opzione <strong>"canvas"</strong>. Il canvas è uno strumento che permette di lavorare direttamente sul codice che faremo generare all'AI.</li>
         </ul>
     </div>
 
     <div class="step">
         <span class="step-title">2) Formula la tua richiesta.</span>
-        <p>Nel prompt (la tua richiesta), specifica che l'applicazione deve essere scritta in html5.</p>
-        <span class="example">Esempio: "Genera un'applicazione html5 interattiva che simuli l'esperimento del moto rettilineo uniforme con la rotaia a cuscinetto d'aria, mostrando all'utente anche il grafico spazio-tempo"</span>
+        <p>Nel <strong>prompt</strong> (la tua richiesta), specifica che l'applicazione deve essere scritta in <strong>html5</strong>.</p>
+        <span class="example"><strong>Esempio:</strong> "Genera un'applicazione html5 interattiva che simuli l'esperimento del moto rettilineo uniforme con la rotaia a cuscinetto d'aria, mostrando all'utente anche il grafico spazio-tempo"</span>
     </div>
 
     <div class="step">
         <span class="step-title">3) Visualizza il risultato.</span>
-        <p>Una volta inviata la richiesta, il chatbot produrrà un codice e lo metterà nel canvas. Non appena avrà finito, potrai cliccare su "Antemprima" (in cima al canvas, di fianco a "Codice") per visualizzare l'applicazione e provare a utilizzarla.</p>
+        <p>Una volta inviata la richiesta, il chatbot produrrà un <strong>codice</strong> e lo metterà nel <strong>canvas</strong>. Non appena avrà finito, potrai cliccare su <strong>"Antemprima"</strong> (in cima al canvas, di fianco a "Codice") per visualizzare l'applicazione e provare a utilizzarla.</p>
     </div>
 
     <div class="step">
         <span class="step-title">4) Perfeziona l'applicazione.</span>
-        <p>L'applicazione non funziona come vorresti? Ci sono altre funzionalità che vorresti aggiungere? Inesattezze? Bug? Dettagli che non ti piacciono? Chiedi al bot di modificarle!</p>
-        <span class="example">Esempio: "Il codice che hai prodotto non funziona, la simulazione crasha appena il carrellino parte"</span>
-        <span class="example">Esempio: "Aggiungi la possibilità per l'utente di scegliere il numero di fotocellule"</span>
-        <span class="example">Esempio: "Aggiungi la possibilità di inclinare la rotaia"</span>
+        <p>L'applicazione non funziona come vorresti? Ci sono altre funzionalità che vorresti aggiungere? Inesattezze? <strong>Bug?</strong> Dettagli che non ti piacciono? Chiedi al bot di modificarle!</p>
+        <span class="example"><strong>Esempio:</strong> "Il codice che hai prodotto non funziona, la simulazione crasha appena il carrellino parte"</span>
+        <span class="example"><strong>Esempio:</strong> "Aggiungi la possibilità per l'utente di scegliere il numero di fotocellule"</span>
+        <span class="example"><strong>Esempio:</strong> "Aggiungi la possibilità di inclinare la rotaia"</span>
         
-        <div class="note">
-            <strong>Nota bene:</strong> il chatbot ha i suoi limiti! Se fai troppe richieste, spesso eliminerà altri elementi o modificherà cose senza che tu lo chieda!
-            <ul class="mt-2">
-                <li>se l'applicazione è già molto complessa, ti consiglio di chiedere sempre "Non eliminare nulla, non fare altre modifiche";</li>
-                <li>non chiedere troppo! Se esageri con la complessità, non riuscirà a starti dietro;</li>
-                <li>l'AI mente molto bene! A volte dirà di aver fatto quello che chiedi, anche se non è vero... controlla sempre bene il risultato!</li>
+        <div class="note shadow-sm">
+            <strong class="text-orange-800 uppercase text-sm tracking-widest">Nota bene:</strong> <span class="text-orange-900 italic">il chatbot ha i suoi limiti! Se fai troppe richieste, spesso eliminerà altri elementi o modificherà cose senza che tu lo chieda!</span>
+            <ul class="mt-4 text-orange-900">
+                <li>se l'applicazione è già molto complessa, ti consiglio di chiedere sempre <span class="highlight-text">"Non eliminare nulla, non fare altre modifiche"</span>;</li>
+                <li><strong>non chiedere troppo!</strong> Se esageri con la complessità, non riuscirà a starti dietro;</li>
+                <li><strong>l'AI mente molto bene!</strong> A volte dirà di aver fatto quello che chiedi, anche se non è vero... controlla sempre bene il risultato!</li>
             </ul>
         </div>
     </div>
 
     <div class="step">
         <span class="step-title">5) Implementa la tua applicazione in un sito</span>
-        <p>Se hai finito di sviluppare la tua applicazione, copia e incolla il codice che trovi nel canvas. Andremo adesso a implementarlo in un vero sito. Per ora ho trovato due opzioni per farlo:</p>
+        <p>Se hai finito di sviluppare la tua applicazione, <strong>copia e incolla</strong> il codice che trovi nel canvas. Andremo adesso a implementarlo in un vero sito. Per ora ho trovato due opzioni per farlo:</p>
         
-        <div class="mt-4">
-            <p><strong>A) github-pages.</strong> Trovi qui un breve tutorial per produrre un semplice sito con questo servizio. I siti github sono gratuiti e pubblici, quindi puoi farli usare direttamente ai tuoi studenti!</p>
+        <div class="mt-6 p-4 bg-white rounded-lg border border-gray-200">
+            <p><strong>A) github-pages.</strong> Trovi <a href="./tutorial.html" class="link-tutorial">qui</a> un breve tutorial per produrre un semplice sito con questo servizio. I siti github sono <strong>gratuiti e pubblici</strong>, quindi puoi farli usare direttamente ai tuoi studenti!</p>
         </div>
         
-        <div class="mt-4">
-            <p><strong>B) google sites.</strong> Più semplice da utilizzare, ma non può essere pubblicato, a meno che tu non abbia la versione premium del servizio. Puoi condividerlo ai tuoi studenti in modalità editor, ma attenzione! Potranno sempre modificare (e vandalizzare...) il sito!</p>
-            <p class="mt-2 font-semibold">Per creare un sito con google sites:</p>
-            <ul class="mt-1">
-                <li>vai su sites.google.com</li>
-                <li>crea un sito vuoto</li>
-                <li>nello spazio bianco, fai doppio click</li>
-                <li>clicca su "Incorpora" (simbolo "&lt;&gt;" giallo)</li>
-                <li>clicca su "Incorpora codice"</li>
-                <li>Incolla qui il codice che hai copiato dal canvas e clicca su "Avanti"</li>
+        <div class="mt-6 p-4 bg-white rounded-lg border border-gray-200">
+            <p><strong>B) google sites.</strong> Più semplice da utilizzare, ma <strong>non può essere pubblicato</strong>, a meno che tu non abbia la versione premium del servizio. Puoi condividerlo ai tuoi studenti in <em>modalità editor</em>, ma attenzione! Potranno sempre modificare (e vandalizzare...) il sito!</p>
+            <p class="mt-4 font-bold text-gray-700 underline decoration-blue-500">Per creare un sito con google sites:</p>
+            <ul class="mt-3">
+                <li>vai su <strong>sites.google.com</strong></li>
+                <li>crea un <strong>sito vuoto</strong></li>
+                <li>nello spazio bianco, fai <strong>doppio click</strong></li>
+                <li>clicca su <strong>"Incorpora"</strong> (simbolo "&lt;&gt;" giallo)</li>
+                <li>clicca su <strong>"Incorpora codice"</strong></li>
+                <li><strong>Incolla</strong> qui il codice che hai copiato dal canvas e clicca su <strong>"Avanti"</strong></li>
             </ul>
-            <p class="mt-2 italic text-sm">Per utilizzare la tua applicazione, clicca su "Anteprima" (icona con un portatile e uno smartphone)</p>
+            <p class="mt-4 italic text-sm text-gray-500 bg-gray-50 p-2 rounded text-center font-semibold">Per utilizzare la tua applicazione, clicca su "Anteprima" (icona con un portatile e uno smartphone)</p>
         </div>
     </div>
 </div>
