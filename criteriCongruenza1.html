@@ -86,10 +86,10 @@
         const mainDesc = document.getElementById('mainDesc');
 
         let mode = 'LAL'; 
-        let pA, pB, pC; // Vertici ABC
-        let pD, pE, pF; // Vertici DEF (posizioni attuali in memoria)
+        let pA, pB, pC; 
+        let pD, pE, pF; 
         let rotationOffset = 0; 
-        const OFFSET_X = 350;
+        const INITIAL_OFFSET_X = 350;
         let overlapFactor = 0; 
         let isAnimating = false;
         let activePoint = null;
@@ -102,22 +102,19 @@
             
             rotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
             
-            // Inizializzazione DEF
-            pD = { x: pA.x + OFFSET_X, y: pA.y };
+            // Inizializzazione DEF a una distanza iniziale
+            pD = { x: pA.x + INITIAL_OFFSET_X, y: pA.y };
             updateDefFromAbc(); 
             
             draw();
         }
 
-        // FUNZIONE CRITICA: Sincronizza DEF su ABC usando la geometria REALE di ABC
         function updateDefFromAbc() {
-            if (mode === 'FREE') return; // In modalità libera non forzare la sincronizzazione continua
+            if (mode === 'FREE') return;
 
-            // Calcolo vettori relativi di ABC
             const vecAB = { x: pB.x - pA.x, y: pB.y - pA.y };
             const vecAC = { x: pC.x - pA.x, y: pC.y - pA.y };
 
-            // Funzione di rotazione vettoriale
             const rotate = (v, angle) => ({
                 x: v.x * Math.cos(angle) - v.y * Math.sin(angle),
                 y: v.x * Math.sin(angle) + v.y * Math.cos(angle)
@@ -126,7 +123,6 @@
             const rotAB = rotate(vecAB, rotationOffset);
             const rotAC = rotate(vecAC, rotationOffset);
 
-            // D è il punto base (già aggiornato o trascinato)
             pE = { x: pD.x + rotAB.x, y: pD.y + rotAB.y };
             pF = { x: pD.x + rotAC.x, y: pD.y + rotAC.y };
         }
@@ -165,13 +161,11 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Se NON siamo in modalità libera, forziamo DEF a seguire ABC (ma con la geometria attuale di ABC)
             if (mode !== 'FREE' && !isAnimating && overlapFactor === 0) {
-                pD = { x: pA.x + OFFSET_X, y: pA.y };
                 updateDefFromAbc();
             }
 
-            let dD, dE, dF; // Punti da disegnare effettivamente
+            let dD, dE, dF; 
 
             if (animationSnapshot) {
                 const { start, target } = animationSnapshot;
@@ -193,14 +187,13 @@
                 angleD: getAngle(dD, dE, dF), angleE: getAngle(dE, dF, dD), angleF: getAngle(dF, dD, dE)
             };
 
-            // Disegno triangoli
             drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0, true);
-            drawTriangle(dD, dE, dF, '#e11d48', ['D', 'E', 'F'], (overlapFactor === 0), false);
+            drawTriangle(dD, dE, dF, '#e11d48', ['D', 'E', 'F'], (overlapFactor === 0), (mode === 'FREE'));
 
             updateStats(abcData, defData);
         }
 
-        function drawTriangle(p1, p2, p3, color, labels, canDrag, isMaster) {
+        function drawTriangle(p1, p2, p3, color, labels, canDrag, isFreeOrDef) {
             ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.closePath();
             ctx.fillStyle = color + '15'; ctx.fill();
             ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
@@ -232,8 +225,11 @@
             drawArc(p3, p1, p2, 30, isConstrained('angle', 'angleF'));
 
             [p1, p2, p3].forEach((p, i) => {
-                ctx.beginPath(); ctx.arc(p.x, p.y, (canDrag && (isMaster || mode === 'FREE')) ? 10 : 4, 0, Math.PI * 2);
-                ctx.fillStyle = (canDrag && (isMaster || mode === 'FREE')) ? 'white' : color; ctx.fill();
+                const isD = (labels[i] === 'D');
+                const dragEnabled = canDrag && (labels[0] === 'A' || mode === 'FREE' || (mode !== 'FREE' && isD));
+                
+                ctx.beginPath(); ctx.arc(p.x, p.y, dragEnabled ? 10 : 4, 0, Math.PI * 2);
+                ctx.fillStyle = dragEnabled ? 'white' : color; ctx.fill();
                 ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
                 ctx.fillStyle = '#1e293b'; ctx.font = 'bold 14px sans-serif';
                 ctx.fillText(labels[i], p.x - 5, p.y - 15);
@@ -257,8 +253,7 @@
         canvas.onmousedown = (e) => {
             if (isAnimating || overlapFactor > 0) return;
             const m = getPos(e);
-            // In FREE mode trasciniamo tutti, altrimenti solo ABC
-            const points = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC];
+            const points = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC, pD];
             activePoint = points.find(p => getDistance(m, p) < 25);
         };
 
@@ -271,10 +266,9 @@
 
         window.onmouseup = () => activePoint = null;
 
-        // Gestione Touch
         canvas.addEventListener('touchstart', (e) => {
             const m = getPos(e);
-            const points = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC];
+            const points = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC, pD];
             activePoint = points.find(p => getDistance(m, p) < 35);
             if (activePoint) e.preventDefault();
         }, {passive: false});
@@ -310,15 +304,18 @@
         overlapBtn.onclick = () => {
             if (isAnimating) return;
             
-            // CATTURA STATO REALE: Scattiamo una foto alle posizioni correnti ESATTE
-            const start = { D: { ...pD }, E: { ...pE }, F: { ...pF } };
-            const target = { D: { ...pA }, E: { ...pB }, F: { ...pC } };
-
-            animationSnapshot = { start, target };
-            isAnimating = true;
             const isClosing = (overlapFactor === 0);
+
+            // Se stiamo per chiudere, creiamo uno snapshot basato sulle posizioni attuali
+            if (isClosing) {
+                const start = { D: { ...pD }, E: { ...pE }, F: { ...pF } };
+                const target = { D: { ...pA }, E: { ...pB }, F: { ...pC } };
+                animationSnapshot = { start, target };
+            }
+
+            isAnimating = true;
             const startTime = performance.now();
-            const duration = 1000;
+            const duration = 800;
 
             const animate = (t) => {
                 const elapsed = t - startTime;
@@ -332,8 +329,21 @@
                 if (progress < 1) requestAnimationFrame(animate);
                 else { 
                     isAnimating = false;
-                    if (!isClosing) animationSnapshot = null;
+                    if (!isClosing) {
+                        // Quando si separa, ripristiniamo le coordinate iniziali dallo snapshot
+                        pD = { ...animationSnapshot.start.D };
+                        pE = { ...animationSnapshot.start.E };
+                        pF = { ...animationSnapshot.start.F };
+                        animationSnapshot = null;
+                        overlapFactor = 0;
+                        updateDefFromAbc(); // Riapplica vincoli se in modalità criteri
+                    } else {
+                        // Quando è sovrapposto
+                        pD = { ...pA }; pE = { ...pB }; pF = { ...pC };
+                        overlapFactor = 1;
+                    }
                     overlapBtn.innerText = isClosing ? "Separa Triangoli" : "Verifica Sovrapposizione";
+                    draw();
                 }
             };
             requestAnimationFrame(animate);
@@ -344,6 +354,7 @@
             rotationOffset = (Math.random() - 0.5) * Math.PI;
             overlapFactor = 0;
             animationSnapshot = null;
+            updateDefFromAbc();
             draw();
         };
 
