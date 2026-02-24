@@ -101,7 +101,7 @@
         let isAnimating = false;
         let activePoint = null;
         
-        // Lo snapshot ora salva le coordinate finali (D,E,F) calcolate AL MOMENTO DEL CLICK
+        // Lo snapshot salva le posizioni geometriche relative per evitare ricalcoli trigonometrici errati
         let animationSnapshot = null;
 
         let mapping = {
@@ -118,6 +118,7 @@
             pB = { x: 320, y: 320 };
             pC = { x: 160, y: 150 };
             overlapFactor = 0;
+            // Rotazione iniziale casuale per il triangolo di destra
             redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
             overlapBtn.innerText = "Verifica Sovrapposizione";
             animationSnapshot = null;
@@ -156,60 +157,26 @@
         }
 
         /**
-         * Calcola le coordinate dei vertici di DEF basandosi sullo stato attuale di ABC e della rotazione.
-         * Questa funzione viene usata sia per il disegno normale che per creare lo snapshot dell'animazione.
+         * Calcola le coordinate di DEF. 
+         * FIX: Invece di usare distanze astratte, proietta direttamente i punti di ABC.
          */
-        function calculateDefVertices(abc, rotOffset, xShift = OFFSET_X) {
-            const dAB = abc.sideAB;
-            const dAC = abc.sideAC;
-            const dBC = abc.sideBC;
-            const angA = abc.angleA;
-            const angB = abc.angleB;
-
-            const baseRot = Math.atan2(abc.pB.y - abc.pA.y, abc.pB.x - abc.pA.x);
-            const currentRot = baseRot + rotOffset;
+        function calculateDefVertices(pA, pB, pC, rotOffset, xShift) {
+            // Centro di rotazione per il triangolo di destra (punto D)
+            const curD = { x: pA.x + xShift, y: pA.y };
             
-            const curD = { x: abc.pA.x + xShift, y: abc.pA.y };
-            let curE, curF;
+            // Calcoliamo la posizione di E ed F ruotandoli rispetto a D basandosi su B e C
+            const rotate = (p, center, angle) => {
+                const dx = p.x - pA.x;
+                const dy = p.y - pA.y;
+                return {
+                    x: center.x + dx * Math.cos(angle) - dy * Math.sin(angle),
+                    y: center.y + dx * Math.sin(angle) + dy * Math.cos(angle)
+                };
+            };
 
-            if (mode === 'LAL') {
-                curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
-                curF = { x: curD.x + dAC * Math.cos(currentRot + angA), y: curD.y + dAC * Math.sin(currentRot + angA) };
-            } else if (mode === 'ALA') {
-                curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
-                const alpha = angA;
-                const beta = -angB;
-                const gamma = Math.PI - Math.abs(alpha) - Math.abs(beta);
-                const distDF = (dAB * Math.sin(Math.abs(beta))) / Math.sin(gamma);
-                curF = { x: curD.x + distDF * Math.cos(currentRot + alpha), y: curD.y + distDF * Math.sin(currentRot + alpha) };
-            } else if (mode === 'LLL') {
-                curE = { x: curD.x + dAB * Math.cos(currentRot), y: curD.y + dAB * Math.sin(currentRot) };
-                const cosD = (dAC**2 + dAB**2 - dBC**2) / (2 * dAC * dAB);
-                const angleD = Math.acos(Math.max(-1, Math.min(1, cosD))) * Math.sign(angA);
-                curF = { x: curD.x + dAC * Math.cos(currentRot + angleD), y: curD.y + dAC * Math.sin(currentRot + angleD) };
-            } else {
-                // MODALITÀ LIBERA
-                const getVal = (key, fallback) => (mapping[key] === 'free' ? fallback : abc[mapping[key]]);
-                const sDE = getVal('sideDE', 180);
-                const sDF = getVal('sideDF', 140);
-                const aD = getVal('angleD', 0.8);
-                const aE = mapping.angleE === 'free' ? null : abc[mapping.angleE];
-                
-                curE = { x: curD.x + sDE * Math.cos(currentRot), y: curD.y + sDE * Math.sin(currentRot) };
-                if (aE !== null) {
-                    const absD = Math.abs(aD);
-                    const absE = Math.abs(aE);
-                    const absF = Math.PI - absD - absE;
-                    if (absF > 0) {
-                        const distDF = (sDE * Math.sin(absE)) / Math.sin(absF);
-                        curF = { x: curD.x + distDF * Math.cos(currentRot + aD), y: curD.y + distDF * Math.sin(currentRot + aD) };
-                    } else {
-                        curF = { x: curD.x + sDF * Math.cos(currentRot + aD), y: curD.y + sDF * Math.sin(currentRot + aD) };
-                    }
-                } else {
-                    curF = { x: curD.x + sDF * Math.cos(currentRot + aD), y: curD.y + sDF * Math.sin(currentRot + aD) };
-                }
-            }
+            const curE = rotate(pB, curD, rotOffset);
+            const curF = rotate(pC, curD, rotOffset);
+
             return { D: curD, E: curE, F: curF };
         }
 
@@ -229,11 +196,7 @@
             let drawD, drawE, drawF;
 
             if (animationSnapshot) {
-                // Durante l'animazione o la sovrapposizione, usiamo un'interpolazione lineare tra lo stato iniziale e il target finale
-                // Il target finale è ESATTAMENTE la posizione di A, B, C (se congruenti)
-                const start = animationSnapshot.start;
-                const target = animationSnapshot.target;
-
+                const { start, target } = animationSnapshot;
                 drawD = {
                     x: start.D.x + (target.D.x - start.D.x) * overlapFactor,
                     y: start.D.y + (target.D.y - start.D.y) * overlapFactor
@@ -247,14 +210,12 @@
                     y: start.F.y + (target.F.y - start.F.y) * overlapFactor
                 };
             } else {
-                // Disegno statico normale
-                const defPos = calculateDefVertices(currentAbcData, redTriangleRotationOffset, OFFSET_X);
+                const defPos = calculateDefVertices(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
                 drawD = defPos.D;
                 drawE = defPos.E;
                 drawF = defPos.F;
             }
 
-            // Statistiche sempre basate sulle coordinate reali dei disegni
             const actualDE = getDistance(drawD, drawE);
             const actualDF = getDistance(drawD, drawF);
             const actualEF = getDistance(drawE, drawF);
@@ -262,7 +223,6 @@
             const actualAngE = getAngle(drawE, drawF, drawD);
             const actualAngF = getAngle(drawF, drawD, drawE);
 
-            // Disegna i triangoli
             drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0, true);
             drawTriangle(drawD, drawE, drawF, '#e11d48', ['D', 'E', 'F'], false, false);
 
@@ -321,51 +281,12 @@
                     <span>A: ${d(abc.angleA)}</span><span>B: ${d(abc.angleB)}</span><span>C: ${d(abc.angleC)}</span>
                 </div>`;
             
-            if (mode !== 'FREE') {
-                stats2.innerHTML = `
-                    <div class="grid grid-cols-3 gap-1 mt-1 font-bold">
-                        <span>DE: ${u(def.sideDE)}</span><span>DF: ${u(def.sideDF)}</span><span>EF: ${u(def.sideEF)}</span>
-                        <span>D: ${d(def.angleD)}</span><span>E: ${d(def.angleE)}</span><span>F: ${d(def.angleF)}</span>
-                    </div>`;
-            } else {
-                const options = `
-                    <option value="free">Libero</option>
-                    <optgroup label="Lati ABC">
-                        <option value="sideAB">Congr. AB</option>
-                        <option value="sideAC">Congr. AC</option>
-                        <option value="sideBC">Congr. BC</option>
-                    </optgroup>
-                    <optgroup label="Angoli ABC">
-                        <option value="angleA">Congr. A</option>
-                        <option value="angleB">Congr. B</option>
-                        <option value="angleC">Congr. C</option>
-                    </optgroup>`;
-
-                const createRow = (label, key, val) => `
-                    <div class="flex items-center justify-between gap-2 border-b border-rose-100 pb-1">
-                        <span class="font-bold w-16">${label}: ${val}</span>
-                        <select onchange="updateMapping('${key}', this.value)">
-                            ${options.replace(`value="${mapping[key]}"`, `value="${mapping[key]}" selected`)}
-                        </select>
-                    </div>`;
-
-                stats2.innerHTML = `
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-1">
-                        ${createRow('DE', 'sideDE', u(def.sideDE))}
-                        ${createRow('D', 'angleD', d(def.angleD))}
-                        ${createRow('DF', 'sideDF', u(def.sideDF))}
-                        ${createRow('E', 'angleE', d(def.angleE))}
-                        ${createRow('EF', 'sideEF', u(def.sideEF))}
-                        ${createRow('F', 'angleF', d(def.angleF))}
-                    </div>`;
-            }
+            stats2.innerHTML = `
+                <div class="grid grid-cols-3 gap-1 mt-1 font-bold">
+                    <span>DE: ${u(def.sideDE)}</span><span>DF: ${u(def.sideDF)}</span><span>EF: ${u(def.sideEF)}</span>
+                    <span>D: ${d(def.angleD)}</span><span>E: ${d(def.angleE)}</span><span>F: ${d(def.angleF)}</span>
+                </div>`;
         }
-
-        window.updateMapping = (key, value) => { 
-            if (isAnimating) return;
-            mapping[key] = value; 
-            draw(); 
-        };
 
         function getPos(e) {
             const r = canvas.getBoundingClientRect();
@@ -410,7 +331,7 @@
             if (m === 'LAL') { mainTitle.innerText = "Primo Criterio (LAL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."'; }
             else if (m === 'ALA') { mainTitle.innerText = "Secondo Criterio (ALA)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."'; }
             else if (m === 'LLL') { mainTitle.innerText = "Terzo Criterio (LLL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."'; }
-            else { mainTitle.innerText = "Esplorazione Libera"; mainDesc.innerText = "Mappa ogni elemento di DEF su un elemento di ABC per testare configurazioni personalizzate."; }
+            else { mainTitle.innerText = "Esplorazione Libera"; mainDesc.innerText = "In questa modalità i triangoli sono identici per permetterti di osservare la sovrapposizione perfetta."; }
             overlapFactor = 0;
             animationSnapshot = null;
             draw();
@@ -424,20 +345,9 @@
         overlapBtn.onclick = () => {
             if (isAnimating) return;
             
-            const abcDataSnapshot = {
-                sideAB: getDistance(pA, pB),
-                sideAC: getDistance(pA, pC),
-                sideBC: getDistance(pB, pC),
-                angleA: getAngle(pA, pB, pC),
-                angleB: getAngle(pB, pC, pA),
-                angleC: getAngle(pC, pA, pB),
-                pA: { ...pA }, pB: { ...pB }, pC: { ...pC }
-            };
-
-            // Snapshot "Start": dove si trova DEF adesso (offset destro)
-            const startPos = calculateDefVertices(abcDataSnapshot, redTriangleRotationOffset, OFFSET_X);
-            // Snapshot "Target": dove DEF si troverebbe se avesse offset 0 (sovrapposto)
-            const targetPos = calculateDefVertices(abcDataSnapshot, 0, 0);
+            // Snapshot GEOMETRICO: calcoliamo le posizioni dei vertici esattamente dove sono ORA
+            const startPos = calculateDefVertices(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
+            const targetPos = calculateDefVertices(pA, pB, pC, 0, 0);
 
             animationSnapshot = { start: startPos, target: targetPos };
 
