@@ -52,7 +52,7 @@
             <canvas id="geoCanvas" width="800" height="450" class="rounded-lg shadow-inner border border-slate-200 w-full h-auto max-w-full"></canvas>
             
             <div id="tutorial" class="absolute bottom-6 left-6 bg-black/70 text-white px-4 py-2 rounded-full text-xs pointer-events-none transition-opacity duration-500">
-                💡 Trascina i vertici di ABC. Verifica la congruenza con il tasto in basso.
+                💡 Trascina i vertici. In modalità Libera puoi muovere entrambi i triangoli.
             </div>
         </div>
 
@@ -81,51 +81,54 @@
             LLL: document.getElementById('tabLLL'),
             FREE: document.getElementById('tabFREE')
         };
+
         const mainTitle = document.getElementById('mainTitle');
         const mainDesc = document.getElementById('mainDesc');
 
         let mode = 'LAL'; 
-        let pA, pB, pC;
-        let pD, pE, pF; // Punti reali di DEF
-        let redTriangleRotationOffset = 0; 
-        const OFFSET_X = 380;
+        let pA, pB, pC; // Vertici ABC
+        let pD, pE, pF; // Vertici DEF (posizioni attuali in memoria)
+        let rotationOffset = 0; 
+        const OFFSET_X = 350;
         let overlapFactor = 0; 
         let isAnimating = false;
         let activePoint = null;
-        
         let animationSnapshot = null;
 
         function initPoints() {
-            if (!pA) {
-                pA = { x: 120, y: 320 };
-                pB = { x: 320, y: 320 };
-                pC = { x: 160, y: 150 };
-            }
-            overlapFactor = 0;
-            redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
+            pA = { x: 150, y: 320 };
+            pB = { x: 300, y: 320 };
+            pC = { x: 180, y: 180 };
             
-            // Sincronizza i punti D, E, F basandoli sulla geometria corrente di A, B, C
-            syncDefToAbc();
-
-            overlapBtn.innerText = "Verifica Sovrapposizione";
-            animationSnapshot = null;
+            rotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
+            
+            // Inizializzazione DEF
+            pD = { x: pA.x + OFFSET_X, y: pA.y };
+            updateDefFromAbc(); 
+            
             draw();
         }
 
-        // Funzione per sincronizzare DEF con ABC mantenendo congruenza e rotazione
-        function syncDefToAbc() {
-            const d = { x: pA.x + OFFSET_X, y: pA.y };
-            const rotate = (p, center, angle) => {
-                const dx = p.x - pA.x;
-                const dy = p.y - pA.y;
-                return {
-                    x: center.x + dx * Math.cos(angle) - dy * Math.sin(angle),
-                    y: center.y + dx * Math.sin(angle) + dy * Math.cos(angle)
-                };
-            };
-            pD = d;
-            pE = rotate(pB, d, redTriangleRotationOffset);
-            pF = rotate(pC, d, redTriangleRotationOffset);
+        // FUNZIONE CRITICA: Sincronizza DEF su ABC usando la geometria REALE di ABC
+        function updateDefFromAbc() {
+            if (mode === 'FREE') return; // In modalità libera non forzare la sincronizzazione continua
+
+            // Calcolo vettori relativi di ABC
+            const vecAB = { x: pB.x - pA.x, y: pB.y - pA.y };
+            const vecAC = { x: pC.x - pA.x, y: pC.y - pA.y };
+
+            // Funzione di rotazione vettoriale
+            const rotate = (v, angle) => ({
+                x: v.x * Math.cos(angle) - v.y * Math.sin(angle),
+                y: v.x * Math.sin(angle) + v.y * Math.cos(angle)
+            });
+
+            const rotAB = rotate(vecAB, rotationOffset);
+            const rotAC = rotate(vecAC, rotationOffset);
+
+            // D è il punto base (già aggiornato o trascinato)
+            pE = { x: pD.x + rotAB.x, y: pD.y + rotAB.y };
+            pF = { x: pD.x + rotAC.x, y: pD.y + rotAC.y };
         }
 
         function getDistance(p1, p2) {
@@ -162,35 +165,37 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Se NON siamo in modalità libera, forziamo DEF a seguire ABC (ma con la geometria attuale di ABC)
+            if (mode !== 'FREE' && !isAnimating && overlapFactor === 0) {
+                pD = { x: pA.x + OFFSET_X, y: pA.y };
+                updateDefFromAbc();
+            }
+
+            let dD, dE, dF; // Punti da disegnare effettivamente
+
+            if (animationSnapshot) {
+                const { start, target } = animationSnapshot;
+                const lerp = (s, t, f) => s + (t - s) * f;
+                dD = { x: lerp(start.D.x, target.D.x, overlapFactor), y: lerp(start.D.y, target.D.y, overlapFactor) };
+                dE = { x: lerp(start.E.x, target.E.x, overlapFactor), y: lerp(start.E.y, target.E.y, overlapFactor) };
+                dF = { x: lerp(start.F.x, target.F.x, overlapFactor), y: lerp(start.F.y, target.F.y, overlapFactor) };
+            } else {
+                dD = pD; dE = pE; dF = pF;
+            }
+
             const abcData = {
                 sideAB: getDistance(pA, pB), sideAC: getDistance(pA, pC), sideBC: getDistance(pB, pC),
                 angleA: getAngle(pA, pB, pC), angleB: getAngle(pB, pC, pA), angleC: getAngle(pC, pA, pB)
             };
 
-            let drawD, drawE, drawF;
-
-            // Se stiamo animando, usiamo l'interpolazione tra lo stato iniziale catturato e il target (ABC)
-            if (animationSnapshot) {
-                const { start, target } = animationSnapshot;
-                const lerp = (s, t, f) => s + (t - s) * f;
-                drawD = { x: lerp(start.D.x, target.D.x, overlapFactor), y: lerp(start.D.y, target.D.y, overlapFactor) };
-                drawE = { x: lerp(start.E.x, target.E.x, overlapFactor), y: lerp(start.E.y, target.E.y, overlapFactor) };
-                drawF = { x: lerp(start.F.x, target.F.x, overlapFactor), y: lerp(start.F.y, target.F.y, overlapFactor) };
-            } else {
-                // Durante la manipolazione libera, ricalcoliamo DEF solo se NON siamo in modalità FREE
-                if (mode !== 'FREE') {
-                    syncDefToAbc();
-                }
-                drawD = pD; drawE = pE; drawF = pF;
-            }
-
             const defData = {
-                sideDE: getDistance(drawD, drawE), sideDF: getDistance(drawD, drawF), sideEF: getDistance(drawE, drawF),
-                angleD: getAngle(drawD, drawE, drawF), angleE: getAngle(drawE, drawF, drawD), angleF: getAngle(drawF, drawD, drawE)
+                sideDE: getDistance(dD, dE), sideDF: getDistance(dD, dF), sideEF: getDistance(dE, dF),
+                angleD: getAngle(dD, dE, dF), angleE: getAngle(dE, dF, dD), angleF: getAngle(dF, dD, dE)
             };
 
+            // Disegno triangoli
             drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0, true);
-            drawTriangle(drawD, drawE, drawF, '#e11d48', ['D', 'E', 'F'], (mode === 'FREE' && overlapFactor === 0), false);
+            drawTriangle(dD, dE, dF, '#e11d48', ['D', 'E', 'F'], (overlapFactor === 0), false);
 
             updateStats(abcData, defData);
         }
@@ -227,8 +232,8 @@
             drawArc(p3, p1, p2, 30, isConstrained('angle', 'angleF'));
 
             [p1, p2, p3].forEach((p, i) => {
-                ctx.beginPath(); ctx.arc(p.x, p.y, canDrag ? 10 : 4, 0, Math.PI * 2);
-                ctx.fillStyle = canDrag ? 'white' : color; ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, (canDrag && (isMaster || mode === 'FREE')) ? 10 : 4, 0, Math.PI * 2);
+                ctx.fillStyle = (canDrag && (isMaster || mode === 'FREE')) ? 'white' : color; ctx.fill();
                 ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
                 ctx.fillStyle = '#1e293b'; ctx.font = 'bold 14px sans-serif';
                 ctx.fillText(labels[i], p.x - 5, p.y - 15);
@@ -249,28 +254,38 @@
             return { x: (cx - r.left) * (canvas.width / r.width), y: (cy - r.top) * (canvas.height / r.height) };
         }
 
-        const handleDown = (e) => {
-            if (overlapFactor > 0 || isAnimating) return;
+        canvas.onmousedown = (e) => {
+            if (isAnimating || overlapFactor > 0) return;
             const m = getPos(e);
+            // In FREE mode trasciniamo tutti, altrimenti solo ABC
             const points = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC];
-            points.forEach(p => { if (getDistance(m, p) < 30) activePoint = p; });
-            if (activePoint && e.touches) e.preventDefault();
+            activePoint = points.find(p => getDistance(m, p) < 25);
         };
 
-        const handleMove = (e) => {
+        window.onmousemove = (e) => {
             if (!activePoint) return;
             const m = getPos(e);
-            activePoint.x = Math.max(10, Math.min(canvas.width - 10, m.x));
-            activePoint.y = Math.max(10, Math.min(canvas.height - 10, m.y));
+            activePoint.x = m.x; activePoint.y = m.y;
             draw();
-            if (e.touches) e.preventDefault();
         };
 
-        canvas.addEventListener('mousedown', handleDown);
-        window.addEventListener('mousemove', handleMove);
-        window.addEventListener('mouseup', () => activePoint = null);
-        canvas.addEventListener('touchstart', handleDown, {passive: false});
-        canvas.addEventListener('touchmove', handleMove, {passive: false});
+        window.onmouseup = () => activePoint = null;
+
+        // Gestione Touch
+        canvas.addEventListener('touchstart', (e) => {
+            const m = getPos(e);
+            const points = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC];
+            activePoint = points.find(p => getDistance(m, p) < 35);
+            if (activePoint) e.preventDefault();
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!activePoint) return;
+            const m = getPos(e);
+            activePoint.x = m.x; activePoint.y = m.y;
+            draw();
+            e.preventDefault();
+        }, {passive: false});
 
         function switchTab(m) {
             if (isAnimating) return;
@@ -280,13 +295,10 @@
             if (m === 'LAL') { mainTitle.innerText = "Primo Criterio (LAL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."'; }
             else if (m === 'ALA') { mainTitle.innerText = "Secondo Criterio (ALA)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."'; }
             else if (m === 'LLL') { mainTitle.innerText = "Terzo Criterio (LLL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."'; }
-            else { mainTitle.innerText = "Esplorazione Libera"; mainDesc.innerText = "In questa modalità puoi trascinare sia ABC che DEF liberamente per testare la sovrapposizione."; }
+            else { mainTitle.innerText = "Esplorazione Libera ✨"; mainDesc.innerText = "Puoi manipolare indipendentemente entrambi i triangoli e tentare di sovrapporli."; }
             
             overlapFactor = 0;
             animationSnapshot = null;
-            if (m !== 'FREE') {
-                syncDefToAbc();
-            }
             draw();
         }
 
@@ -298,37 +310,30 @@
         overlapBtn.onclick = () => {
             if (isAnimating) return;
             
-            // CATTURA STATO REALE: Scattiamo una foto alle posizioni correnti
-            // per evitare scatti verso valori predefiniti
+            // CATTURA STATO REALE: Scattiamo una foto alle posizioni correnti ESATTE
             const start = { D: { ...pD }, E: { ...pE }, F: { ...pF } };
             const target = { D: { ...pA }, E: { ...pB }, F: { ...pC } };
 
             animationSnapshot = { start, target };
             isAnimating = true;
-            const startVal = overlapFactor;
-            const endVal = (overlapFactor === 0) ? 1 : 0;
+            const isClosing = (overlapFactor === 0);
             const startTime = performance.now();
-            const duration = 800;
+            const duration = 1000;
 
             const animate = (t) => {
                 const elapsed = t - startTime;
-                const p = Math.min(elapsed / duration, 1);
-                const ease = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-                overlapFactor = startVal + (endVal - startVal) * ease;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = progress < .5 ? 2*progress*progress : -1+(4-2*progress)*progress;
+                
+                overlapFactor = isClosing ? ease : 1 - ease;
+                
                 draw();
-                if (p < 1) requestAnimationFrame(animate);
+                
+                if (progress < 1) requestAnimationFrame(animate);
                 else { 
-                    isAnimating = false; 
-                    overlapBtn.innerText = endVal === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
-                    if (endVal === 0) {
-                        animationSnapshot = null;
-                        // Al termine del distacco, ripristiniamo le coordinate reali basate su pD, pE, pF correnti
-                        pD = start.D; pE = start.E; pF = start.F;
-                    } else {
-                        // Se sovrapposti, i punti "reali" di DEF sono ora esattamente sopra ABC
-                        pD = { ...pA }; pE = { ...pB }; pF = { ...pC };
-                    }
-                    draw();
+                    isAnimating = false;
+                    if (!isClosing) animationSnapshot = null;
+                    overlapBtn.innerText = isClosing ? "Separa Triangoli" : "Verifica Sovrapposizione";
                 }
             };
             requestAnimationFrame(animate);
@@ -336,8 +341,7 @@
 
         resetBtn.onclick = () => {
             if (isAnimating) return;
-            redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
-            syncDefToAbc();
+            rotationOffset = (Math.random() - 0.5) * Math.PI;
             overlapFactor = 0;
             animationSnapshot = null;
             draw();
