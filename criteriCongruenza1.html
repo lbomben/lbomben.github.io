@@ -72,14 +72,14 @@
         const stats1 = document.getElementById('stats1');
         const stats2 = document.getElementById('stats2');
         
-        let pA, pB, pC; // Triangolo ABC (fisso/trascinabile)
-        let pD, pE, pF; // Triangolo DEF (configurazione)
+        let pA, pB, pC; // Triangolo ABC
+        let pD, pE, pF; // Triangolo DEF
         let mode = 'LAL';
         let rotation = Math.PI / 4;
-        let overlapFactor = 0; // 0 = separati, 1 = sovrapposti
+        let overlapFactor = 0; 
         let isAnimating = false;
         let activePoint = null;
-        let lastKnownDEF = null; // Snapshot per l'animazione
+        let lastKnownDEF = null;
 
         function init() {
             pA = { x: 150, y: 300 };
@@ -110,33 +110,98 @@
         }
 
         function getDist(p1, p2) { return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2); }
-        function getDeg(pC, p1, p2) {
-            const a1 = Math.atan2(p1.y - pC.y, p1.x - pC.x);
-            const a2 = Math.atan2(p2.y - pC.y, p2.x - pC.x);
+        
+        function getDeg(pCenter, p1, p2) {
+            const a1 = Math.atan2(p1.y - pCenter.y, p1.x - pCenter.x);
+            const a2 = Math.atan2(p2.y - pCenter.y, p2.x - pCenter.x);
             let angle = (a2 - a1) * 180 / Math.PI;
             if (angle < 0) angle += 360;
             return angle > 180 ? 360 - angle : angle;
         }
 
-        function drawTriangle(pts, color, labels, active) {
+        // Funzione per disegnare i trattini di congruenza sui lati
+        function drawSideMarker(p1, p2, color, count) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
+            const len = 6;
+            const gap = 3;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < count; i++) {
+                const shift = (i - (count - 1) / 2) * gap;
+                const offsetX = Math.cos(angle - Math.PI / 2) * shift;
+                const offsetY = Math.sin(angle - Math.PI / 2) * shift;
+                ctx.beginPath();
+                ctx.moveTo(midX + offsetX + Math.cos(angle) * len, midY + offsetY + Math.sin(angle) * len);
+                ctx.lineTo(midX + offsetX - Math.cos(angle) * len, midY + offsetY - Math.sin(angle) * len);
+                ctx.stroke();
+            }
+        }
+
+        // Funzione per disegnare l'arco dell'angolo
+        function drawAngleMarker(p, p1, p2, color, isHighlighted) {
+            const a1 = Math.atan2(p1.y - p.y, p1.x - p.x);
+            const a2 = Math.atan2(p2.y - p.y, p2.x - p.x);
+            const r = 25;
+
             ctx.beginPath();
-            ctx.moveTo(pts[0].x, pts[0].y);
-            ctx.lineTo(pts[1].x, pts[1].y);
-            ctx.lineTo(pts[2].x, pts[2].y);
+            ctx.moveTo(p.x, p.y);
+            ctx.arc(p.x, p.y, r, a1, a2, Math.abs(a2 - a1) > Math.PI);
             ctx.closePath();
+            ctx.fillStyle = color + (isHighlighted ? "40" : "10");
+            ctx.fill();
+            if (isHighlighted) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function drawTriangle(pts, color, labels, active) {
+            const [p1, p2, p3] = pts;
             
+            // Disegno area triangolo
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.closePath();
             ctx.fillStyle = color + "15";
             ctx.fill();
             ctx.strokeStyle = color;
             ctx.lineWidth = active ? 3 : 1;
             ctx.stroke();
 
+            // Marcatori di congruenza basati sulla modalità
+            if (mode !== 'FREE') {
+                const isLAL = mode === 'LAL';
+                const isALA = mode === 'ALA';
+                const isLLL = mode === 'LLL';
+
+                // Lati
+                if (isLAL || isALA || isLLL) drawSideMarker(p1, p2, color, 1); // AB / DE
+                if (isLAL || isLLL) drawSideMarker(p1, p3, color, 2);          // AC / DF
+                if (isLLL) drawSideMarker(p2, p3, color, 3);                   // BC / EF
+
+                // Angoli
+                drawAngleMarker(p1, p2, p3, color, isLAL || isALA); // Angolo in A / D
+                drawAngleMarker(p2, p3, p1, color, isALA);          // Angolo in B / E
+                drawAngleMarker(p3, p1, p2, color, false);          // Angolo in C / F (mai evidenziato dai criteri base)
+            }
+
+            // Vertici
             pts.forEach((p, i) => {
+                const isDraggable = active && (labels[i] === 'A' || labels[i] === 'D' || mode === 'FREE');
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, active ? 6 : 4, 0, Math.PI * 2);
-                ctx.fillStyle = active ? "white" : color;
+                ctx.arc(p.x, p.y, isDraggable ? 6 : 4, 0, Math.PI * 2);
+                ctx.fillStyle = isDraggable ? "white" : color;
                 ctx.fill();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
                 ctx.stroke();
+                
                 ctx.fillStyle = "#1e293b";
                 ctx.font = "bold 12px sans-serif";
                 ctx.fillText(labels[i], p.x - 5, p.y - 12);
@@ -148,7 +213,6 @@
             
             if (!isAnimating && overlapFactor === 0) syncDEF();
 
-            // Calcolo posizioni rendering (Interpolazione)
             let renderDEF;
             if (overlapFactor > 0) {
                 const start = lastKnownDEF || { D: pD, E: pE, F: pF };
@@ -174,8 +238,6 @@
         function animateOverlap(target) {
             if (isAnimating) return;
             isAnimating = true;
-            
-            // Snapshot della posizione corrente per un'animazione senza salti
             lastKnownDEF = { D: {...pD}, E: {...pE}, F: {...pF} };
             
             const duration = 600;
@@ -210,16 +272,13 @@
             draw();
         };
 
-        // Touch & Mouse
         function handleStart(e) {
             if (isAnimating || overlapFactor > 0) return;
             const rect = canvas.getBoundingClientRect();
             const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mx = x * scaleX;
-            const my = y * scaleY;
+            const mx = x * (canvas.width / rect.width);
+            const my = y * (canvas.height / rect.height);
 
             const pts = mode === 'FREE' ? [pA, pB, pC, pD, pE, pF] : [pA, pB, pC, pD];
             activePoint = pts.find(p => Math.hypot(p.x - mx, p.y - my) < 20);
