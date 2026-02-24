@@ -13,15 +13,6 @@
             cursor: default;
         }
         .active-tab { border-bottom: 4px solid #4f46e5; color: #4f46e5; }
-        select {
-            background-color: white;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            padding: 2px 4px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            max-width: 90px;
-        }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-2 md:p-6 font-sans">
@@ -52,7 +43,7 @@
             </div>
             <div class="p-4 bg-rose-50/50 flex flex-col items-center border-t md:border-t-0 md:border-l border-slate-200">
                 <span class="text-rose-700 font-bold text-xs uppercase tracking-widest mb-3 text-center">Triangolo DEF (Configurazione)</span>
-                <div id="stats2" class="text-slate-700 font-mono text-[11px] space-y-2 w-full max-w-md"></div>
+                <div id="stats2" class="text-slate-700 font-mono text-[11px] space-y-2 w-full max-w-md text-center"></div>
             </div>
         </div>
 
@@ -101,24 +92,17 @@
         let isAnimating = false;
         let activePoint = null;
         
-        // Lo snapshot salva le posizioni geometriche relative per evitare ricalcoli trigonometrici errati
         let animationSnapshot = null;
 
-        let mapping = {
-            sideDE: 'sideAB',
-            sideDF: 'sideAC',
-            sideEF: 'free',
-            angleD: 'angleA',
-            angleE: 'free',
-            angleF: 'free'
-        };
-
         function initPoints() {
-            pA = { x: 120, y: 320 };
-            pB = { x: 320, y: 320 };
-            pC = { x: 160, y: 150 };
+            // Inizializzazione solo se i punti non esistono (primo avvio)
+            if (!pA) {
+                pA = { x: 120, y: 320 };
+                pB = { x: 320, y: 320 };
+                pC = { x: 160, y: 150 };
+            }
             overlapFactor = 0;
-            // Rotazione iniziale casuale per il triangolo di destra
+            // Cambia solo la rotazione, non le coordinate di base
             redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
             overlapBtn.innerText = "Verifica Sovrapposizione";
             animationSnapshot = null;
@@ -156,15 +140,8 @@
             }
         }
 
-        /**
-         * Calcola le coordinate di DEF. 
-         * FIX: Invece di usare distanze astratte, proietta direttamente i punti di ABC.
-         */
         function calculateDefVertices(pA, pB, pC, rotOffset, xShift) {
-            // Centro di rotazione per il triangolo di destra (punto D)
             const curD = { x: pA.x + xShift, y: pA.y };
-            
-            // Calcoliamo la posizione di E ed F ruotandoli rispetto a D basandosi su B e C
             const rotate = (p, center, angle) => {
                 const dx = p.x - pA.x;
                 const dy = p.y - pA.y;
@@ -173,75 +150,52 @@
                     y: center.y + dx * Math.sin(angle) + dy * Math.cos(angle)
                 };
             };
-
-            const curE = rotate(pB, curD, rotOffset);
-            const curF = rotate(pC, curD, rotOffset);
-
-            return { D: curD, E: curE, F: curF };
+            return { D: curD, E: rotate(pB, curD, rotOffset), F: rotate(pC, curD, rotOffset) };
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const currentAbcData = {
-                sideAB: getDistance(pA, pB),
-                sideAC: getDistance(pA, pC),
-                sideBC: getDistance(pB, pC),
-                angleA: getAngle(pA, pB, pC),
-                angleB: getAngle(pB, pC, pA),
-                angleC: getAngle(pC, pA, pB),
-                pA: { ...pA }, pB: { ...pB }, pC: { ...pC }
+            const abcData = {
+                sideAB: getDistance(pA, pB), sideAC: getDistance(pA, pC), sideBC: getDistance(pB, pC),
+                angleA: getAngle(pA, pB, pC), angleB: getAngle(pB, pC, pA), angleC: getAngle(pC, pA, pB)
             };
 
             let drawD, drawE, drawF;
 
             if (animationSnapshot) {
                 const { start, target } = animationSnapshot;
-                drawD = {
-                    x: start.D.x + (target.D.x - start.D.x) * overlapFactor,
-                    y: start.D.y + (target.D.y - start.D.y) * overlapFactor
-                };
-                drawE = {
-                    x: start.E.x + (target.E.x - start.E.x) * overlapFactor,
-                    y: start.E.y + (target.E.y - start.E.y) * overlapFactor
-                };
-                drawF = {
-                    x: start.F.x + (target.F.x - start.F.x) * overlapFactor,
-                    y: start.F.y + (target.F.y - start.F.y) * overlapFactor
-                };
+                const lerp = (s, t, f) => s + (t - s) * f;
+                drawD = { x: lerp(start.D.x, target.D.x, overlapFactor), y: lerp(start.D.y, target.D.y, overlapFactor) };
+                drawE = { x: lerp(start.E.x, target.E.x, overlapFactor), y: lerp(start.E.y, target.E.y, overlapFactor) };
+                drawF = { x: lerp(start.F.x, target.F.x, overlapFactor), y: lerp(start.F.y, target.F.y, overlapFactor) };
             } else {
                 const defPos = calculateDefVertices(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
-                drawD = defPos.D;
-                drawE = defPos.E;
-                drawF = defPos.F;
+                drawD = defPos.D; drawE = defPos.E; drawF = defPos.F;
             }
 
-            const actualDE = getDistance(drawD, drawE);
-            const actualDF = getDistance(drawD, drawF);
-            const actualEF = getDistance(drawE, drawF);
-            const actualAngD = getAngle(drawD, drawE, drawF);
-            const actualAngE = getAngle(drawE, drawF, drawD);
-            const actualAngF = getAngle(drawF, drawD, drawE);
+            const defData = {
+                sideDE: getDistance(drawD, drawE), sideDF: getDistance(drawD, drawF), sideEF: getDistance(drawE, drawF),
+                angleD: getAngle(drawD, drawE, drawF), angleE: getAngle(drawE, drawF, drawD), angleF: getAngle(drawF, drawD, drawE)
+            };
 
             drawTriangle(pA, pB, pC, '#2563eb', ['A', 'B', 'C'], overlapFactor === 0, true);
             drawTriangle(drawD, drawE, drawF, '#e11d48', ['D', 'E', 'F'], false, false);
 
-            updateStats(currentAbcData, {
-                sideDE: actualDE, sideDF: actualDF, sideEF: actualEF,
-                angleD: actualAngD, angleE: actualAngE, angleF: actualAngF
-            });
+            updateStats(abcData, defData);
         }
 
         function drawTriangle(p1, p2, p3, color, labels, canDrag, isMaster) {
             ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.closePath();
-            ctx.fillStyle = color + '10'; ctx.fill();
+            ctx.fillStyle = color + '15'; ctx.fill();
             ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
 
             const isConstrained = (type, id) => {
+                if (mode === 'FREE') return false;
                 if (mode === 'LAL') return (id === 'sideDE' || id === 'sideDF' || id === 'angleD');
                 if (mode === 'ALA') return (id === 'sideDE' || id === 'angleD' || id === 'angleE');
                 if (mode === 'LLL') return (type === 'side');
-                return mapping[id] && mapping[id] !== 'free';
+                return false;
             };
 
             ctx.lineWidth = 4;
@@ -254,7 +208,7 @@
                 const a2 = Math.atan2(pNext.y - p.y, pNext.x - p.x);
                 ctx.beginPath(); ctx.moveTo(p.x, p.y);
                 ctx.arc(p.x, p.y, radius, a1, a2, (a2 - a1 + Math.PI * 4) % (Math.PI * 2) > Math.PI);
-                ctx.fillStyle = color + (isHyp ? '40' : '10'); ctx.fill();
+                ctx.fillStyle = color + (isHyp ? '45' : '15'); ctx.fill();
                 ctx.strokeStyle = color; ctx.lineWidth = isHyp ? 3 : 1; ctx.stroke();
             };
 
@@ -274,18 +228,8 @@
         function updateStats(abc, def) {
             const u = (v) => (v/25).toFixed(1);
             const d = (a) => Math.abs(a * 180 / Math.PI).toFixed(1) + "°";
-            
-            stats1.innerHTML = `
-                <div class="grid grid-cols-3 gap-1">
-                    <span>AB: ${u(abc.sideAB)}</span><span>AC: ${u(abc.sideAC)}</span><span>BC: ${u(abc.sideBC)}</span>
-                    <span>A: ${d(abc.angleA)}</span><span>B: ${d(abc.angleB)}</span><span>C: ${d(abc.angleC)}</span>
-                </div>`;
-            
-            stats2.innerHTML = `
-                <div class="grid grid-cols-3 gap-1 mt-1 font-bold">
-                    <span>DE: ${u(def.sideDE)}</span><span>DF: ${u(def.sideDF)}</span><span>EF: ${u(def.sideEF)}</span>
-                    <span>D: ${d(def.angleD)}</span><span>E: ${d(def.angleE)}</span><span>F: ${d(def.angleF)}</span>
-                </div>`;
+            stats1.innerHTML = `<div class="grid grid-cols-3 gap-1"><span>AB: ${u(abc.sideAB)}</span><span>AC: ${u(abc.sideAC)}</span><span>BC: ${u(abc.sideBC)}</span><span>A: ${d(abc.angleA)}</span><span>B: ${d(abc.angleB)}</span><span>C: ${d(abc.angleC)}</span></div>`;
+            stats2.innerHTML = `<div class="grid grid-cols-3 gap-1 mt-1 font-bold"><span>DE: ${u(def.sideDE)}</span><span>DF: ${u(def.sideDF)}</span><span>EF: ${u(def.sideEF)}</span><span>D: ${d(def.angleD)}</span><span>E: ${d(def.angleE)}</span><span>F: ${d(def.angleF)}</span></div>`;
         }
 
         function getPos(e) {
@@ -331,7 +275,7 @@
             if (m === 'LAL') { mainTitle.innerText = "Primo Criterio (LAL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."'; }
             else if (m === 'ALA') { mainTitle.innerText = "Secondo Criterio (ALA)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."'; }
             else if (m === 'LLL') { mainTitle.innerText = "Terzo Criterio (LLL)"; mainDesc.innerText = '"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."'; }
-            else { mainTitle.innerText = "Esplorazione Libera"; mainDesc.innerText = "In questa modalità i triangoli sono identici per permetterti di osservare la sovrapposizione perfetta."; }
+            else { mainTitle.innerText = "Esplorazione Libera"; mainDesc.innerText = "In questa modalità puoi osservare come i triangoli rimangano sempre congruenti indipendentemente dalla forma."; }
             overlapFactor = 0;
             animationSnapshot = null;
             draw();
@@ -344,30 +288,22 @@
 
         overlapBtn.onclick = () => {
             if (isAnimating) return;
-            
-            // Snapshot GEOMETRICO: calcoliamo le posizioni dei vertici esattamente dove sono ORA
             const startPos = calculateDefVertices(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
             const targetPos = calculateDefVertices(pA, pB, pC, 0, 0);
-
             animationSnapshot = { start: startPos, target: targetPos };
-
             isAnimating = true;
             const startVal = overlapFactor;
             const endVal = (overlapFactor === 0) ? 1 : 0;
             const startTime = performance.now();
             const duration = 800;
-
             const animate = (t) => {
                 const elapsed = t - startTime;
                 const p = Math.min(elapsed / duration, 1);
                 const ease = p < .5 ? 2*p*p : -1+(4-2*p)*p;
-                
                 overlapFactor = startVal + (endVal - startVal) * ease;
                 draw();
-
-                if (p < 1) {
-                    requestAnimationFrame(animate);
-                } else { 
+                if (p < 1) requestAnimationFrame(animate);
+                else { 
                     isAnimating = false; 
                     overlapBtn.innerText = endVal === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
                     if (endVal === 0) animationSnapshot = null; 
