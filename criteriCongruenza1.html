@@ -86,7 +86,7 @@
 
         let mode = 'LAL'; 
         let pA, pB, pC;
-        let pD, pE, pF; // Punti reali di DEF per modalità libera
+        let pD, pE, pF; // Punti reali di DEF
         let redTriangleRotationOffset = 0; 
         const OFFSET_X = 380;
         let overlapFactor = 0; 
@@ -104,13 +104,28 @@
             overlapFactor = 0;
             redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
             
-            // Sincronizza DEF su ABC con l'offset per iniziare
-            const initialDef = calculateDefFromAbc(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
-            pD = initialDef.D; pE = initialDef.E; pF = initialDef.F;
+            // Sincronizza i punti D, E, F basandoli sulla geometria corrente di A, B, C
+            syncDefToAbc();
 
             overlapBtn.innerText = "Verifica Sovrapposizione";
             animationSnapshot = null;
             draw();
+        }
+
+        // Funzione per sincronizzare DEF con ABC mantenendo congruenza e rotazione
+        function syncDefToAbc() {
+            const d = { x: pA.x + OFFSET_X, y: pA.y };
+            const rotate = (p, center, angle) => {
+                const dx = p.x - pA.x;
+                const dy = p.y - pA.y;
+                return {
+                    x: center.x + dx * Math.cos(angle) - dy * Math.sin(angle),
+                    y: center.y + dx * Math.sin(angle) + dy * Math.cos(angle)
+                };
+            };
+            pD = d;
+            pE = rotate(pB, d, redTriangleRotationOffset);
+            pF = rotate(pC, d, redTriangleRotationOffset);
         }
 
         function getDistance(p1, p2) {
@@ -144,19 +159,6 @@
             }
         }
 
-        function calculateDefFromAbc(a, b, c, rot, xShift) {
-            const d = { x: a.x + xShift, y: a.y };
-            const rotate = (p, center, angle) => {
-                const dx = p.x - a.x;
-                const dy = p.y - a.y;
-                return {
-                    x: center.x + dx * Math.cos(angle) - dy * Math.sin(angle),
-                    y: center.y + dx * Math.sin(angle) + dy * Math.cos(angle)
-                };
-            };
-            return { D: d, E: rotate(b, d, rot), F: rotate(c, d, rot) };
-        }
-
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -167,6 +169,7 @@
 
             let drawD, drawE, drawF;
 
+            // Se stiamo animando, usiamo l'interpolazione tra lo stato iniziale catturato e il target (ABC)
             if (animationSnapshot) {
                 const { start, target } = animationSnapshot;
                 const lerp = (s, t, f) => s + (t - s) * f;
@@ -174,13 +177,11 @@
                 drawE = { x: lerp(start.E.x, target.E.x, overlapFactor), y: lerp(start.E.y, target.E.y, overlapFactor) };
                 drawF = { x: lerp(start.F.x, target.F.x, overlapFactor), y: lerp(start.F.y, target.F.y, overlapFactor) };
             } else {
-                // In modalità criteri DEF è calcolato da ABC, in FREE è indipendente
+                // Durante la manipolazione libera, ricalcoliamo DEF solo se NON siamo in modalità FREE
                 if (mode !== 'FREE') {
-                    const defPos = calculateDefFromAbc(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
-                    drawD = defPos.D; drawE = defPos.E; drawF = defPos.F;
-                } else {
-                    drawD = pD; drawE = pE; drawF = pF;
+                    syncDefToAbc();
                 }
+                drawD = pD; drawE = pE; drawF = pF;
             }
 
             const defData = {
@@ -284,8 +285,7 @@
             overlapFactor = 0;
             animationSnapshot = null;
             if (m !== 'FREE') {
-                const sync = calculateDefFromAbc(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
-                pD = sync.D; pE = sync.E; pF = sync.F;
+                syncDefToAbc();
             }
             draw();
         }
@@ -298,14 +298,10 @@
         overlapBtn.onclick = () => {
             if (isAnimating) return;
             
-            let start, target;
-            if (mode !== 'FREE') {
-                start = calculateDefFromAbc(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
-                target = { D: { ...pA }, E: { ...pB }, F: { ...pC } };
-            } else {
-                start = { D: { ...pD }, E: { ...pE }, F: { ...pF } };
-                target = { D: { ...pA }, E: { ...pB }, F: { ...pC } };
-            }
+            // CATTURA STATO REALE: Scattiamo una foto alle posizioni correnti
+            // per evitare scatti verso valori predefiniti
+            const start = { D: { ...pD }, E: { ...pE }, F: { ...pF } };
+            const target = { D: { ...pA }, E: { ...pB }, F: { ...pC } };
 
             animationSnapshot = { start, target };
             isAnimating = true;
@@ -324,7 +320,15 @@
                 else { 
                     isAnimating = false; 
                     overlapBtn.innerText = endVal === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
-                    if (endVal === 0) animationSnapshot = null; 
+                    if (endVal === 0) {
+                        animationSnapshot = null;
+                        // Al termine del distacco, ripristiniamo le coordinate reali basate su pD, pE, pF correnti
+                        pD = start.D; pE = start.E; pF = start.F;
+                    } else {
+                        // Se sovrapposti, i punti "reali" di DEF sono ora esattamente sopra ABC
+                        pD = { ...pA }; pE = { ...pB }; pF = { ...pC };
+                    }
+                    draw();
                 }
             };
             requestAnimationFrame(animate);
@@ -333,10 +337,7 @@
         resetBtn.onclick = () => {
             if (isAnimating) return;
             redTriangleRotationOffset = (Math.random() - 0.5) * Math.PI / 1.5;
-            if (mode !== 'FREE') {
-                const sync = calculateDefFromAbc(pA, pB, pC, redTriangleRotationOffset, OFFSET_X);
-                pD = sync.D; pE = sync.E; pF = sync.F;
-            }
+            syncDefToAbc();
             overlapFactor = 0;
             animationSnapshot = null;
             draw();
