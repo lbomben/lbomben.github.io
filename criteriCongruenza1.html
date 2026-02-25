@@ -44,24 +44,29 @@
         </div>
 
         <!-- Pannello Controlli Modalità Libera -->
-        <div id="freePanel" class="hidden bg-amber-50 border-b border-amber-100 p-2 grid grid-cols-2 md:grid-cols-3 gap-4 text-[10px] uppercase font-bold text-amber-900">
+        <div id="freePanel" class="hidden bg-amber-50 border-b border-amber-100 p-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-[10px] uppercase font-bold text-amber-900">
             <div class="flex flex-col gap-1">
                 <span>Lato DE ≡</span>
-                <select id="bindDE"><option value="none">Libero</option><option value="AB">Lato AB</option></select>
+                <select id="bindDE" class="bind-select"><option value="none">Libero</option><option value="AB">Lato AB</option></select>
                 <span>Lato DF ≡</span>
-                <select id="bindDF"><option value="none">Libero</option><option value="AC">Lato AC</option></select>
+                <select id="bindDF" class="bind-select"><option value="none">Libero</option><option value="AC">Lato AC</option></select>
             </div>
             <div class="flex flex-col gap-1">
                 <span>Lato EF ≡</span>
-                <select id="bindEF"><option value="none">Libero</option><option value="BC">Lato BC</option></select>
+                <select id="bindEF" class="bind-select"><option value="none">Libero</option><option value="BC">Lato BC</option></select>
                 <span>Angolo D ≡</span>
-                <select id="bindAD"><option value="none">Libero</option><option value="A">Angolo A</option></select>
+                <select id="bindAD" class="bind-select"><option value="none">Libero</option><option value="A">Angolo A</option></select>
             </div>
             <div class="flex flex-col gap-1">
                 <span>Angolo E ≡</span>
-                <select id="bindAE"><option value="none">Libero</option><option value="B">Angolo B</option></select>
+                <select id="bindAE" class="bind-select"><option value="none">Libero</option><option value="B">Angolo B</option></select>
                 <span>Angolo F ≡</span>
-                <select id="bindAF"><option value="none">Libero</option><option value="C">Angolo C</option></select>
+                <select id="bindAF" class="bind-select"><option value="none">Libero</option><option value="C">Angolo C</option></select>
+            </div>
+            <div class="flex items-center justify-center">
+                <button id="clearBindsBtn" class="w-full h-full bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-md border border-amber-400 p-1 transition-colors">
+                    Rimuovi tutti i vincoli
+                </button>
             </div>
         </div>
 
@@ -98,6 +103,7 @@
         const ctx = canvas.getContext('2d');
         const overlapBtn = document.getElementById('overlapBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const clearBindsBtn = document.getElementById('clearBindsBtn');
         const stats1 = document.getElementById('stats1');
         const stats2 = document.getElementById('stats2');
         const freePanel = document.getElementById('freePanel');
@@ -134,6 +140,16 @@
             document.getElementById('bindAE').onchange = (e) => { bindings.E = e.target.value; draw(); };
             document.getElementById('bindAF').onchange = (e) => { bindings.F = e.target.value; draw(); };
 
+            clearBindsBtn.onclick = () => {
+                for (let key in bindings) {
+                    bindings[key] = 'none';
+                }
+                document.querySelectorAll('.bind-select').forEach(select => {
+                    select.value = 'none';
+                });
+                draw();
+            };
+
             syncDEF();
             draw();
         }
@@ -155,7 +171,6 @@
                 return;
             }
 
-            // MODALITÀ LIBERA - Logica di sincronizzazione stabile
             const distAB = getDist(pA, pB);
             const distAC = getDist(pA, pC);
             const distBC = getDist(pB, pC);
@@ -165,17 +180,14 @@
             const crossABC = (pB.x - pA.x) * (pC.y - pA.y) - (pB.y - pA.y) * (pC.x - pA.x);
             const sign = crossABC > 0 ? 1 : -1;
 
-            // 1. Stabilizzazione Lato DE (Il nostro asse di riferimento)
             if (bindings.DE === 'AB') {
                 const angleAB = Math.atan2(pB.y - pA.y, pB.x - pA.x);
                 pE.x = pD.x + Math.cos(angleAB) * distAB;
                 pE.y = pD.y + Math.sin(angleAB) * distAB;
             }
 
-            // Direzione corrente di DE (da usare per gli angoli D ed E)
             const angleDE = Math.atan2(pE.y - pD.y, pE.x - pD.x);
 
-            // 2. Applicazione vincoli Angoli (D ed E hanno priorità su F)
             if (bindings.D === 'A') {
                 const targetAngF = angleDE + (sign * angA);
                 const dDF = (bindings.DF === 'AC') ? distAC : getDist(pD, pF);
@@ -188,7 +200,6 @@
                 pF.y = pE.y + Math.sin(targetAngF) * dEF;
             }
 
-            // 3. Applicazione vincoli Lati rimanenti (DF ed EF)
             if (bindings.DF === 'AC' && bindings.D !== 'A') {
                 const angDF = Math.atan2(pF.y - pD.y, pF.x - pD.x);
                 pF.x = pD.x + Math.cos(angDF) * distAC;
@@ -200,10 +211,7 @@
                 pF.y = pE.y + Math.sin(angEF) * distBC;
             }
 
-            // 4. Vincolo Angolo F (Cerca di soddisfare l'angolo spostando E o D se necessario, 
-            // ma per stabilità qui lo limitiamo a orientare il lato FE se non ci sono conflitti)
             if (bindings.F === 'C') {
-                const angFE_current = Math.atan2(pE.y - pF.y, pE.x - pF.x);
                 const angFD_current = Math.atan2(pD.y - pF.y, pD.x - pF.x);
                 const currentDistFE = getDist(pF, pE);
                 const targetAngE = angFD_current + (sign * angC);
@@ -383,17 +391,25 @@
         }
 
         overlapBtn.onclick = () => animateOverlap(overlapFactor === 0 ? 1 : 0);
+        
         resetBtn.onclick = () => {
             if (isAnimating || overlapFactor > 0) return;
-            // Rotazione stabile rispetto a D
-            const distE = getDist(pD, pE);
-            const distF = getDist(pD, pF);
-            const angE = Math.atan2(pE.y - pD.y, pE.x - pD.x) + 0.5;
-            const angF = Math.atan2(pF.y - pD.y, pF.x - pD.x) + 0.5;
-            pE.x = pD.x + Math.cos(angE) * distE;
-            pE.y = pD.y + Math.sin(angE) * distE;
-            pF.x = pD.x + Math.cos(angF) * distF;
-            pF.y = pD.y + Math.sin(angF) * distF;
+            
+            if (mode !== 'FREE') {
+                rotation += 0.5;
+            } else {
+                // In modalità libera ruotiamo fisicamente i vertici E ed F attorno a D
+                const distE = getDist(pD, pE);
+                const distF = getDist(pD, pF);
+                const angE = Math.atan2(pE.y - pD.y, pE.x - pD.x) + 0.5;
+                const angF = Math.atan2(pF.y - pD.y, pF.x - pD.x) + 0.5;
+                
+                // Aggiorniamo i punti. syncDEF userà queste nuove posizioni come base
+                pE.x = pD.x + Math.cos(angE) * distE;
+                pE.y = pD.y + Math.sin(angE) * distE;
+                pF.x = pD.x + Math.cos(angF) * distF;
+                pF.y = pD.y + Math.sin(angF) * distF;
+            }
             draw();
         };
 
