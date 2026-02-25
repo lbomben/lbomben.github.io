@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Virtuale: Rotaia di Precisione</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: 'system-ui', -apple-system, sans-serif;
+        }
+        .track-container {
+            position: relative;
+            padding: 80px 0;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 2rem;
+            perspective: 1000px;
+        }
+        .track-rail {
+            height: 24px;
+            background: linear-gradient(to bottom, #94a3b8, #475569, #94a3b8);
+            width: 100%;
+            position: relative;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glider {
+            width: 44px;
+            height: 28px;
+            background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+            position: absolute;
+            top: -26px; 
+            left: 0%;
+            border-radius: 4px 4px 2px 2px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateX(-50%);
+            z-index: 30;
+        }
+        .glider::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+        .sensor {
+            width: 4px;
+            height: 55px;
+            background: #22c55e;
+            position: absolute;
+            top: -20px;
+            z-index: 20;
+            cursor: pointer;
+        }
+        .sensor::before {
+            content: 'F' attr(data-index);
+            position: absolute;
+            top: -25px;
+            left: -10px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #16a34a;
+            background: white;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .sensor-head {
+            position: absolute;
+            top: -5px;
+            left: -4px;
+            width: 12px;
+            height: 12px;
+            background: #16a34a;
+            border-radius: 2px;
+        }
+        .ruler-mark {
+            position: absolute;
+            bottom: -25px;
+            height: 10px;
+            width: 1px;
+            background: #94a3b8;
+            transform: translateX(-50%);
+        }
+        .ruler-label {
+            position: absolute;
+            bottom: -45px;
+            font-size: 10px;
+            color: #64748b;
+            transform: translateX(-50%);
+        }
+        input[type=range] {
+            accent-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <header class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">LABORATORIO DI CINEMATICA</h1>
+                <p class="text-slate-500 text-sm">Grafico Spazio (s) / Tempo (t)</p>
+            </div>
+            <div class="flex gap-4">
+                <button id="btnStart" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">START</button>
+                <button id="btnReset" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2 rounded-xl font-bold transition-all">RESET</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Sidebar Controlli -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Inclinazione: <span id="angleDisplay" class="text-blue-600">0.0</span>°</label>
+                        <input type="range" id="angleInput" min="-5" max="5" step="0.1" value="0" class="w-full">
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1"><span>-5°</span><span>0°</span><span>+5°</span></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Velocità Iniziale: <span id="v0Display" class="text-blue-600">10</span> cm/s</label>
+                        <input type="range" id="v0Input" min="0" max="150" step="1" value="10" class="w-full">
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Fotocellule</span>
+                            <button id="btnAddSensor" class="bg-green-100 text-green-700 hover:bg-green-200 px-2 py-1 rounded text-xs font-bold">+ Aggiungi</button>
+                        </div>
+                        <div id="sensorControls" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                            <!-- Inseriti dinamicamente -->
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded-xl text-center shadow-inner">
+                        <div class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Tempo di Volo</div>
+                        <div id="timer" class="text-4xl font-mono text-green-400">0.000 <span class="text-lg">s</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Area Principale -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Rotaia -->
+                <div class="track-container px-12">
+                    <div id="railElement" class="track-rail">
+                        <div id="glider" class="glider"></div>
+                        <div id="sensorsLayer"></div>
+                        <div id="marks"></div>
+                    </div>
+                </div>
+
+                <!-- Grafico e Tabella -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 h-80">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-slate-50 px-4 py-3 border-b flex justify-between items-center">
+                            <h3 class="text-sm font-bold text-slate-700 uppercase">Registro Sperimentale</h3>
+                            <span class="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded font-bold">Barre Errore: ROSSE</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto">
+                            <table class="w-full text-xs">
+                                <thead class="bg-white sticky top-0 border-b">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left font-semibold text-slate-400">Sensore</th>
+                                        <th class="px-4 py-3 text-left font-semibold text-slate-400">S (cm) ±1</th>
+                                        <th class="px-4 py-3 text-left font-semibold text-slate-400">T (s) ±0.05</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsTable" class="divide-y divide-slate-100">
+                                    <!-- Dati -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAZIONE ---
+        let v0 = 10; 
+        let angleDeg = 0;
+        let sensors = [40, 160]; 
+        let isMoving = false;
+        let startTime = null;
+        let animationFrame = null;
+        let sensorsTriggered = [];
+
+        const g = 981; 
+        const errorS = 1.0; 
+        const errorT = 0.05;
+
+        // --- ELEMENTI DOM ---
+        const rail = document.getElementById('railElement');
+        const glider = document.getElementById('glider');
+        const timerEl = document.getElementById('timer');
+        const resultsTable = document.getElementById('resultsTable');
+        const sensorsLayer = document.getElementById('sensorsLayer');
+        const sensorControls = document.getElementById('sensorControls');
+
+        // --- PLUGIN ERROR BARS (ROSSO) ---
+        const errorBarPlugin = {
+            id: 'errorBars',
+            afterDatasetsDraw(chart) {
+                const { ctx, scales: { x, y } } = chart;
+                chart.data.datasets.forEach(dataset => {
+                    if (dataset.showErrorBars) {
+                        dataset.data.forEach(point => {
+                            const px = x.getPixelForValue(point.x);
+                            const py = y.getPixelForValue(point.y);
+                            const yTop = y.getPixelForValue(point.y + errorS);
+                            const yBottom = y.getPixelForValue(point.y - errorS);
+                            const xLeft = x.getPixelForValue(point.x - errorT);
+                            const xRight = x.getPixelForValue(point.x + errorT);
+
+                            ctx.save();
+                            ctx.strokeStyle = '#ef4444'; 
+                            ctx.lineWidth = 1.5;
+                            ctx.beginPath();
+                            ctx.moveTo(px, yTop); ctx.lineTo(px, yBottom);
+                            ctx.moveTo(xLeft, py); ctx.lineTo(xRight, py);
+                            ctx.stroke();
+                            ctx.beginPath();
+                            ctx.moveTo(px-3, yTop); ctx.lineTo(px+3, yTop);
+                            ctx.moveTo(px-3, yBottom); ctx.lineTo(px+3, yBottom);
+                            ctx.moveTo(xLeft, py-3); ctx.lineTo(xLeft, py+3);
+                            ctx.moveTo(xRight, py-3); ctx.lineTo(xRight, py+3);
+                            ctx.stroke();
+                            ctx.restore();
+                        });
+                    }
+                });
+            }
+        };
+
+        Chart.register(errorBarPlugin);
+
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { 
+                        label: 'Modello Teorico', 
+                        data: [], 
+                        showLine: true, 
+                        borderColor: '#3b82f6', 
+                        borderWidth: 2, 
+                        pointRadius: 0, 
+                        fill: false 
+                    },
+                    { 
+                        label: 'Dati Sperimentali', 
+                        data: [], 
+                        pointRadius: 0, 
+                        showErrorBars: true 
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { type: 'linear', title: { display: true, text: 't (s)' }, min: 0, suggestedMax: 2 },
+                    y: { title: { display: true, text: 's (cm)' }, min: 0, max: 200 }
+                },
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } } }
+            }
+        });
+
+        function renderSensors() {
+            sensorsLayer.innerHTML = '';
+            sensorControls.innerHTML = '';
+            sensors.forEach((s, i) => {
+                const sDiv = document.createElement('div');
+                sDiv.className = 'sensor';
+                sDiv.dataset.index = i + 1;
+                sDiv.style.left = (s / 200 * 100) + '%';
+                sDiv.innerHTML = '<div class="sensor-head"></div>';
+                sensorsLayer.appendChild(sDiv);
+
+                const ctrl = document.createElement('div');
+                ctrl.className = 'flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-100';
+                ctrl.innerHTML = `
+                    <span class="text-[10px] font-bold text-slate-400 w-4">F${i+1}</span>
+                    <input type="range" min="5" max="195" value="${s}" class="flex-1 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <span class="text-[10px] font-mono w-8">${s}</span>
+                    <button class="text-slate-300 hover:text-red-500 transition-colors">×</button>
+                `;
+                ctrl.querySelector('input').oninput = (e) => {
+                    sensors[i] = parseInt(e.target.value);
+                    renderSensors();
+                };
+                ctrl.querySelector('button').onclick = () => {
+                    if (sensors.length > 1) {
+                        sensors.splice(i, 1);
+                        renderSensors();
+                    }
+                };
+                sensorControls.appendChild(ctrl);
+            });
+        }
+
+        document.getElementById('btnAddSensor').onclick = () => {
+            if (sensors.length < 10) {
+                let lastPos = sensors[sensors.length-1] || 20;
+                sensors.push(Math.min(195, lastPos + 20));
+                renderSensors();
+            }
+        };
+
+        document.getElementById('angleInput').oninput = (e) => {
+            angleDeg = parseFloat(e.target.value);
+            document.getElementById('angleDisplay').innerText = angleDeg.toFixed(1);
+            rail.style.transform = `rotate(${angleDeg}deg)`;
+        };
+        document.getElementById('v0Input').oninput = (e) => {
+            v0 = parseInt(e.target.value);
+            document.getElementById('v0Display').innerText = v0;
+        };
+
+        function resetState() {
+            isMoving = false;
+            cancelAnimationFrame(animationFrame);
+            startTime = null;
+            sensorsTriggered = [];
+            glider.style.left = '0%';
+            timerEl.innerHTML = '0.000 <span class="text-lg">s</span>';
+            resultsTable.innerHTML = '';
+            chart.data.datasets[0].data = [];
+            chart.data.datasets[1].data = [];
+            chart.update();
+            document.getElementById('btnStart').disabled = false;
+        }
+
+        function recordData(name, s, t) {
+            const row = document.createElement('tr');
+            row.className = "hover:bg-slate-50 transition-colors";
+            row.innerHTML = `
+                <td class="px-4 py-2 font-bold text-slate-700">${name}</td>
+                <td class="px-4 py-2 text-slate-600">${s} ± ${errorS}</td>
+                <td class="px-4 py-2 text-slate-600">${t.toFixed(3)} ± ${errorT}</td>
+            `;
+            resultsTable.prepend(row);
+            chart.data.datasets[1].data.push({x: t, y: s});
+            chart.update();
+        }
+
+        function update(timestamp) {
+            if (!isMoving) return;
+            if (!startTime) startTime = timestamp;
+            const t = (timestamp - startTime) / 1000;
+            
+            const acc = g * Math.sin(angleDeg * Math.PI / 180);
+            const s = (v0 * t) + (0.5 * acc * t * t);
+
+            // Continua finché il carrello è sulla rotaia (0-200 cm)
+            if (s >= 0 && s <= 200) {
+                glider.style.left = (s / 200 * 100) + '%';
+                timerEl.innerHTML = t.toFixed(3) + ' <span class="text-lg">s</span>';
+
+                sensors.forEach((sTarget, idx) => {
+                    // Logica per rilevare il passaggio (sia in avanti che indietro)
+                    // Per semplicità registriamo il primo passaggio ad ogni sensore
+                    if (!sensorsTriggered.includes(idx) && Math.abs(s - sTarget) < 1.5) {
+                        sensorsTriggered.push(idx);
+                        recordData(`F${idx+1}`, sTarget, t);
+                    }
+                });
+
+                chart.data.datasets[0].data.push({x: t, y: s});
+                chart.update('none');
+                animationFrame = requestAnimationFrame(update);
+            } else {
+                // Ferma il moto quando esce dai limiti, senza aggiungere punti sperimentali extra
+                isMoving = false;
+                document.getElementById('btnStart').disabled = false;
+            }
+        }
+
+        document.getElementById('btnStart').onclick = () => {
+            if (isMoving) return;
+            resetState();
+            isMoving = true;
+            document.getElementById('btnStart').disabled = true;
+            animationFrame = requestAnimationFrame(update);
+        };
+
+        document.getElementById('btnReset').onclick = resetState;
+
+        const marks = document.getElementById('marks');
+        for (let i = 0; i <= 200; i += 20) {
+            const pct = (i / 200) * 100;
+            const mark = document.createElement('div');
+            mark.className = 'ruler-mark';
+            mark.style.left = pct + '%';
+            const label = document.createElement('div');
+            label.className = 'ruler-label';
+            label.style.left = pct + '%';
+            label.innerText = i;
+            marks.appendChild(mark);
+            marks.appendChild(label);
+        }
+
+        renderSensors();
+    </script>
+</body>
+</html>
