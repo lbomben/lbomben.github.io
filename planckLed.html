@@ -216,13 +216,9 @@ const e = 1.602e-19;
 const hTeorico = 6.626e-34;
 
 // Incertezze simulate
-const sigmaV = 0.04; 
-const sigmaLambda = 3e-9;
-
-// Default: Solo Rosso
-let ledList = [
-  { id: 'red', lambda: 630, color: '#dc2626', name: 'Rosso', active: false, measured: false }
-];
+const sigmaV = 0.04;           // Errore di lettura casuale sulla singola misura
+const sigmaLambda = 3e-9;      // Errore sulla lunghezza d'onda reale
+const sigmaSistematicaV = 0.05; // Tolleranza costruttiva del singolo LED (sistematica intrinseca)
 
 let misure = [];
 
@@ -233,8 +229,12 @@ function gauss(sigma) {
   return sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
+// Inizializzazione LED Rosso con la sua sistematica
+let ledList = [
+  { id: 'red', lambda: 630, color: '#dc2626', name: 'Rosso', active: false, measured: false, offsetSistematico: gauss(sigmaSistematicaV) }
+];
+
 function sortLedList() {
-  // Ordina per lunghezza d'onda decrescente (dal Rosso al Violetto)
   ledList.sort((a, b) => b.lambda - a.lambda);
 }
 
@@ -250,7 +250,8 @@ function addPresetLed() {
     color: opt.dataset.c,
     name: opt.text.split(' ')[0],
     active: false,
-    measured: false
+    measured: false,
+    offsetSistematico: gauss(sigmaSistematicaV) // Ogni LED ha la sua tolleranza fissa
   });
   
   sortLedList();
@@ -274,7 +275,8 @@ function addNewLed() {
     color: color,
     name: name,
     active: false,
-    measured: false
+    measured: false,
+    offsetSistematico: gauss(sigmaSistematicaV)
   });
   
   sortLedList();
@@ -398,7 +400,6 @@ function drawGraph() {
   
   const VMin = 0, VMax = 5;
 
-  // Griglia
   gCtx.strokeStyle = '#f1f5f9';
   for(let i=0; i<=10; i++) {
     const x = L + (i/10)*(R-L);
@@ -411,7 +412,6 @@ function drawGraph() {
   gCtx.lineWidth = 2;
   gCtx.strokeRect(L, T, R-L, B-T);
 
-  // Titoli assi ingranditi
   gCtx.fillStyle = '#1e293b';
   gCtx.font = 'bold 16px system-ui';
   gCtx.textAlign = 'center';
@@ -422,7 +422,6 @@ function drawGraph() {
   gCtx.fillText("Tensione soglia V_th (V)", 0, 0);
   gCtx.restore();
 
-  // Etichette assi ingrandite
   gCtx.font = '13px monospace';
   gCtx.fillStyle = '#475569';
   for(let i=0; i<=5; i++) {
@@ -475,13 +474,18 @@ slider.addEventListener('input', () => {
   vread.textContent = `${Vapp.toFixed(2)} V`;
 
   ledList.forEach(led => {
+    // La frequenza reale ha un piccolo errore casuale
     const f_reale = c / (led.lambda * 1e-9 + gauss(sigmaLambda));
-    const Vth_limite = (hTeorico * f_reale) / e;
+    // La Vth teorica basata su f_reale
+    const Vth_base = (hTeorico * f_reale) / e;
+    // La Vth effettiva del componente (base + sistematica intrinseca del pezzo)
+    const Vth_effettiva = Vth_base + led.offsetSistematico;
 
-    if (Vapp >= Vth_limite) {
+    if (Vapp >= Vth_effettiva) {
       led.active = true;
       if (!led.measured) {
-        const Vmis = Vth_limite + gauss(sigmaV);
+        // La misura finale include l'incertezza casuale di lettura dell'operatore
+        const Vmis = Vth_effettiva + gauss(sigmaV);
         misure.push({
           name: led.name,
           lambdaNominale: led.lambda,
@@ -496,14 +500,14 @@ slider.addEventListener('input', () => {
       }
     } else {
       led.active = false;
-      if (Vapp < Vth_limite - 0.3) led.measured = false;
+      // Permette di ri-misurare se si scende molto sotto la soglia (simula reset misura)
+      if (Vapp < Vth_effettiva - 0.3) led.measured = false;
     }
   });
   
   drawScene();
 });
 
-// Inizializzazione
 sortLedList();
 drawScene();
 drawGraph();
