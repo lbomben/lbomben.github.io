@@ -105,7 +105,7 @@
   </style>
   <script>
     window.MathJax = {
-      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], '\\[', '\\]'] },
       options: {
         renderActions: {
           addMenu: [0, '', '']
@@ -132,6 +132,7 @@
     <strong>Pre-impostati:</strong>
     <select id="preset-select">
       <option value="">-- Scegli --</option>
+      <option value="red" data-l="630" data-c="#dc2626">Rosso (630nm)</option>
       <option value="orange" data-l="605" data-c="#f97316">Arancio (605nm)</option>
       <option value="yellow" data-l="590" data-c="#eab308">Giallo (590nm)</option>
       <option value="green" data-l="530" data-c="#22c55e">Verde (530nm)</option>
