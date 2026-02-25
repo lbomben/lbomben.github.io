@@ -155,45 +155,72 @@
                 return;
             }
 
+            // MODALITÀ LIBERA - Logica di sincronizzazione stabile
             const distAB = getDist(pA, pB);
             const distAC = getDist(pA, pC);
             const distBC = getDist(pB, pC);
             const angA = getRad(pA, pB, pC);
+            const angB = getRad(pB, pA, pC);
+            const angC = getRad(pC, pA, pB);
+            const crossABC = (pB.x - pA.x) * (pC.y - pA.y) - (pB.y - pA.y) * (pC.x - pA.x);
+            const sign = crossABC > 0 ? 1 : -1;
 
+            // 1. Stabilizzazione Lato DE (Il nostro asse di riferimento)
             if (bindings.DE === 'AB') {
-                const currentAng = Math.atan2(pE.y - pD.y, pE.x - pD.x);
-                pE.x = pD.x + Math.cos(currentAng) * distAB;
-                pE.y = pD.y + Math.sin(currentAng) * distAB;
+                const angleAB = Math.atan2(pB.y - pA.y, pB.x - pA.x);
+                pE.x = pD.x + Math.cos(angleAB) * distAB;
+                pE.y = pD.y + Math.sin(angleAB) * distAB;
             }
-            if (bindings.DF === 'AC') {
-                const currentAng = Math.atan2(pF.y - pD.y, pF.x - pD.x);
-                pF.x = pD.x + Math.cos(currentAng) * distAC;
-                pF.y = pD.y + Math.sin(currentAng) * distAC;
-            }
-            if (bindings.EF === 'BC') {
-                const currentAng = Math.atan2(pF.y - pE.y, pF.x - pE.x);
-                pF.x = pE.x + Math.cos(currentAng) * distBC;
-                pF.y = pE.y + Math.sin(currentAng) * distBC;
-            }
+
+            // Direzione corrente di DE (da usare per gli angoli D ed E)
+            const angleDE = Math.atan2(pE.y - pD.y, pE.x - pD.x);
+
+            // 2. Applicazione vincoli Angoli (D ed E hanno priorità su F)
             if (bindings.D === 'A') {
-                const baseAng = Math.atan2(pE.y - pD.y, pE.x - pD.x);
-                const currentDistDF = getDist(pD, pF);
-                const crossProduct = (pB.x - pA.x) * (pC.y - pA.y) - (pB.y - pA.y) * (pC.x - pA.x);
-                const targetAng = baseAng + (crossProduct > 0 ? angA : -angA);
-                pF.x = pD.x + Math.cos(targetAng) * currentDistDF;
-                pF.y = pD.y + Math.sin(targetAng) * currentDistDF;
+                const targetAngF = angleDE + (sign * angA);
+                const dDF = (bindings.DF === 'AC') ? distAC : getDist(pD, pF);
+                pF.x = pD.x + Math.cos(targetAngF) * dDF;
+                pF.y = pD.y + Math.sin(targetAngF) * dDF;
+            } else if (bindings.E === 'B') {
+                const targetAngF = (angleDE + Math.PI) - (sign * angB);
+                const dEF = (bindings.EF === 'BC') ? distBC : getDist(pE, pF);
+                pF.x = pE.x + Math.cos(targetAngF) * dEF;
+                pF.y = pE.y + Math.sin(targetAngF) * dEF;
+            }
+
+            // 3. Applicazione vincoli Lati rimanenti (DF ed EF)
+            if (bindings.DF === 'AC' && bindings.D !== 'A') {
+                const angDF = Math.atan2(pF.y - pD.y, pF.x - pD.x);
+                pF.x = pD.x + Math.cos(angDF) * distAC;
+                pF.y = pD.y + Math.sin(angDF) * distAC;
+            }
+            if (bindings.EF === 'BC' && bindings.E !== 'B') {
+                const angEF = Math.atan2(pF.y - pE.y, pF.x - pE.x);
+                pF.x = pE.x + Math.cos(angEF) * distBC;
+                pF.y = pE.y + Math.sin(angEF) * distBC;
+            }
+
+            // 4. Vincolo Angolo F (Cerca di soddisfare l'angolo spostando E o D se necessario, 
+            // ma per stabilità qui lo limitiamo a orientare il lato FE se non ci sono conflitti)
+            if (bindings.F === 'C') {
+                const angFE_current = Math.atan2(pE.y - pF.y, pE.x - pF.x);
+                const angFD_current = Math.atan2(pD.y - pF.y, pD.x - pF.x);
+                const currentDistFE = getDist(pF, pE);
+                const targetAngE = angFD_current + (sign * angC);
+                pE.x = pF.x + Math.cos(targetAngE) * currentDistFE;
+                pE.y = pF.y + Math.sin(targetAngE) * currentDistFE;
             }
         }
 
         function getDist(p1, p2) { return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2); }
         
         function getRad(pCenter, p1, p2) {
-            const a1 = Math.atan2(p1.y - pCenter.y, p1.x - pCenter.x);
-            const a2 = Math.atan2(p2.y - pCenter.y, p2.x - pCenter.x);
-            let diff = a2 - a1;
-            while (diff < -Math.PI) diff += Math.PI * 2;
-            while (diff > Math.PI) diff -= Math.PI * 2;
-            return Math.abs(diff);
+            const v1 = { x: p1.x - pCenter.x, y: p1.y - pCenter.y };
+            const v2 = { x: p2.x - pCenter.x, y: p2.y - pCenter.y };
+            const dot = v1.x * v2.x + v1.y * v2.y;
+            const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+            const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+            return Math.acos(Math.max(-1, Math.min(1, dot / (mag1 * mag2))));
         }
 
         function getDeg(pCenter, p1, p2) {
@@ -223,12 +250,13 @@
             const startAngle = Math.atan2(p1.y - p.y, p1.x - p.x);
             const endAngle = Math.atan2(p2.y - p.y, p2.x - p.x);
             const r = 25;
-            let diff = endAngle - startAngle;
-            while (diff < -Math.PI) diff += Math.PI * 2;
-            while (diff > Math.PI) diff -= Math.PI * 2;
+            const v1 = {x: p1.x - p.x, y: p1.y - p.y};
+            const v2 = {x: p2.x - p.x, y: p2.y - p.y};
+            const cross = v1.x * v2.y - v1.y * v2.x;
+            
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
-            ctx.arc(p.x, p.y, r, startAngle, endAngle, diff < 0);
+            ctx.arc(p.x, p.y, r, startAngle, endAngle, cross < 0);
             ctx.closePath();
             ctx.fillStyle = color + (isHighlighted ? "40" : "10");
             ctx.fill();
@@ -252,7 +280,6 @@
             ctx.lineWidth = active ? 3 : 1;
             ctx.stroke();
 
-            const isDEF = labels.includes('D');
             if (mode !== 'FREE') {
                 const isLAL = mode === 'LAL';
                 const isALA = mode === 'ALA';
@@ -292,21 +319,13 @@
 
             let renderDEF;
             if (overlapFactor > 0) {
-                // Posizione di riferimento in ABC (A, B, C)
-                // Usiamo una rotazione rigida di DEF basata sulla sovrapposizione di D su A
                 const start = lastKnownDEF || { D: pD, E: pE, F: pF };
-                
-                // Angolo di base di ABC (AB) e di DEF (DE)
                 const angABC = Math.atan2(pB.y - pA.y, pB.x - pA.x);
                 const angDEF = Math.atan2(start.E.y - start.D.y, start.E.x - start.D.x);
                 
                 const lerp = (a, b, f) => a + (b - a) * f;
-                
-                // D trasla verso A
                 const curDx = lerp(start.D.x, pA.x, overlapFactor);
                 const curDy = lerp(start.D.y, pA.y, overlapFactor);
-                
-                // Rotazione: DEF ruota per allineare DE con AB
                 const curRot = lerp(0, angABC - angDEF, overlapFactor);
                 
                 const rotatePoint = (p, center, angle) => {
@@ -320,10 +339,8 @@
                     };
                 };
 
-                // Calcoliamo E ed F mantenendo la geometria originale di DEF, traslata su curD e ruotata
                 const eRel = { x: start.E.x - start.D.x + curDx, y: start.E.y - start.D.y + curDy };
                 const fRel = { x: start.F.x - start.D.x + curDx, y: start.F.y - start.D.y + curDy };
-                
                 const curE = rotatePoint(eRel, {x: curDx, y: curDy}, curRot);
                 const curF = rotatePoint(fRel, {x: curDx, y: curDy}, curRot);
 
@@ -368,7 +385,15 @@
         overlapBtn.onclick = () => animateOverlap(overlapFactor === 0 ? 1 : 0);
         resetBtn.onclick = () => {
             if (isAnimating || overlapFactor > 0) return;
-            rotation = (Math.random() - 0.5) * Math.PI;
+            // Rotazione stabile rispetto a D
+            const distE = getDist(pD, pE);
+            const distF = getDist(pD, pF);
+            const angE = Math.atan2(pE.y - pD.y, pE.x - pD.x) + 0.5;
+            const angF = Math.atan2(pF.y - pD.y, pF.x - pD.x) + 0.5;
+            pE.x = pD.x + Math.cos(angE) * distE;
+            pE.y = pD.y + Math.sin(angE) * distE;
+            pF.x = pD.x + Math.cos(angF) * distF;
+            pF.y = pD.y + Math.sin(angF) * distF;
             draw();
         };
 
