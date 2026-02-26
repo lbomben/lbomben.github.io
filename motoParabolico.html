@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulatore di Moto Parabolico Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .canvas-container { position: relative; width: 100%; height: 480px; background: #fff; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        canvas { display: block; }
+        .controls { background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .math-box { background: #f1f5f9; border-left: 5px solid #6366f1; padding: 12px; margin-bottom: 12px; border-radius: 0 8px 8px 0; }
+        
+        /* Miglioramento Slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: #e2e8f0; height: 10px; border-radius: 5px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #6366f1; cursor: pointer; border: 3px solid #fff; box-shadow: 0 0 8px rgba(99, 102, 241, 0.4); transition: all 0.2s; }
+        input[type=range]::-webkit-slider-thumb:hover { background: #4f46e5; transform: scale(1.15); }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        <header class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Laboratorio di Fisica: <span class="text-indigo-600">Moto Parabolico</span></h1>
+                <p class="text-slate-500 font-medium italic">Simulazione cinematica interattiva</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <button id="startBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-10 rounded-full shadow-lg shadow-indigo-200 transition-all transform active:scale-95 text-lg uppercase tracking-wider">
+                    LANCIA!
+                </button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Pannello Parametri -->
+            <div class="lg:col-span-3 space-y-6">
+                <div class="controls space-y-6">
+                    <h2 class="text-xl font-bold text-slate-700 border-b pb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        Parametri
+                    </h2>
+                    
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <label class="text-sm font-bold text-slate-600 uppercase">Velocità (v₀)</label>
+                            <span class="text-indigo-600 font-black"><span id="v0Val">25</span> m/s</span>
+                        </div>
+                        <input type="range" id="v0" min="5" max="60" value="25">
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <label class="text-sm font-bold text-slate-600 uppercase">Angolo (θ)</label>
+                            <span class="text-indigo-600 font-black"><span id="angleVal">45</span>°</span>
+                        </div>
+                        <input type="range" id="angle" min="0" max="90" value="45">
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <label class="text-sm font-bold text-slate-600 uppercase">Quota (h)</label>
+                            <span class="text-indigo-600 font-black"><span id="hVal">5</span> m</span>
+                        </div>
+                        <input type="range" id="h" min="0" max="30" value="5">
+                    </div>
+
+                    <div class="pt-2 border-t">
+                        <label class="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">Scenario Selezionato</label>
+                        <select id="projectileType" class="w-full border-2 border-slate-100 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 bg-slate-50 font-semibold text-slate-700 outline-none">
+                            <option value="cannon">💣 Artiglieria (Cannone)</option>
+                            <option value="soccer">⚽ Calcio (Punizione)</option>
+                            <option value="basketball">🏀 Basket (Tiro libero)</option>
+                            <option value="bird">🐦 Volatile arrabbiato (Fionda)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Box Equazioni -->
+                <div class="math-box">
+                    <h3 class="text-xs font-bold text-indigo-400 uppercase mb-2">Equazioni del moto</h3>
+                    <div id="equationDisplay" class="text-slate-800">
+                        \[ x(t) = v_0 \cos(\theta) t \]
+                        \[ y(t) = h + v_0 \sin(\theta) t - \frac{1}{2} g t^2 \]
+                    </div>
+                </div>
+            </div>
+
+            <!-- Area Visualizzazione -->
+            <div class="lg:col-span-9 space-y-6">
+                <!-- Canvas Principale -->
+                <div class="canvas-container" id="container">
+                    <canvas id="mainCanvas"></canvas>
+                </div>
+
+                <!-- Grafico Dati -->
+                <div class="graph-container">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-2">
+                        <h3 class="font-bold text-slate-700 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                            Analisi dei Dati
+                        </h3>
+                        <div class="flex gap-3">
+                            <div class="flex items-center bg-slate-100 px-2 py-1 rounded-md text-xs font-bold">
+                                <span class="text-slate-400 mr-1 italic">X:</span>
+                                <select id="xAxis" class="bg-transparent outline-none text-slate-700 cursor-pointer">
+                                    <option value="t">Tempo (t)</option>
+                                    <option value="x">Distanza (x)</option>
+                                    <option value="y">Altezza (y)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center bg-slate-100 px-2 py-1 rounded-md text-xs font-bold">
+                                <span class="text-slate-400 mr-1 italic">Y:</span>
+                                <select id="yAxis" class="bg-transparent outline-none text-slate-700 cursor-pointer">
+                                    <option value="y">Altezza (y)</option>
+                                    <option value="vx">Vel. x</option>
+                                    <option value="vy">Vel. y</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="graphCanvas" height="130"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const gctx = graphCanvas.getContext('2d');
+
+        const g = 9.81;
+        const ptm = 12; // Pixel a Metro
+
+        let v0 = 25;
+        let angleDeg = 45;
+        let h0 = 5;
+        let isAnimating = false;
+        let startTime = 0;
+        let trajectoryPoints = [];
+        
+        const inputs = {
+            v0: document.getElementById('v0'),
+            angle: document.getElementById('angle'),
+            h: document.getElementById('h'),
+            v0Val: document.getElementById('v0Val'),
+            angleVal: document.getElementById('angleVal'),
+            hVal: document.getElementById('hVal'),
+            type: document.getElementById('projectileType'),
+            startBtn: document.getElementById('startBtn'),
+            xAxis: document.getElementById('xAxis'),
+            yAxis: document.getElementById('yAxis')
+        };
+
+        function resize() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            graphCanvas.width = graphCanvas.parentElement.clientWidth - 40;
+            update();
+        }
+
+        window.addEventListener('resize', resize);
+        
+        function update() {
+            v0 = parseFloat(inputs.v0.value);
+            angleDeg = parseFloat(inputs.angle.value);
+            h0 = parseFloat(inputs.h.value);
+            
+            inputs.v0Val.innerText = v0;
+            inputs.angleVal.innerText = angleDeg;
+            inputs.hVal.innerText = h0;
+
+            updateEquations();
+            if (!isAnimating) draw();
+        }
+
+        function updateEquations() {
+            const angleRad = angleDeg * Math.PI / 180;
+            const vx = (v0 * Math.cos(angleRad)).toFixed(2);
+            const vy = (v0 * Math.sin(angleRad)).toFixed(2);
+            
+            const display = document.getElementById('equationDisplay');
+            display.innerHTML = `
+                \\[ v_{0x} = ${vx} \\, \\text{m/s}, \\quad v_{0y} = ${vy} \\, \\text{m/s} \\]
+                \\[ x(t) = ${vx} \\cdot t \\]
+                \\[ y(t) = ${h0} + ${vy} \\cdot t - 4.90 \\cdot t^2 \\]
+            `;
+            if (window.MathJax) MathJax.typesetPromise([display]);
+        }
+
+        function drawLauncher(x, y, angleDeg) {
+            const angleRad = angleDeg * Math.PI / 180;
+            const type = inputs.type.value;
+            ctx.save();
+            ctx.translate(x, y);
+
+            if (type === 'cannon') {
+                ctx.save();
+                ctx.rotate(-angleRad);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, -12, 50, 24); 
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(0, -12, 50, 24);
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(45, -14, 10, 28);
+                ctx.restore();
+                ctx.fillStyle = '#64748b';
+                ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(20, 0); ctx.lineTo(15, 20); ctx.lineTo(-15, 20); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath(); ctx.arc(-12, 22, 10, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(12, 22, 10, 0, Math.PI*2); ctx.fill();
+
+            } else if (type === 'soccer') {
+                ctx.translate(-20, 0);
+                // Gambe migliorate
+                ctx.strokeStyle = '#ffdbac';
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                // Gamba d'appoggio (flessa)
+                ctx.beginPath(); ctx.moveTo(14, 40); ctx.lineTo(8, 50); ctx.lineTo(12, 60); ctx.stroke();
+                // Gamba che calcia (movimento dinamico)
+                ctx.beginPath(); ctx.moveTo(18, 40); ctx.lineTo(35, 45); ctx.lineTo(42, 55); ctx.stroke();
+                
+                ctx.fillStyle = '#1d4ed8'; // Shorts
+                ctx.fillRect(10, 35, 12, 10);
+                ctx.fillStyle = '#dc2626'; // Maglietta
+                ctx.fillRect(8, 15, 16, 25);
+                ctx.fillStyle = '#ffdbac';
+                ctx.beginPath(); ctx.arc(16, 5, 10, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000'; // Scarpe
+                ctx.fillRect(10, 60, 8, 4);
+                ctx.fillRect(40, 55, 10, 5);
+
+            } else if (type === 'basketball') {
+                ctx.translate(-20, 0);
+                // Gambe flesse per il salto
+                ctx.strokeStyle = '#ffdbac';
+                ctx.lineWidth = 6;
+                ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(12, 45); ctx.lineTo(5, 55); ctx.lineTo(10, 65); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(22, 45); ctx.lineTo(28, 55); ctx.lineTo(23, 65); ctx.stroke();
+                
+                ctx.fillStyle = '#ea580c'; // Divisa
+                ctx.fillRect(8, 15, 18, 30);
+                ctx.fillStyle = '#ffdbac';
+                ctx.beginPath(); ctx.arc(17, 5, 10, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#ffdbac';
+                ctx.lineWidth = 5;
+                ctx.beginPath(); ctx.moveTo(10, 20); ctx.lineTo(0, 0); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(25, 20); ctx.lineTo(40, -5); ctx.stroke();
+                ctx.fillStyle = '#fff'; // Scarpe alte
+                ctx.fillRect(6, 65, 10, 6);
+                ctx.fillRect(19, 65, 10, 6);
+
+            } else if (type === 'bird') {
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 8;
+                ctx.beginPath(); ctx.moveTo(0, 70); ctx.lineTo(0, 20); ctx.stroke(); 
+                ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(-20, -15); ctx.stroke(); 
+                ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(20, -15); ctx.stroke(); 
+                if (!isAnimating) {
+                    ctx.strokeStyle = '#1e1b4b';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(-20, -15); ctx.lineTo(-30, 10); ctx.lineTo(20, -15); ctx.stroke();
+                }
+            }
+            ctx.restore();
+        }
+
+        function drawProjectile(x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+            const type = inputs.type.value;
+            
+            if (type === 'cannon') {
+                ctx.fillStyle = '#334155';
+                ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#000'; ctx.stroke();
+            } else if (type === 'soccer') {
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
+                ctx.fillStyle = '#000';
+                for(let i=0; i<6; i++) {
+                    ctx.beginPath(); ctx.arc(Math.cos(i)*6, Math.sin(i)*6, 3, 0, Math.PI*2); ctx.fill();
+                }
+            } else if (type === 'basketball') {
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#431407'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(-11, 0); ctx.lineTo(11, 0); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(0, 11); ctx.stroke();
+            } else if (type === 'bird') {
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-5, -13); ctx.lineTo(-8, -20); ctx.lineTo(0, -14); ctx.fill();
+                ctx.fillStyle = '#fef3c7';
+                ctx.beginPath(); ctx.ellipse(0, 7, 10, 6, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.beginPath(); ctx.arc(5, -4, 5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(-2, -4, 4, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.beginPath(); ctx.arc(6, -4, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(-1, -4, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = 'black'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(-6, -11); ctx.lineTo(1, -7); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(12, -11); ctx.lineTo(5, -7); ctx.stroke();
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(18, 3); ctx.lineTo(8, 7); ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const groundY = canvas.height - 50;
+            let grad = ctx.createLinearGradient(0, 0, 0, groundY);
+            grad.addColorStop(0, '#f0f9ff');
+            grad.addColorStop(1, '#bae6fd');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, groundY);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(0, groundY, canvas.width, 50);
+            ctx.fillStyle = '#16a34a';
+            ctx.fillRect(0, groundY, canvas.width, 4);
+
+            const angleRad = angleDeg * Math.PI / 180;
+            const vx = v0 * Math.cos(angleRad);
+            const vy = v0 * Math.sin(angleRad);
+            const startX = 70;
+            const startY = groundY - (h0 * ptm);
+
+            drawLauncher(startX, startY, angleDeg);
+
+            ctx.setLineDash([6, 10]);
+            ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            let t = 0; let px = startX; let py = startY;
+            while (py <= groundY && px < canvas.width) {
+                t += 0.05;
+                px = startX + (vx * t * ptm);
+                py = startY - (vy * t * ptm) + (0.5 * g * t * t * ptm);
+                ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            if (!isAnimating) {
+                if(inputs.type.value === 'soccer') drawProjectile(startX + 40, groundY - 10);
+                else if(inputs.type.value === 'basketball') drawProjectile(startX + 42, startY - 15);
+                else if(inputs.type.value === 'bird') drawProjectile(startX - 30, startY + 10);
+                else drawProjectile(startX, startY);
+            } else {
+                const curT = (Date.now() - startTime) / 1000;
+                const curX = startX + (vx * curT * ptm);
+                const curY = startY - (vy * curT * ptm) + (0.5 * g * curT * curT * ptm);
+                ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2.5; ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                trajectoryPoints.forEach(p => ctx.lineTo(p.x, p.y));
+                ctx.stroke();
+
+                if (curY > groundY) {
+                    isAnimating = false;
+                    drawProjectile(curX, groundY - 8);
+                } else {
+                    trajectoryPoints.push({x: curX, y: curY, t: curT, vx: vx, vy: vy - g*curT});
+                    drawProjectile(curX, curY);
+                    updateGraph();
+                    requestAnimationFrame(draw);
+                }
+            }
+        }
+
+        function updateGraph() {
+            gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+            if (trajectoryPoints.length < 2) return;
+            const xType = inputs.xAxis.value;
+            const yType = inputs.yAxis.value;
+            const getData = (p, type) => {
+                switch(type) {
+                    case 't': return p.t;
+                    case 'x': return (p.x - 70) / ptm;
+                    case 'y': return (canvas.height - 50 - p.y) / ptm;
+                    case 'vx': return p.vx;
+                    case 'vy': return p.vy;
+                    default: return 0;
+                }
+            };
+            const dataX = trajectoryPoints.map(p => getData(p, xType));
+            const dataY = trajectoryPoints.map(p => getData(p, yType));
+            const minX = Math.min(...dataX, 0); const maxX = Math.max(...dataX, 1);
+            const minY = Math.min(...dataY, 0); const maxY = Math.max(...dataY, 1);
+            const pad = 40;
+            const mapX = (v) => pad + (v - minX) / (maxX - minX) * (graphCanvas.width - 2 * pad);
+            const mapY = (v) => (graphCanvas.height - pad) - (v - minY) / (maxY - minY) * (graphCanvas.height - 2 * pad);
+            gctx.strokeStyle = '#f1f5f9'; gctx.beginPath();
+            for(let i=1; i<5; i++){
+                let gx = pad + i * (graphCanvas.width - 2*pad)/5; gctx.moveTo(gx, 0); gctx.lineTo(gx, graphCanvas.height - pad);
+            }
+            gctx.stroke();
+            gctx.strokeStyle = '#94a3b8'; gctx.lineWidth = 1.5; gctx.beginPath();
+            gctx.moveTo(pad, 10); gctx.lineTo(pad, graphCanvas.height - pad);
+            gctx.moveTo(pad, graphCanvas.height - pad); gctx.lineTo(graphCanvas.width - 10, graphCanvas.height - pad);
+            gctx.stroke();
+            gctx.strokeStyle = '#6366f1'; gctx.lineWidth = 3; gctx.lineJoin = 'round'; gctx.beginPath();
+            gctx.moveTo(mapX(dataX[0]), mapY(dataY[0]));
+            for(let i=1; i<dataX.length; i++) gctx.lineTo(mapX(dataX[i]), mapY(dataY[i]));
+            gctx.stroke();
+        }
+
+        inputs.startBtn.onclick = () => {
+            isAnimating = true; startTime = Date.now(); trajectoryPoints = []; draw();
+        };
+        [inputs.v0, inputs.angle, inputs.h, inputs.type].forEach(el => el.oninput = update);
+        [inputs.xAxis, inputs.yAxis].forEach(el => el.onchange = updateGraph);
+        setTimeout(() => { resize(); update(); }, 300);
+    </script>
+</body>
+</html>
