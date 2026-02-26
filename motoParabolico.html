@@ -124,7 +124,8 @@
                             </div>
                         </div>
                     </div>
-                    <canvas id="graphCanvas" height="160"></canvas>
+                    <!-- Altezza del grafico aumentata -->
+                    <canvas id="graphCanvas" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -392,7 +393,7 @@
             const padLeft = 60;
             const padBottom = 50;
             const padRight = 30;
-            const padTop = 20;
+            const padTop = 30;
 
             const getData = (p, type) => {
                 switch(type) {
@@ -408,64 +409,115 @@
             const dataX = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, xType)) : [0, 10];
             const dataY = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, yType)) : [0, 10];
             
-            const minX = Math.min(...dataX, 0); const maxX = Math.max(...dataX, 1);
-            const minY = Math.min(...dataY, 0); const maxY = Math.max(...dataY, 1);
+            const minX = Math.min(...dataX, 0); 
+            const maxX = Math.max(...dataX, 1);
+            const minY = Math.min(...dataY, 0); 
+            const maxY = Math.max(...dataY, 1);
 
             const mapX = (v) => padLeft + (v - minX) / (maxX - minX) * (graphCanvas.width - padLeft - padRight);
             const mapY = (v) => (graphCanvas.height - padBottom) - (v - minY) / (maxY - minY) * (graphCanvas.height - padBottom - padTop);
 
-            // Griglia di sfondo
-            gctx.strokeStyle = '#f1f5f9'; gctx.lineWidth = 1; gctx.beginPath();
-            for(let i=1; i<=5; i++){
-                let gx = padLeft + i * (graphCanvas.width - padLeft - padRight)/5;
-                gctx.moveTo(gx, padTop); gctx.lineTo(gx, graphCanvas.height - padBottom);
-                let gy = (graphCanvas.height - padBottom) - i * (graphCanvas.height - padBottom - padTop)/5;
-                gctx.moveTo(padLeft, gy); gctx.lineTo(graphCanvas.width - padRight, gy);
-            }
-            gctx.stroke();
+            // Griglia di sfondo più dettagliata
+            gctx.setLineDash([2, 4]);
+            gctx.strokeStyle = '#e2e8f0'; 
+            gctx.lineWidth = 1;
+            
+            // Griglia Verticale e Tick X
+            const xTicks = 10;
+            for(let i=0; i<=xTicks; i++){
+                const val = minX + i * (maxX - minX) / xTicks;
+                const gx = mapX(val);
+                
+                gctx.beginPath();
+                gctx.moveTo(gx, padTop); 
+                gctx.lineTo(gx, graphCanvas.height - padBottom);
+                gctx.stroke();
 
-            // Assi
-            gctx.strokeStyle = '#64748b'; gctx.lineWidth = 2; gctx.beginPath();
-            gctx.moveTo(padLeft, padTop); gctx.lineTo(padLeft, graphCanvas.height - padBottom); // Y
-            gctx.lineTo(graphCanvas.width - padRight, graphCanvas.height - padBottom); // X
+                // Label X
+                gctx.setLineDash([]);
+                gctx.fillStyle = '#64748b';
+                gctx.font = '10px Inter, sans-serif';
+                gctx.textAlign = 'center';
+                gctx.fillText(val.toFixed(1), gx, graphCanvas.height - padBottom + 15);
+                gctx.setLineDash([2, 4]);
+            }
+
+            // Griglia Orizzontale e Tick Y
+            const yTicks = 8;
+            for(let i=0; i<=yTicks; i++){
+                const val = minY + i * (maxY - minY) / yTicks;
+                const gy = mapY(val);
+                
+                gctx.beginPath();
+                gctx.moveTo(padLeft, gy); 
+                gctx.lineTo(graphCanvas.width - padRight, gy);
+                gctx.stroke();
+
+                // Label Y
+                gctx.setLineDash([]);
+                gctx.fillStyle = '#64748b';
+                gctx.font = '10px Inter, sans-serif';
+                gctx.textAlign = 'right';
+                gctx.fillText(val.toFixed(1), padLeft - 10, gy + 3);
+                gctx.setLineDash([2, 4]);
+            }
+            gctx.setLineDash([]);
+
+            // Assi Principali
+            gctx.strokeStyle = '#334155'; 
+            gctx.lineWidth = 2; 
+            gctx.beginPath();
+            gctx.moveTo(padLeft, padTop); 
+            gctx.lineTo(padLeft, graphCanvas.height - padBottom); // Asse Y
+            gctx.lineTo(graphCanvas.width - padRight, graphCanvas.height - padBottom); // Asse X
             gctx.stroke();
 
             // Titoli Assi
-            gctx.fillStyle = '#475569';
-            gctx.font = 'bold 12px Inter, sans-serif';
+            gctx.fillStyle = '#1e293b';
+            gctx.font = 'bold 13px Inter, sans-serif';
             gctx.textAlign = 'center';
             
-            // X Label
+            // Titolo X
             gctx.fillText(axisLabels[xType], padLeft + (graphCanvas.width - padLeft - padRight) / 2, graphCanvas.height - 10);
             
-            // Y Label (ruotata)
+            // Titolo Y (Ruotato)
             gctx.save();
             gctx.translate(15, padTop + (graphCanvas.height - padBottom - padTop) / 2);
             gctx.rotate(-Math.PI / 2);
             gctx.fillText(axisLabels[yType], 0, 0);
             gctx.restore();
 
-            // Valori estremi assi
-            gctx.font = '10px Inter, sans-serif';
-            gctx.textAlign = 'right';
-            gctx.fillText(minY.toFixed(1), padLeft - 8, graphCanvas.height - padBottom + 4);
-            gctx.fillText(maxY.toFixed(1), padLeft - 8, padTop + 8);
-            
-            gctx.textAlign = 'center';
-            gctx.fillText(minX.toFixed(1), padLeft, graphCanvas.height - padBottom + 15);
-            gctx.fillText(maxX.toFixed(1), graphCanvas.width - padRight, graphCanvas.height - padBottom + 15);
-
-            // Disegno Linea se ci sono dati
+            // Disegno Linea Dati
             if (trajectoryPoints.length >= 2) {
-                gctx.strokeStyle = '#6366f1'; gctx.lineWidth = 3; gctx.lineJoin = 'round'; gctx.beginPath();
+                gctx.strokeStyle = '#6366f1'; 
+                gctx.lineWidth = 3; 
+                gctx.lineCap = 'round';
+                gctx.lineJoin = 'round';
+                gctx.beginPath();
                 gctx.moveTo(mapX(dataX[0]), mapY(dataY[0]));
-                for(let i=1; i<dataX.length; i++) gctx.lineTo(mapX(dataX[i]), mapY(dataY[i]));
+                for(let i=1; i<dataX.length; i++) {
+                    gctx.lineTo(mapX(dataX[i]), mapY(dataY[i]));
+                }
+                gctx.stroke();
+
+                // Punto corrente sulla curva
+                const lastX = mapX(dataX[dataX.length-1]);
+                const lastY = mapY(dataY[dataY.length-1]);
+                gctx.fillStyle = '#6366f1';
+                gctx.beginPath();
+                gctx.arc(lastX, lastY, 4, 0, Math.PI*2);
+                gctx.fill();
+                gctx.strokeStyle = 'white';
+                gctx.lineWidth = 2;
                 gctx.stroke();
             }
         }
 
         inputs.startBtn.onclick = () => {
-            isAnimating = true; startTime = Date.now(); trajectoryPoints = []; draw();
+            isAnimating = true; 
+            startTime = Date.now(); 
+            trajectoryPoints = []; 
+            draw();
         };
         
         [inputs.v0, inputs.angle, inputs.h, inputs.type].forEach(el => el.oninput = update);
