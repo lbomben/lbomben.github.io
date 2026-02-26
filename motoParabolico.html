@@ -112,14 +112,22 @@
                                     <option value="t">Tempo (t)</option>
                                     <option value="x">Distanza (x)</option>
                                     <option value="y">Altezza (y)</option>
+                                    <option value="vx">Velocità x (vx)</option>
+                                    <option value="vy">Velocità y (vy)</option>
+                                    <option value="ax">Acc. x (ax)</option>
+                                    <option value="ay">Acc. y (ay)</option>
                                 </select>
                             </div>
                             <div class="flex items-center bg-slate-100 px-2 py-1 rounded-md text-xs font-bold">
                                 <span class="text-slate-400 mr-1 italic">Y:</span>
                                 <select id="yAxis" class="bg-transparent outline-none text-slate-700 cursor-pointer">
                                     <option value="y">Altezza (y)</option>
-                                    <option value="vx">Vel. x</option>
-                                    <option value="vy">Vel. y</option>
+                                    <option value="x">Distanza (x)</option>
+                                    <option value="t">Tempo (t)</option>
+                                    <option value="vx">Velocità x (vx)</option>
+                                    <option value="vy">Velocità y (vy)</option>
+                                    <option value="ax">Acc. x (ax)</option>
+                                    <option value="ay">Acc. y (ay)</option>
                                 </select>
                             </div>
                         </div>
@@ -165,7 +173,9 @@
             x: 'Distanza (m)',
             y: 'Altezza (m)',
             vx: 'Velocità x (m/s)',
-            vy: 'Velocità y (m/s)'
+            vy: 'Velocità y (m/s)',
+            ax: 'Accelerazione x (m/s²)',
+            ay: 'Accelerazione y (m/s²)'
         };
 
         function resize() {
@@ -377,7 +387,15 @@
                     isAnimating = false;
                     drawProjectile(curX, groundY - 8);
                 } else {
-                    trajectoryPoints.push({x: curX, y: curY, t: curT, vx: vx, vy: vy - g*curT});
+                    trajectoryPoints.push({
+                        x: curX, 
+                        y: curY, 
+                        t: curT, 
+                        vx: vx, 
+                        vy: vy - g * curT,
+                        ax: 0,
+                        ay: -g
+                    });
                     drawProjectile(curX, curY);
                     updateGraph();
                     requestAnimationFrame(draw);
@@ -390,7 +408,7 @@
             
             const xType = inputs.xAxis.value;
             const yType = inputs.yAxis.value;
-            const padLeft = 60;
+            const padLeft = 70; // Aumentato per label ay/ax
             const padBottom = 50;
             const padRight = 30;
             const padTop = 30;
@@ -402,17 +420,23 @@
                     case 'y': return (canvas.height - 50 - p.y) / ptm;
                     case 'vx': return p.vx;
                     case 'vy': return p.vy;
+                    case 'ax': return p.ax;
+                    case 'ay': return p.ay;
                     default: return 0;
                 }
             };
 
-            const dataX = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, xType)) : [0, 10];
-            const dataY = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, yType)) : [0, 10];
+            const dataX = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, xType)) : [0, 1];
+            const dataY = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, yType)) : [0, 1];
             
-            const minX = Math.min(...dataX, 0); 
-            const maxX = Math.max(...dataX, 1);
-            const minY = Math.min(...dataY, 0); 
-            const maxY = Math.max(...dataY, 1);
+            let minX = Math.min(...dataX, 0); 
+            let maxX = Math.max(...dataX, 1);
+            let minY = Math.min(...dataY, 0); 
+            let maxY = Math.max(...dataY, 1);
+
+            // Evita divisione per zero se i dati sono costanti (es. accelerazione)
+            if (maxX === minX) { maxX += 1; minX -= 1; }
+            if (maxY === minY) { maxY += 1; minY -= 1; }
 
             const mapX = (v) => padLeft + (v - minX) / (maxX - minX) * (graphCanvas.width - padLeft - padRight);
             const mapY = (v) => (graphCanvas.height - padBottom) - (v - minY) / (maxY - minY) * (graphCanvas.height - padBottom - padTop);
@@ -517,6 +541,17 @@
             isAnimating = true; 
             startTime = Date.now(); 
             trajectoryPoints = []; 
+            // Inizializza il primo punto per permettere grafici istantanei
+            const angleRad = angleDeg * Math.PI / 180;
+            trajectoryPoints.push({
+                x: 70, 
+                y: canvas.height - 50 - (h0 * ptm), 
+                t: 0, 
+                vx: v0 * Math.cos(angleRad), 
+                vy: v0 * Math.sin(angleRad),
+                ax: 0,
+                ay: -g
+            });
             draw();
         };
         
