@@ -99,7 +99,7 @@
                 </div>
 
                 <!-- Grafico Dati -->
-                <div class="graph-container">
+                <div class="graph-container p-4 bg-white rounded-xl shadow-sm border border-slate-200">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-2">
                         <h3 class="font-bold text-slate-700 flex items-center">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
@@ -124,7 +124,7 @@
                             </div>
                         </div>
                     </div>
-                    <canvas id="graphCanvas" height="130"></canvas>
+                    <canvas id="graphCanvas" height="160"></canvas>
                 </div>
             </div>
         </div>
@@ -159,6 +159,14 @@
             yAxis: document.getElementById('yAxis')
         };
 
+        const axisLabels = {
+            t: 'Tempo (s)',
+            x: 'Distanza (m)',
+            y: 'Altezza (m)',
+            vx: 'Velocità x (m/s)',
+            vy: 'Velocità y (m/s)'
+        };
+
         function resize() {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
@@ -179,6 +187,7 @@
 
             updateEquations();
             if (!isAnimating) draw();
+            updateGraph();
         }
 
         function updateEquations() {
@@ -220,35 +229,29 @@
 
             } else if (type === 'soccer') {
                 ctx.translate(-20, 0);
-                // Gambe migliorate
                 ctx.strokeStyle = '#ffdbac';
                 ctx.lineWidth = 5;
                 ctx.lineCap = 'round';
-                // Gamba d'appoggio (flessa)
                 ctx.beginPath(); ctx.moveTo(14, 40); ctx.lineTo(8, 50); ctx.lineTo(12, 60); ctx.stroke();
-                // Gamba che calcia (movimento dinamico)
                 ctx.beginPath(); ctx.moveTo(18, 40); ctx.lineTo(35, 45); ctx.lineTo(42, 55); ctx.stroke();
-                
-                ctx.fillStyle = '#1d4ed8'; // Shorts
+                ctx.fillStyle = '#1d4ed8';
                 ctx.fillRect(10, 35, 12, 10);
-                ctx.fillStyle = '#dc2626'; // Maglietta
+                ctx.fillStyle = '#dc2626';
                 ctx.fillRect(8, 15, 16, 25);
                 ctx.fillStyle = '#ffdbac';
                 ctx.beginPath(); ctx.arc(16, 5, 10, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#000'; // Scarpe
+                ctx.fillStyle = '#000';
                 ctx.fillRect(10, 60, 8, 4);
                 ctx.fillRect(40, 55, 10, 5);
 
             } else if (type === 'basketball') {
                 ctx.translate(-20, 0);
-                // Gambe flesse per il salto
                 ctx.strokeStyle = '#ffdbac';
                 ctx.lineWidth = 6;
                 ctx.lineCap = 'round';
                 ctx.beginPath(); ctx.moveTo(12, 45); ctx.lineTo(5, 55); ctx.lineTo(10, 65); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(22, 45); ctx.lineTo(28, 55); ctx.lineTo(23, 65); ctx.stroke();
-                
-                ctx.fillStyle = '#ea580c'; // Divisa
+                ctx.fillStyle = '#ea580c';
                 ctx.fillRect(8, 15, 18, 30);
                 ctx.fillStyle = '#ffdbac';
                 ctx.beginPath(); ctx.arc(17, 5, 10, 0, Math.PI*2); ctx.fill();
@@ -256,7 +259,7 @@
                 ctx.lineWidth = 5;
                 ctx.beginPath(); ctx.moveTo(10, 20); ctx.lineTo(0, 0); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(25, 20); ctx.lineTo(40, -5); ctx.stroke();
-                ctx.fillStyle = '#fff'; // Scarpe alte
+                ctx.fillStyle = '#fff';
                 ctx.fillRect(6, 65, 10, 6);
                 ctx.fillRect(19, 65, 10, 6);
 
@@ -383,9 +386,14 @@
 
         function updateGraph() {
             gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
-            if (trajectoryPoints.length < 2) return;
+            
             const xType = inputs.xAxis.value;
             const yType = inputs.yAxis.value;
+            const padLeft = 60;
+            const padBottom = 50;
+            const padRight = 30;
+            const padTop = 20;
+
             const getData = (p, type) => {
                 switch(type) {
                     case 't': return p.t;
@@ -396,33 +404,73 @@
                     default: return 0;
                 }
             };
-            const dataX = trajectoryPoints.map(p => getData(p, xType));
-            const dataY = trajectoryPoints.map(p => getData(p, yType));
+
+            const dataX = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, xType)) : [0, 10];
+            const dataY = trajectoryPoints.length > 0 ? trajectoryPoints.map(p => getData(p, yType)) : [0, 10];
+            
             const minX = Math.min(...dataX, 0); const maxX = Math.max(...dataX, 1);
             const minY = Math.min(...dataY, 0); const maxY = Math.max(...dataY, 1);
-            const pad = 40;
-            const mapX = (v) => pad + (v - minX) / (maxX - minX) * (graphCanvas.width - 2 * pad);
-            const mapY = (v) => (graphCanvas.height - pad) - (v - minY) / (maxY - minY) * (graphCanvas.height - 2 * pad);
-            gctx.strokeStyle = '#f1f5f9'; gctx.beginPath();
-            for(let i=1; i<5; i++){
-                let gx = pad + i * (graphCanvas.width - 2*pad)/5; gctx.moveTo(gx, 0); gctx.lineTo(gx, graphCanvas.height - pad);
+
+            const mapX = (v) => padLeft + (v - minX) / (maxX - minX) * (graphCanvas.width - padLeft - padRight);
+            const mapY = (v) => (graphCanvas.height - padBottom) - (v - minY) / (maxY - minY) * (graphCanvas.height - padBottom - padTop);
+
+            // Griglia di sfondo
+            gctx.strokeStyle = '#f1f5f9'; gctx.lineWidth = 1; gctx.beginPath();
+            for(let i=1; i<=5; i++){
+                let gx = padLeft + i * (graphCanvas.width - padLeft - padRight)/5;
+                gctx.moveTo(gx, padTop); gctx.lineTo(gx, graphCanvas.height - padBottom);
+                let gy = (graphCanvas.height - padBottom) - i * (graphCanvas.height - padBottom - padTop)/5;
+                gctx.moveTo(padLeft, gy); gctx.lineTo(graphCanvas.width - padRight, gy);
             }
             gctx.stroke();
-            gctx.strokeStyle = '#94a3b8'; gctx.lineWidth = 1.5; gctx.beginPath();
-            gctx.moveTo(pad, 10); gctx.lineTo(pad, graphCanvas.height - pad);
-            gctx.moveTo(pad, graphCanvas.height - pad); gctx.lineTo(graphCanvas.width - 10, graphCanvas.height - pad);
+
+            // Assi
+            gctx.strokeStyle = '#64748b'; gctx.lineWidth = 2; gctx.beginPath();
+            gctx.moveTo(padLeft, padTop); gctx.lineTo(padLeft, graphCanvas.height - padBottom); // Y
+            gctx.lineTo(graphCanvas.width - padRight, graphCanvas.height - padBottom); // X
             gctx.stroke();
-            gctx.strokeStyle = '#6366f1'; gctx.lineWidth = 3; gctx.lineJoin = 'round'; gctx.beginPath();
-            gctx.moveTo(mapX(dataX[0]), mapY(dataY[0]));
-            for(let i=1; i<dataX.length; i++) gctx.lineTo(mapX(dataX[i]), mapY(dataY[i]));
-            gctx.stroke();
+
+            // Titoli Assi
+            gctx.fillStyle = '#475569';
+            gctx.font = 'bold 12px Inter, sans-serif';
+            gctx.textAlign = 'center';
+            
+            // X Label
+            gctx.fillText(axisLabels[xType], padLeft + (graphCanvas.width - padLeft - padRight) / 2, graphCanvas.height - 10);
+            
+            // Y Label (ruotata)
+            gctx.save();
+            gctx.translate(15, padTop + (graphCanvas.height - padBottom - padTop) / 2);
+            gctx.rotate(-Math.PI / 2);
+            gctx.fillText(axisLabels[yType], 0, 0);
+            gctx.restore();
+
+            // Valori estremi assi
+            gctx.font = '10px Inter, sans-serif';
+            gctx.textAlign = 'right';
+            gctx.fillText(minY.toFixed(1), padLeft - 8, graphCanvas.height - padBottom + 4);
+            gctx.fillText(maxY.toFixed(1), padLeft - 8, padTop + 8);
+            
+            gctx.textAlign = 'center';
+            gctx.fillText(minX.toFixed(1), padLeft, graphCanvas.height - padBottom + 15);
+            gctx.fillText(maxX.toFixed(1), graphCanvas.width - padRight, graphCanvas.height - padBottom + 15);
+
+            // Disegno Linea se ci sono dati
+            if (trajectoryPoints.length >= 2) {
+                gctx.strokeStyle = '#6366f1'; gctx.lineWidth = 3; gctx.lineJoin = 'round'; gctx.beginPath();
+                gctx.moveTo(mapX(dataX[0]), mapY(dataY[0]));
+                for(let i=1; i<dataX.length; i++) gctx.lineTo(mapX(dataX[i]), mapY(dataY[i]));
+                gctx.stroke();
+            }
         }
 
         inputs.startBtn.onclick = () => {
             isAnimating = true; startTime = Date.now(); trajectoryPoints = []; draw();
         };
+        
         [inputs.v0, inputs.angle, inputs.h, inputs.type].forEach(el => el.oninput = update);
         [inputs.xAxis, inputs.yAxis].forEach(el => el.onchange = updateGraph);
+        
         setTimeout(() => { resize(); update(); }, 300);
     </script>
 </body>
