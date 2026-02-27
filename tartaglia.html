@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esploratore Triangolo di Tartaglia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Caricamento MathJax per il rendering LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .triangle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-width: fit-content;
+        }
+        .row-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+        .power-label {
+            width: 80px;
+            text-align: right;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .expansion-label {
+            width: 450px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #334155;
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .row-cells {
+            display: flex;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        .cell {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+        .cell:hover {
+            transform: scale(1.15);
+            background: #3b82f6;
+            color: white;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .cell.highlight-parent {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+        .term-highlight {
+            background-color: #fde047;
+            border-radius: 4px;
+            padding: 2px 4px;
+            transition: background-color 0.2s;
+        }
+        .controls {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-2">Triangolo di Tartaglia</h1>
+            <p class="text-slate-600">Esplorazione delle potenze di binomio e coefficienti.</p>
+        </header>
+
+        <div class="controls border rounded-xl p-6 shadow-sm mb-8 flex flex-wrap items-center justify-center gap-6">
+            <div class="flex flex-col">
+                <label for="rowsInput" class="text-sm font-semibold text-slate-700 mb-1">Numero di righe:</label>
+                <div class="flex items-center gap-4">
+                    <input type="range" id="rowsRange" min="1" max="15" value="8" class="h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
+                    <input type="number" id="rowsInput" min="1" max="20" value="8" class="w-16 p-1 border rounded text-center font-bold">
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border rounded-2xl shadow-inner min-h-[500px] flex items-start justify-center overflow-auto py-10">
+            <div id="triangle" class="triangle-container"></div>
+        </div>
+
+        <footer class="mt-12 text-center text-slate-500 text-sm">
+            <p>Il valore di ogni cella è la somma dei due numeri sovrastanti.</p>
+        </footer>
+    </div>
+
+    <script>
+        const triangleElement = document.getElementById('triangle');
+        const rowsInput = document.getElementById('rowsInput');
+        const rowsRange = document.getElementById('rowsRange');
+
+        rowsRange.addEventListener('input', () => { rowsInput.value = rowsRange.value; generateTriangle(); });
+        rowsInput.addEventListener('input', () => { rowsRange.value = rowsInput.value; generateTriangle(); });
+
+        function getExpansionHTML(rowValues, n) {
+            if (n === 0) return `<span id="term-0-0">1</span>`;
+            let terms = [];
+            for (let k = 0; k <= n; k++) {
+                let coeff = rowValues[k];
+                let aPow = n - k;
+                let bPow = k;
+                
+                let termStr = "";
+                // Coefficiente
+                if (coeff !== 1 || (aPow === 0 && bPow === 0)) termStr += coeff;
+                
+                // Variabile a
+                if (aPow > 0) {
+                    termStr += "a";
+                    if (aPow > 1) termStr += `^{${aPow}}`;
+                }
+                
+                // Variabile b
+                if (bPow > 0) {
+                    termStr += "b";
+                    if (bPow > 1) termStr += `^{${bPow}}`;
+                }
+                
+                // Wrap each term in a span with a unique ID for highlighting
+                terms.push(`<span id="term-${n}-${k}">$${termStr}$</span>`);
+            }
+            return terms.join(" + ");
+        }
+
+        function generateTriangle() {
+            const numRows = parseInt(rowsInput.value);
+            if (isNaN(numRows) || numRows < 1) return;
+            
+            triangleElement.innerHTML = '';
+            const triangleData = [];
+
+            for (let i = 0; i < numRows; i++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'row-wrapper';
+
+                // Sinistra: Potenza del binomio
+                const powerLabel = document.createElement('div');
+                powerLabel.className = 'power-label';
+                powerLabel.innerHTML = `$(a+b)^{${i}}$`;
+                wrapper.appendChild(powerLabel);
+
+                // Centro: Celle del triangolo
+                const cellsContainer = document.createElement('div');
+                cellsContainer.className = 'row-cells';
+                const rowData = [];
+
+                for (let j = 0; j <= i; j++) {
+                    let val;
+                    if (j === 0 || j === i) {
+                        val = 1;
+                    } else {
+                        val = triangleData[i - 1][j - 1] + triangleData[i - 1][j];
+                    }
+                    rowData.push(val);
+
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = val;
+                    
+                    if (val > 999) cell.style.fontSize = '0.7rem';
+
+                    cell.addEventListener('mouseenter', () => {
+                        highlightParents(i, j, true);
+                        highlightTerm(i, j, true);
+                    });
+
+                    cell.addEventListener('mouseleave', () => {
+                        highlightParents(i, j, false);
+                        highlightTerm(i, j, false);
+                    });
+
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    cellsContainer.appendChild(cell);
+                }
+                triangleData.push(rowData);
+                wrapper.appendChild(cellsContainer);
+
+                // Destra: Sviluppo algebrico
+                const expansionLabel = document.createElement('div');
+                expansionLabel.className = 'expansion-label';
+                expansionLabel.innerHTML = getExpansionHTML(rowData, i);
+                wrapper.appendChild(expansionLabel);
+
+                triangleElement.appendChild(wrapper);
+            }
+
+            // Trigger MathJax rendering
+            if (window.MathJax) {
+                MathJax.typesetPromise([triangleElement]);
+            }
+        }
+
+        function highlightParents(r, c, highlight) {
+            if (r === 0) return;
+            const rows = document.querySelectorAll('.row-cells');
+            const parentRow = rows[r - 1];
+            if (!parentRow) return;
+
+            const leftParent = parentRow.querySelector(`[data-col="${c - 1}"]`);
+            const rightParent = parentRow.querySelector(`[data-col="${c}"]`);
+
+            if (leftParent) leftParent.classList.toggle('highlight-parent', highlight);
+            if (rightParent) rightParent.classList.toggle('highlight-parent', highlight);
+        }
+
+        function highlightTerm(r, k, highlight) {
+            const termSpan = document.getElementById(`term-${r}-${k}`);
+            if (termSpan) {
+                if (highlight) {
+                    termSpan.classList.add('term-highlight');
+                } else {
+                    termSpan.classList.remove('term-highlight');
+                }
+            }
+        }
+
+        // Generazione iniziale
+        window.onload = generateTriangle;
+    </script>
+</body>
+</html>
