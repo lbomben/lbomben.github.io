@@ -72,6 +72,346 @@
             <button onclick="checkAnswer(false)" class="btn-choice bg-amber-500 text-white py-5 rounded-2xl font-black text-xl shadow-lg border-b-4 border-amber-700">CONCAVA</button>
         </div>
 
+        <div id="feedback-panel" class="opacity-0 transition-opacity duration-300 mb-6">
+            <div id="feedback-box" class="p-5 rounded-2xl border-4 flex flex-col items-center text-center">
+                <div id="feedback-msg" class="font-black text-2xl mb-2"></div>
+                <div id="explanation-msg" class="text-slate-700 text-sm leading-relaxed"></div>
+            </div>
+        </div>
+
+        <div class="bg-indigo-50 border-2 border-indigo-100 p-5 rounded-2xl">
+            <h3 class="font-bold text-indigo-900 mb-2 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Regola fondamentale:
+            </h3>
+            <p class="text-indigo-800 text-sm leading-relaxed">
+                Una figura è <strong>concava</strong> se puoi trovare due suoi punti il cui segmento di collegamento <strong>esce</strong> dalla figura. Se ogni segmento tra punti della figura è contenuto in essa, è <strong>convessa</strong>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('polygonCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentIsConvex = true;
+        let score = 0;
+        let streak = 0;
+        let currentPoints = [];
+        let holePoints = null; 
+        let figureType = 'polygon';
+        let proofSegment = null;
+        let angleInfo = null;
+
+        function initCanvas() {
+            const size = canvas.parentElement.clientWidth;
+            canvas.width = size;
+            canvas.height = size;
+            generateFigure();
+        }
+
+        function isPolygonConvex(points) {
+            if (points.length < 3) return true;
+            let sign = 0;
+            for (let i = 0; i < points.length; i++) {
+                const p1 = points[i];
+                const p2 = points[(i + 1) % points.length];
+                const p3 = points[(i + 2) % points.length];
+                const cp = (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x);
+                if (cp !== 0) {
+                    if (sign === 0) sign = cp > 0 ? 1 : -1;
+                    else if ((cp > 0 ? 1 : -1) !== sign) return false;
+                }
+            }
+            return true;
+        }
+
+        function generateFigure() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const rBase = canvas.width * 0.3;
+            currentPoints = [];
+            holePoints = null;
+            proofSegment = null;
+            angleInfo = null;
+
+            const pool = ['polygon', 'polygon', 'hole', 'polyline', 'angle', 'ray'];
+            figureType = pool[Math.floor(Math.random() * pool.length)];
+
+            if (figureType === 'angle') {
+                currentIsConvex = Math.random() > 0.5;
+                const startAngle = Math.random() * Math.PI * 2;
+                const r = rBase * (0.8 + Math.random() * 0.4);
+                let sweep = currentIsConvex ? (25 + Math.random() * 125) * (Math.PI / 180) : (205 + Math.random() * 130) * (Math.PI / 180);
+                angleInfo = { start: startAngle, sweep: sweep };
+                currentPoints.push({ x: cx + Math.cos(startAngle) * r, y: cy + Math.sin(startAngle) * r }, { x: cx, y: cy }, { x: cx + Math.cos(startAngle + sweep) * r, y: cy + Math.sin(startAngle + sweep) * r });
+                if (!currentIsConvex) {
+                    proofSegment = {
+                        p1: { x: cx + Math.cos(startAngle + 0.1) * (r*0.85), y: cy + Math.sin(startAngle + 0.1) * (r*0.85) },
+                        p2: { x: cx + Math.cos(startAngle + sweep - 0.1) * (r*0.85), y: cy + Math.sin(startAngle + sweep - 0.1) * (r*0.85) }
+                    };
+                }
+            } 
+            else if (figureType === 'hole') {
+                currentIsConvex = false;
+                const sides = 3 + Math.floor(Math.random() * 7);
+                const rExt = rBase * (0.9 + Math.random() * 0.2);
+                for(let i=0; i<sides; i++) currentPoints.push({x: cx + Math.cos((i/sides) * Math.PI * 2)*rExt, y: cy + Math.sin((i/sides) * Math.PI * 2)*rExt});
+                holePoints = [];
+                const holeType = Math.floor(Math.random() * 4);
+                const holeSize = rBase * (0.25 + Math.random() * 0.2);
+                const ox = (Math.random() - 0.5) * rBase * 0.4;
+                const oy = (Math.random() - 0.5) * rBase * 0.4;
+                if(holeType === 0) for(let i=16; i>=0; i--) holePoints.push({x: cx + ox + Math.cos((i/16) * Math.PI * 2)*holeSize, y: cy + oy + Math.sin((i/16) * Math.PI * 2)*holeSize});
+                else if (holeType === 1) {
+                    const rot = Math.random() * Math.PI;
+                    for(let i=2; i>=0; i--) holePoints.push({x: cx + ox + Math.cos(rot + (i/3) * Math.PI * 2)*holeSize, y: cy + oy + Math.sin(rot + (i/3) * Math.PI * 2)*holeSize});
+                } else if (holeType === 2) {
+                    const hw = holeSize * (0.8 + Math.random() * 0.4), hh = holeSize * (0.8 + Math.random() * 0.4);
+                    holePoints.push({x: cx + ox - hw, y: cy + oy - hh}, {x: cx + ox - hw, y: cy + oy + hh}, {x: cx + ox + hw, y: cy + oy + hh}, {x: cx + ox + hw, y: cy + oy - hh});
+                } else {
+                    for(let i=7; i>=0; i--) {
+                        const a = (i/8) * Math.PI * 2, d = (i % 2 === 0) ? holeSize : holeSize * 0.5;
+                        holePoints.push({x: cx + ox + Math.cos(a)*d, y: cy + oy + Math.sin(a)*d});
+                    }
+                }
+                proofSegment = { p1: {x: cx + ox + holeSize + 10, y: cy + oy}, p2: {x: cx + ox - holeSize - 10, y: cy + oy} };
+            }
+            else if (figureType === 'ray') {
+                currentIsConvex = true;
+                const angle = Math.random() * Math.PI * 2, r = rBase * (1.2 + Math.random() * 0.4);
+                currentPoints.push({ x: cx, y: cy }, { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+            }
+            else if (figureType === 'polyline') {
+                // Le poligonali aperte sono sempre concave perché il segmento che unisce gli estremi non giace sulla linea
+                currentIsConvex = false; 
+                const numNodes = 3 + Math.floor(Math.random() * 3);
+                const rot = Math.random() * Math.PI * 2;
+                const r = rBase;
+                
+                // Generazione poligonale con un po' di varietà
+                currentPoints.push({x: cx + Math.cos(rot)*r, y: cy + Math.sin(rot)*r});
+                currentPoints.push({x: cx + (Math.random()-0.5)*20, y: cy + (Math.random()-0.5)*20});
+                currentPoints.push({x: cx + Math.cos(rot + 2.5)*r, y: cy + Math.sin(rot + 2.5)*r});
+                
+                if (numNodes > 3) {
+                    currentPoints.push({x: cx + Math.cos(rot + 3.5)*r*0.7, y: cy + Math.sin(rot + 3.5)*r*0.7});
+                }
+                proofSegment = { p1: currentPoints[0], p2: currentPoints[currentPoints.length-1] };
+            }
+            else {
+                const num = 3 + Math.floor(Math.random() * 6), wantConvex = Math.random() > 0.5, r = rBase * (0.8 + Math.random() * 0.3);
+                if (wantConvex) {
+                    let valid = false;
+                    while(!valid) {
+                        currentPoints = [];
+                        const angles = [];
+                        for (let i = 0; i < num; i++) angles.push(Math.random() * Math.PI * 2);
+                        angles.sort((a, b) => a - b);
+                        valid = true;
+                        for(let i=0; i<num; i++){
+                            let diff = (angles[(i+1)%num] - angles[i] + Math.PI*2) % (Math.PI*2);
+                            if (diff < 0.35 || Math.abs(diff - Math.PI) < 0.25) { valid = false; break; }
+                        }
+                        if(valid) angles.forEach(a => currentPoints.push({ x: cx + Math.cos(a) * r * (0.85 + Math.random() * 0.15), y: cy + Math.sin(a) * r * (0.85 + Math.random() * 0.15) }));
+                    }
+                } else {
+                    const angles = [];
+                    for (let i = 0; i < num; i++) angles.push((i / num) * Math.PI * 2 + Math.random()*0.2);
+                    const caveIndex = Math.floor(Math.random() * num);
+                    angles.forEach((a, i) => {
+                        const dist = (i === caveIndex) ? r * (0.2 + Math.random()*0.2) : r * (0.8 + Math.random()*0.3);
+                        currentPoints.push({ x: cx + Math.cos(a) * dist, y: cy + Math.sin(a) * dist });
+                    });
+                    proofSegment = { p1: currentPoints[(caveIndex - 1 + num) % num], p2: currentPoints[(caveIndex + 1) % num] };
+                }
+                currentIsConvex = isPolygonConvex(currentPoints);
+            }
+            drawFigure(currentPoints, false);
+        }
+
+        function drawFigure(points, showProof) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2, cy = canvas.height / 2;
+            ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+            if (figureType === 'polygon' || figureType === 'hole') {
+                ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+                ctx.closePath();
+                if (figureType === 'hole' && holePoints) {
+                    ctx.moveTo(holePoints[0].x, holePoints[0].y);
+                    for (let i = 1; i < holePoints.length; i++) ctx.lineTo(holePoints[i].x, holePoints[i].y);
+                    ctx.closePath();
+                }
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.12)'; ctx.fill('evenodd'); ctx.stroke();
+                if (holePoints) {
+                    ctx.beginPath(); ctx.moveTo(holePoints[0].x, holePoints[0].y);
+                    for (let i = 1; i < holePoints.length; i++) ctx.lineTo(holePoints[i].x, holePoints[i].y);
+                    ctx.closePath(); ctx.stroke();
+                }
+            } 
+            else if (figureType === 'angle' && angleInfo) {
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, canvas.width, angleInfo.start, angleInfo.start + angleInfo.sweep);
+                ctx.lineTo(cx, cy); ctx.fillStyle = 'rgba(99, 102, 241, 0.12)'; ctx.fill();
+                const r = canvas.width * 0.35;
+                [angleInfo.start, angleInfo.start + angleInfo.sweep].forEach(a => {
+                    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); ctx.stroke();
+                    ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+                    ctx.lineTo(cx + Math.cos(a) * (r+80), cy + Math.sin(a) * (r+80)); ctx.stroke(); ctx.setLineDash([]);
+                });
+            }
+            else {
+                ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+                if (figureType === 'ray') {
+                    ctx.stroke();
+                    const last = points[points.length-1], prev = points[points.length-2], angle = Math.atan2(last.y - prev.y, last.x - prev.x);
+                    ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(last.x, last.y);
+                    ctx.lineTo(last.x + Math.cos(angle) * 80, last.y + Math.sin(angle) * 80); ctx.stroke(); ctx.setLineDash([]);
+                } else ctx.stroke();
+            }
+
+            points.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fillStyle = '#1e1b4b'; ctx.fill(); });
+            if(holePoints) holePoints.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fillStyle = '#1e1b4b'; ctx.fill(); });
+
+            if (showProof && !currentIsConvex && proofSegment) {
+                ctx.setLineDash([4, 4]); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.moveTo(proofSegment.p1.x, proofSegment.p1.y); ctx.lineTo(proofSegment.p2.x, proofSegment.p2.y); ctx.stroke();
+                ctx.setLineDash([]); ctx.fillStyle = '#f59e0b';
+                ctx.beginPath(); ctx.arc(proofSegment.p1.x, proofSegment.p1.y, 4, 0, Math.PI * 2); ctx.arc(proofSegment.p2.x, proofSegment.p2.y, 4, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function checkAnswer(answerIsConvex) {
+            const isCorrect = (answerIsConvex === currentIsConvex);
+            const panel = document.getElementById('feedback-panel');
+            const box = document.getElementById('feedback-box');
+            const msg = document.getElementById('feedback-msg');
+            const exp = document.getElementById('explanation-msg');
+            const btns = document.querySelectorAll('.btn-choice');
+            const nextBtn = document.getElementById('next-btn');
+
+            btns.forEach(b => b.disabled = true);
+            nextBtn.classList.remove('hidden');
+
+            if (isCorrect) {
+                score += 10; streak++;
+                msg.textContent = "CORRETTO! 🌟";
+                box.className = "p-5 rounded-2xl border-4 bg-emerald-50 text-emerald-600 border-emerald-500 feedback-pop";
+            } else {
+                streak = 0;
+                msg.textContent = "SBAGLIATO 🔍";
+                box.className = "p-5 rounded-2xl border-4 bg-rose-50 text-rose-600 border-rose-500 feedback-pop";
+            }
+
+            let tip = "";
+            if (figureType === 'polygon') tip = currentIsConvex ? "Poligono convesso: non ha 'punte' rivolte verso l'interno." : "Poligono concavo: ha almeno una rientranza netta.";
+            else if (figureType === 'hole') tip = "Figura con buco: è sempre concava perché il segmento passa nel vuoto.";
+            else if (figureType === 'angle') tip = currentIsConvex ? "Angolo convesso: è chiaramente minore di 180°." : "Angolo concavo: è chiaramente maggiore di 180°.";
+            else if (figureType === 'ray') tip = "Semiretta: è una figura convessa per definizione.";
+            else tip = currentIsConvex ? "Poligonale convessa: i suoi punti sono tutti allineati." : "Poligonale aperta: è sempre concava perché non contiene i segmenti tra i suoi estremi.";
+
+            exp.innerHTML = tip + (currentIsConvex ? "" : "<br><span class='text-orange-500 font-bold'>Il segmento arancione esce dalla figura!</span>");
+            
+            drawFigure(currentPoints, true);
+            updateUI();
+            panel.style.opacity = '1';
+        }
+
+        function nextQuestion() {
+            document.getElementById('feedback-panel').style.opacity = '0';
+            document.getElementById('next-btn').classList.add('hidden');
+            document.querySelectorAll('.btn-choice').forEach(b => b.disabled = false);
+            generateFigure();
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            const sc = document.getElementById('streak-container');
+            if (streak > 2) sc.classList.replace('hidden', 'flex');
+            else sc.classList.replace('flex', 'hidden');
+        }
+
+        window.onload = initCanvas;
+        window.onresize = initCanvas;
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Concavità e Convessità</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1/1;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            border: 1px solid #e2e8f0;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .btn-choice {
+            transition: all 0.2s ease;
+        }
+        .btn-choice:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-choice:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        .btn-choice:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #feedback-panel {
+            min-height: 120px;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-2xl mx-auto">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Sfida di Geometria</h1>
+            <p class="text-slate-500 mt-2">Analizza la figura colorata: è concava o convessa?</p>
+        </header>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm mb-6 flex justify-between items-center border border-slate-100">
+            <div class="flex items-center gap-2">
+                <span class="text-slate-400 font-medium">Punti:</span>
+                <span id="score" class="text-2xl font-black text-indigo-600">0</span>
+            </div>
+            <div id="streak-container" class="hidden items-center gap-1 text-orange-500 font-bold animate-pulse">
+                <span>STREAK:</span> <span id="streak">0</span> 🔥
+            </div>
+            <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg animate-bounce">PROSSIMA FIGURA</button>
+        </div>
+
+        <div class="canvas-container mb-6">
+            <canvas id="polygonCanvas"></canvas>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6" id="button-group">
+            <button onclick="checkAnswer(true)" class="btn-choice bg-emerald-500 text-white py-5 rounded-2xl font-black text-xl shadow-lg border-b-4 border-emerald-700">CONVESSA</button>
+            <button onclick="checkAnswer(false)" class="btn-choice bg-amber-500 text-white py-5 rounded-2xl font-black text-xl shadow-lg border-b-4 border-amber-700">CONCAVA</button>
+        </div>
+
         <!-- Nuovo Pannello Feedback che non copre il disegno -->
         <div id="feedback-panel" class="opacity-0 transition-opacity duration-300 mb-6">
             <div id="feedback-box" class="p-5 rounded-2xl border-4 flex flex-col items-center text-center">
