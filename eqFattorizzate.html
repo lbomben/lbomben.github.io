@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equazioni con Legge di Annullamento del Prodotto</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+        }
+        .equation-card {
+            transition: transform 0.2s;
+        }
+        .equation-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Equazioni Fattorizzate</h1>
+            <p class="text-slate-600">10 Esempi risolti applicando la Legge di Annullamento del Prodotto</p>
+            <div class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 text-sm inline-block text-left">
+                <strong>Regola:</strong> Per risolvere queste equazioni, poniamo ogni singola parentesi uguale a zero.
+            </div>
+        </header>
+
+        <div class="grid gap-4">
+            <!-- Esempio 1 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(x - 3)(x + 5) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = 3 \lor x = -5\)
+                </div>
+            </div>
+
+            <!-- Esempio 2 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(2x - 1)(x + 4) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = \frac{1}{2} \lor x = -4\)
+                </div>
+            </div>
+
+            <!-- Esempio 3 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$x(x - 2)(x + 2) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = 0 \lor x = 2 \lor x = -2\)
+                </div>
+            </div>
+
+            <!-- Esempio 4 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(x + 7)(3x - 2)(x - 1) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = -7 \lor x = \frac{2}{3} \lor x = 1\)
+                </div>
+            </div>
+
+            <!-- Esempio 5 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(x - 10)(x + 10) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = 10 \lor x = -10\)
+                </div>
+            </div>
+
+            <!-- Esempio 6 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(5x + 1)(x - 6) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = -\frac{1}{5} \lor x = 6\)
+                </div>
+            </div>
+
+            <!-- Esempio 7 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(x - 1)(x - 2)(x - 3)(x - 4) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = 1 \lor x = 2 \lor x = 3 \lor x = 4\)
+                </div>
+            </div>
+
+            <!-- Esempio 8 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(4x + 3)(2x - 5) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = -\frac{3}{4} \lor x = \frac{5}{2}\)
+                </div>
+            </div>
+
+            <!-- Esempio 9 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(x + 8)(x - 9)(2x + 1) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = -8 \lor x = 9 \lor x = -\frac{1}{2}\)
+                </div>
+            </div>
+
+            <!-- Esempio 10 -->
+            <div class="equation-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-lg font-mono text-indigo-600 mb-2 md:mb-0">
+                    $$(x + 1)(x - 1)(x + 2)(x - 2) = 0$$
+                </div>
+                <div class="text-slate-700 font-semibold italic">
+                    Soluzione: \(x = -1 \lor x = 1 \lor x = -2 \lor x = 2\)
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-slate-400 text-sm">
+            Tutti i fattori sono di primo grado.
+        </footer>
+    </div>
+</body>
+</html>
