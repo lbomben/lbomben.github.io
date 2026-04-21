@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risoluzione Equazioni Lineari</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax per la resa delle formule matematiche -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .step-card {
+            transition: transform 0.2s;
+        }
+        .step-card:hover {
+            transform: translateY(-2px);
+        }
+        .math-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-4">Guida alle Equazioni Lineari</h1>
+            <p class="text-lg text-slate-600">Un percorso logico passo dopo passo per risolvere qualsiasi equazione.</p>
+        </header>
+
+        <div class="space-y-6">
+            <!-- STEP 1 -->
+            <section class="step-card bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">1</span>
+                    <h2 class="text-xl font-bold text-slate-800">Controllo Parentesi</h2>
+                </div>
+                <div class="text-slate-700 space-y-3">
+                    <p>Guardo se ci sono parentesi:</p>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li>Se non ci sono, vado avanti.</li>
+                        <li>Se ci sono, controllo se rispettano la struttura dell'<strong>annullamento del prodotto</strong>: \(F_1 \cdot F_2 \cdot F_3 \dots = 0\)
+                            <ul class="list-circle ml-6 mt-2 text-sm italic">
+                                <li><strong>Sì:</strong> Pongo ciascun fattore uguale a zero e risolvo individualmente.</li>
+                                <li><strong>No:</strong> Risolvo le parentesi come in un'espressione con polinomi e vado avanti.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="math-box">
+                        <p class="font-semibold text-blue-800">Esempio (Annullamento):</p>
+                        <p>\((x - 2)(x + 5) = 0\)</p>
+                        <ul class="list-disc ml-6 mt-2 text-sm">
+                            <li>\(x - 2 = 0 \quad \rightarrow \quad x = 2\)</li>
+                            <li>\(x + 5 = 0 \quad \rightarrow \quad x = -5\)</li>
+                        </ul>
+                        <p class="mt-2 text-sm font-medium">Risultato finale: \(x = 2 \lor x = -5\)</p>
+                    </div>
+                    <div class="math-box border-l-slate-400 bg-slate-50">
+                        <p class="font-semibold text-slate-700">Esempio (Senza annullamento - Calcoli polinomiali):</p>
+                        <p>\(3(x - 1) = 2x + 4\)</p>
+                        <p class="text-sm mt-1">Eseguo il prodotto: \(3x - 3 = 2x + 4\)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 2 -->
+            <section class="step-card bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">2</span>
+                    <h2 class="text-xl font-bold text-slate-800">Gestione Frazioni</h2>
+                </div>
+                <div class="text-slate-700 space-y-3">
+                    <p>Guardo se ci sono frazioni:</p>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li>Se non ci sono, vado avanti.</li>
+                        <li>Se ci sono, le elimino:
+                            <ol class="list-decimal ml-6 mt-1">
+                                <li>Trovo il m.c.m. dei denominatori.</li>
+                                <li>Metto entrambi i membri a denominatore comune.</li>
+                                <li>Semplifico (elimino) il denominatore applicando il secondo principio di equivalenza.</li>
+                            </ol>
+                        </li>
+                    </ul>
+                    <div class="math-box">
+                        <p class="font-semibold text-blue-800">Esempio:</p>
+                        <p>\(\frac{x}{3} - \frac{3x + 1}{2} = 1\)</p>
+                        <p class="text-sm mt-2">m.c.m = 6 \(\quad \rightarrow \quad \frac{2x - 3(3x + 1)}{6} = \frac{6}{6}\)</p>
+                        <p class="text-sm mt-2">Moltiplico entrambi i membri per 6 per semplificare:</p>
+                        <p>\(6 \cdot \frac{2x - 9x - 3}{6} = \frac{6}{6} \cdot 6 \quad \rightarrow \quad 2x - 9x - 3 = 6\)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 3 -->
+            <section class="step-card bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">3</span>
+                    <h2 class="text-xl font-bold text-slate-800">Regola del Trasporto</h2>
+                </div>
+                <p class="text-slate-700">Porto tutti i termini con la <strong>x</strong> a sinistra (primo membro) e tutti i termini senza x (termini noti) a destra (secondo membro), ricordando di <strong>cambiare il segno</strong> a ciò che sposto.</p>
+                <div class="math-box">
+                    <p class="font-semibold text-blue-800">Esempio:</p>
+                    <p>\(5x + 3 = 2x - 4 \quad \rightarrow \quad 5x - 2x = -4 - 3\)</p>
+                </div>
+            </section>
+
+            <!-- STEP 4 -->
+            <section class="step-card bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">4</span>
+                    <h2 class="text-xl font-bold text-slate-800">Somma Termini Simili</h2>
+                </div>
+                <p class="text-slate-700">Eseguo i calcoli algebrici per ridurre l'equazione alla forma normale: \(ax = b\).</p>
+                <div class="math-box">
+                    <p class="font-semibold text-blue-800">Esempio:</p>
+                    <p>\(5x - 2x = -4 - 3 \quad \rightarrow \quad 3x = -7\)</p>
+                </div>
+            </section>
+
+            <!-- STEP 5 -->
+            <section class="step-card bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">5</span>
+                    <h2 class="text-xl font-bold text-slate-800">Controllo Grado > 1</h2>
+                </div>
+                <div class="text-slate-700 space-y-3">
+                    <p>Guardo se ci sono termini di grado superiore al primo (es. \(x^2, x^3\)):</p>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li>Se non ci sono, vado avanti.</li>
+                        <li>Se ci sono, controllo di non aver commesso errori nei calcoli precedenti, poi:
+                            <ul class="list-none ml-6 mt-1 text-sm space-y-1">
+                                <li><strong>A.</strong> Porto tutti i termini a sinistra.</li>
+                                <li><strong>B.</strong> Uso le scomposizioni (raccoglimento, differenza di quadrati, trinomio notevole...) per ridurre il membro sinistro a un prodotto.</li>
+                                <li><strong>C.</strong> Risolvo applicando l'annullamento del prodotto.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="math-box">
+                        <p class="font-semibold text-blue-800">Esempio:</p>
+                        <p>\(x^2 = 4 \quad \rightarrow \quad x^2 - 4 = 0 \quad \rightarrow \quad (x - 2)(x + 2) = 0\)</p>
+                        <ul class="list-disc ml-6 mt-2 text-sm">
+                            <li>\(x - 2 = 0 \quad \rightarrow \quad x = 2\)</li>
+                            <li>\(x + 2 = 0 \quad \rightarrow \quad x = -2\)</li>
+                        </ul>
+                        <p class="mt-2 text-sm font-medium">Risultato: \(x = 2 \lor x = -2\)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 6 -->
+            <section class="step-card bg-white p-6 rounded-xl shadow-md border border-slate-200 mb-10">
+                <div class="flex items-center mb-4">
+                    <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">6</span>
+                    <h2 class="text-xl font-bold text-slate-800">Conclusione e Coefficiente di x</h2>
+                </div>
+                <div class="text-slate-700 space-y-3">
+                    <p>Guardo il coefficiente di \(x\) (il numero \(a\) davanti alla \(x\)):</p>
+                    <ul class="list-disc ml-6 space-y-3">
+                        <li><strong>Se il coefficiente è 0:</strong> guardo il membro destro (\(0x = b\))
+                            <ul class="list-circle ml-6 mt-1">
+                                <li>Se il membro destro è 0 (\(0=0\)): l'equazione è <strong>indeterminata</strong>.</li>
+                                <li>Se il membro destro NON è 0 (\(0=b\)): l'equazione è <strong>impossibile</strong>.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Se il coefficiente NON è 0:</strong> divido entrambi i membri per il coefficiente di \(x\) (incluso il segno meno).</li>
+                    </ul>
+                    <div class="math-box">
+                        <p class="font-semibold text-blue-800">Esempi di calcolo:</p>
+                        <ul class="space-y-3 text-sm md:text-base">
+                            <!-- Coefficiente positivo -->
+                            <li>
+                                \(3x = 15 \quad \rightarrow \quad \frac{3x}{3} = \frac{15}{3} \quad \rightarrow \quad x = 5\)
+                            </li>
+                            <!-- Coefficiente negativo -->
+                            <li>
+                                \(-3x = 12 \quad \rightarrow \quad \frac{-3x}{-3} = \frac{12}{-3} \quad \rightarrow \quad x = -4\)
+                            </li>
+                            <!-- Coefficiente 1 -->
+                            <li>
+                                \(x = 5\) <span class="text-xs text-slate-500 ml-2 italic">(coefficiente 1 \(\rightarrow\) non serve dividere, l'equazione è già risolta)</span>
+                            </li>
+                            <!-- Coefficiente -1 -->
+                            <li>
+                                \(-x = 7 \quad \rightarrow \quad \frac{-1x}{-1} = \frac{7}{-1} \quad \rightarrow \quad x = -7\)
+                            </li>
+                            <!-- Membro destro 0 -->
+                            <li>
+                                \(4x = 0 \quad \rightarrow \quad \frac{4x}{4} = \frac{0}{4} \quad \rightarrow \quad x = 0\)
+                            </li>
+                            <!-- Casi speciali -->
+                            <li class="pt-2 border-t border-slate-200">
+                                \(0x = 0 \quad \rightarrow \quad\) <strong>Indeterminata</strong>
+                            </li>
+                            <li>
+                                \(0x = 3 \quad \rightarrow \quad\) <strong>Impossibile</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="text-center text-slate-500 text-sm mt-8 pb-12">
+            Guida interattiva per lo studio della matematica.
+        </footer>
+    </div>
+</body>
+</html>
