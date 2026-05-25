@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Data Analyzer</title>
+    <!-- Tailwind CSS for modern and responsive utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for high-fidelity interactive visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom sleek scrollbar for modern browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 flex flex-col antialiased bg-slate-50/50">
+
+    <!-- Main Application Header -->
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-500/20 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                    </svg>
+                </div>
+                <div class="flex flex-col gap-2 w-full">
+                    <h1 id="app-title" class="text-xl font-bold tracking-tight text-slate-900">Data Analyzer</h1>
+                    
+                    <!-- Mode Selector replacing the old subtitle precisely in top-left -->
+                    <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 w-fit">
+                        <button id="btn-mode-histogram" onclick="setChartMode('histogram')" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm">
+                            Histogram
+                        </button>
+                        <button id="btn-mode-bar" onclick="setChartMode('bar')" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                            Bar Chart
+                        </button>
+                        <button id="btn-mode-pie" onclick="setChartMode('pie')" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900">
+                            Pie Chart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Language Switcher button -->
+            <div class="flex items-center gap-3 shrink-0">
+                <button onclick="toggleLanguage()" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 rounded-lg border border-slate-200 shadow-sm transition-all duration-200">
+                    <span id="flag-icon">🇮🇹</span>
+                    <span id="lang-btn-text">Italiano</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Input Data & Binning Configuration (4 grid columns) -->
+            <div class="lg:col-span-4 flex flex-col gap-6">
+                
+                <!-- Data Input Section Card -->
+                <section class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <h2 id="section1-title" class="text-sm font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            1. Input Data
+                        </h2>
+                        <span id="data-count-badge" class="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md font-medium border border-slate-200/40">0 values</span>
+                    </div>
+                    
+                    <p id="section1-desc" class="text-xs text-slate-500">Enter numbers separated by spaces, commas, or new lines.</p>
+                    
+                    <textarea 
+                        id="data-input" 
+                        rows="6" 
+                        class="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-800 rounded-xl p-3 text-sm font-mono placeholder:text-slate-400 transition-colors duration-200 outline-none"
+                        placeholder="E.g., 12.5, 14.2, 11.1..."
+                    ></textarea>
+
+                    <!-- Real-time error/validation feedback box -->
+                    <div id="validation-feedback" class="hidden text-xs text-rose-600 bg-rose-50 border border-rose-100 p-3 rounded-lg"></div>
+
+                    <!-- Dataset presets for immediate interactive visualization -->
+                    <div class="flex flex-col gap-2 mt-2">
+                        <span id="preset-title" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Quick Sample Datasets:</span>
+                        <div class="grid grid-cols-2 gap-2" id="preset-buttons-container">
+                            <button id="preset-btn-1" class="text-left text-xs bg-white hover:bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-slate-700 transition-all shadow-sm flex items-center gap-1.5 font-medium"></button>
+                            <button id="preset-btn-2" class="text-left text-xs bg-white hover:bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-slate-700 transition-all shadow-sm flex items-center gap-1.5 font-medium"></button>
+                            <button id="preset-btn-3" class="text-left text-xs bg-white hover:bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-slate-700 transition-all shadow-sm flex items-center gap-1.5 font-medium"></button>
+                            <button id="preset-btn-4" class="text-left text-xs bg-white hover:bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-slate-700 transition-all shadow-sm flex items-center gap-1.5 font-medium"></button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Bin Width Configuration Card (The unique binning interface, hidden in discrete modes) -->
+                <section id="bin-config-card" class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+                    <h2 id="section2-title" class="text-sm font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        2. Configure Bin Width
+                    </h2>
+                    
+                    <div class="flex flex-col gap-2">
+                        <label id="bin-width-label" class="text-xs font-semibold text-slate-500">Interval range for each column bin</label>
+                        <div class="flex gap-2">
+                            <input 
+                                type="number" 
+                                id="bin-width-input" 
+                                value="5" 
+                                step="any" 
+                                min="0.0001"
+                                oninput="triggerRecalculation()" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl p-2.5 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                            >
+                            <button id="suggest-btn" onclick="autoSuggestWidth()" class="px-3.5 py-1.5 text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-xl border border-indigo-100 transition-all whitespace-nowrap shadow-sm">
+                                Suggest Width
+                            </button>
+                        </div>
+                        <p id="bin-width-desc" class="text-[10px] text-slate-400">Determines the specific numeric size/width of each column bucket across the dataset range.</p>
+                    </div>
+                </section>
+
+                <!-- Chart Customization Card (Axis Label and Limits editor) -->
+                <section id="chart-settings-card" class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col gap-4">
+                    <h2 id="section3-title" class="text-sm font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                        <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
+                        3. Chart Settings
+                    </h2>
+                    
+                    <!-- Axis Titles inputs -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-col gap-1">
+                            <label id="lbl-xaxis-title" class="text-xs font-semibold text-slate-500">X-Axis Label</label>
+                            <input 
+                                type="text" 
+                                id="xaxis-title-input" 
+                                oninput="updateChartLabels()" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl p-2 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                                placeholder="Auto"
+                            >
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label id="lbl-yaxis-title" class="text-xs font-semibold text-slate-500">Y-Axis Label</label>
+                            <input 
+                                type="text" 
+                                id="yaxis-title-input" 
+                                oninput="updateChartLabels()" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl p-2 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                                placeholder="Auto"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Axis Limits inputs (only active in histogram mode) -->
+                    <div id="axis-limits-container" class="flex flex-col gap-2 pt-2 border-t border-slate-100">
+                        <label id="lbl-axis-limits" class="text-xs font-semibold text-slate-500">X-Axis Limits (Histogram)</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input 
+                                type="number" 
+                                id="xmin-input" 
+                                step="any"
+                                oninput="updateChartLimits()" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl p-2 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                                placeholder="Min (Auto)"
+                            >
+                            <input 
+                                type="number" 
+                                id="xmax-input" 
+                                step="any"
+                                oninput="updateChartLimits()" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-xl p-2 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                                placeholder="Max (Auto)"
+                            >
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Interactive Chart, Stats and Frequency Table (8 grid columns) -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                
+                <!-- Main Interactive Chart Card -->
+                <section class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <h2 id="chart-panel-title" class="text-lg font-bold text-slate-900">Histogram Visualizer</h2>
+                            <p class="text-xs text-slate-500" id="binning-summary">Please input valid data points to render the dynamic histogram.</p>
+                        </div>
+                        <button id="export-png-btn" onclick="downloadChart()" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 rounded-xl border border-slate-200 shadow-sm transition-all">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Export PNG
+                        </button>
+                    </div>
+
+                    <!-- Canvas/Chart container -->
+                    <div class="relative w-full bg-slate-50/50 border border-slate-150 rounded-xl p-4 min-h-[380px] flex items-center justify-center">
+                        <div id="chart-placeholder" class="text-center py-20 flex flex-col items-center gap-3">
+                            <div class="p-4 bg-white rounded-full border border-slate-100 shadow-sm">
+                                <svg class="w-10 h-10 text-slate-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                                </svg>
+                            </div>
+                            <span id="placeholder-text" class="text-sm font-medium text-slate-400">Awaiting numerical values to display the diagram...</span>
+                        </div>
+                        <canvas id="histogramChart" class="hidden w-full h-full"></canvas>
+                    </div>
+                </section>
+
+                <!-- Descriptive Statistical Data Card -->
+                <section class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                    <h3 id="stats-panel-title" class="text-base font-bold text-slate-900">Dataset Statistical Properties</h3>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <!-- Card: Sample size -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl shadow-sm">
+                            <p id="lbl-stat-n" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sample Size (N)</p>
+                            <p id="stat-n" class="text-2xl font-bold text-slate-800 mt-1">-</p>
+                        </div>
+                        <!-- Card: Mean -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl shadow-sm">
+                            <p id="lbl-stat-mean" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mean (μ)</p>
+                            <p id="stat-mean" class="text-2xl font-bold text-slate-800 mt-1">-</p>
+                        </div>
+                        <!-- Card: Median -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl shadow-sm">
+                            <p id="lbl-stat-median" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Median (M)</p>
+                            <p id="stat-median" class="text-2xl font-bold text-slate-800 mt-1">-</p>
+                        </div>
+                        <!-- Card: Standard Deviation -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl shadow-sm">
+                            <p id="lbl-stat-std" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Std Deviation (σ)</p>
+                            <p id="stat-std" class="text-2xl font-bold text-slate-800 mt-1">-</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <!-- Card: Minimum -->
+                        <div class="bg-slate-50/50 border border-slate-100/55 p-3.5 rounded-xl">
+                            <p id="lbl-stat-min" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Minimum</p>
+                            <p id="stat-min" class="text-lg font-semibold text-slate-700 mt-0.5">-</p>
+                        </div>
+                        <!-- Card: Maximum -->
+                        <div class="bg-slate-50/50 border border-slate-100/55 p-3.5 rounded-xl">
+                            <p id="lbl-stat-max" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Maximum</p>
+                            <p id="stat-max" class="text-lg font-semibold text-slate-700 mt-0.5">-</p>
+                        </div>
+                        <!-- Card: Range -->
+                        <div class="bg-slate-50/50 border border-slate-100/55 p-3.5 rounded-xl">
+                            <p id="lbl-stat-range" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Range</p>
+                            <p id="stat-range" class="text-lg font-semibold text-slate-700 mt-0.5">-</p>
+                        </div>
+                        <!-- Card: Variance -->
+                        <div class="bg-slate-50/50 border border-slate-100/55 p-3.5 rounded-xl">
+                            <p id="lbl-stat-variance" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Variance (σ²)</p>
+                            <p id="stat-variance" class="text-lg font-semibold text-slate-700 mt-0.5">-</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Frequency Distribution Table Card -->
+                <section class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                    <div class="flex justify-between items-center">
+                        <h3 id="table-panel-title" class="text-base font-bold text-slate-900">Frequency Distribution Table</h3>
+                        <button id="download-csv-btn" onclick="downloadCSV()" class="text-xs text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-1.5 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download Table (.csv)
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto border border-slate-100 rounded-xl bg-slate-50/20">
+                        <table class="min-w-full divide-y divide-slate-150 text-left text-sm">
+                            <thead class="bg-slate-50/80 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                                <tr>
+                                    <th scope="col" id="col-bin-num" class="px-4 py-3"># Bin / Category</th>
+                                    <th scope="col" id="col-range" class="px-4 py-3">Interval / Key</th>
+                                    <th scope="col" id="col-abs-freq" class="px-4 py-3 text-right">Abs Frequency</th>
+                                    <th scope="col" id="col-rel-freq" class="px-4 py-3 text-right">Rel Frequency (%)</th>
+                                    <th scope="col" id="col-visual" class="px-4 py-3">Visual Distribution</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bins-table-body" class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td colspan="5" id="table-placeholder" class="px-4 py-6 text-center text-slate-400 italic">Please enter data to populate the distribution metrics.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- App Footer -->
+    <footer class="border-t border-slate-200 bg-white py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-medium">
+            <p id="footer-text-1">© 2026 Interactive Statistics Tool. Pure Client-Side HTML5 Application.</p>
+            <p id="footer-text-2">Supports multi-format parsing, qualitative mapping, and high-resolution exports.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dictionary for translation mapping
+        const translations = {
+            en: {
+                appTitle: "Data Analyzer",
+                flag: "🇮🇹",
+                langBtnText: "Italiano",
+                section1Title: "1. Input Data",
+                section1Desc: "Enter values separated by commas, semicolons or new lines.",
+                presetTitle: "Quick Sample Datasets:",
+                
+                // Continuous / Hist presets
+                presetHeights: "Heights (Normal)",
+                presetHeightsMF: "Heights (M & F)",
+                presetScores: "Exam Scores",
+                presetDice: "Single Die Roll",
+
+                // Discrete/Qualitative presets
+                presetColors: "Car Colors",
+                presetRatings: "Ratings (1-5 Stars)",
+                presetAgeGroups: "Age Groups",
+
+                section2Title: "2. Configure Bin Width",
+                binWidthLabel: "Interval range for each column bin",
+                suggestBtn: "Suggest Width",
+                binWidthDesc: "Determines the specific numeric size/width of each column bucket across the dataset range.",
+                
+                // Chart Customization Card English translations
+                section3Title: "3. Chart Settings",
+                xAxisTitleLabel: "X-Axis Label",
+                yAxisTitleLabel: "Y-Axis Label",
+                axisLimitsLabel: "X-Axis Limits (Histogram)",
+                placeholderMinAuto: "Min (Auto)",
+                placeholderMaxAuto: "Max (Auto)",
+
+                chartPanelTitle: "Distribution Visualizer",
+                exportPng: "Export PNG",
+                placeholderText: "Awaiting values to display the diagram...",
+                statsPanelTitle: "Dataset Statistical Properties",
+                lblStatN: "Sample Size (N)",
+                lblStatMean: "Mean (μ)",
+                lblStatMedian: "Median (M)",
+                lblStatStd: "Std Deviation (σ)",
+                lblStatMin: "Minimum",
+                lblStatMax: "Maximum",
+                lblStatRange: "Total Range",
+                lblStatVariance: "Variance (σ²)",
+                tablePanelTitle: "Frequency Distribution Table",
+                downloadCsv: "Download Table (.csv)",
+                colBinNum: "# Label",
+                colRange: "Interval / Category",
+                colAbsFreq: "Abs Frequency",
+                colRelFreq: "Rel Frequency (%)",
+                colVisual: "Visual Distribution",
+                tablePlaceholder: "Please enter data to populate the distribution metrics.",
+                footerText1: "© 2026 Interactive Statistics Tool. Pure Client-Side HTML5 Application.",
+                footerText2: "Supports multi-format parsing, qualitative mapping, and high-resolution exports.",
+                valuesText: "values",
+                errorTooFew: "⚠️ Please enter at least <strong>2 valid elements</strong> to process calculations.",
+                summaryDesc: "Configured with bin intervals of custom width size = ",
+                categoricalSummary: "Categorical frequency aggregation computed directly over unique values.",
+                chartLegend: "Absolute Frequency",
+                chartLabelSingle: "Concentrated Single Bin Around Value",
+                chartSuffixFreq: "Frequency",
+                modeHistogram: "Histogram",
+                modeBar: "Bar Chart",
+                modePie: "Pie Chart"
+            },
+            it: {
+                appTitle: "Analizzatore Dati",
+                flag: "🇬🇧",
+                langBtnText: "English",
+                section1Title: "1. Inserimento Dati",
+                section1Desc: "Inserisci i valori separandoli con virgole, punti e virgola o andando a capo.",
+                presetTitle: "Dataset di Esempio Rapido:",
+                
+                // Continuous / Hist presets
+                presetHeights: "Altezze (Normale)",
+                presetHeightsMF: "Altezze (M e F)",
+                presetScores: "Punteggi Esami",
+                presetDice: "Lancio Dado Singolo",
+
+                // Discrete/Qualitative presets
+                presetColors: "Colori Auto",
+                presetRatings: "Valutazioni (1-5 Stelle)",
+                presetAgeGroups: "Fasce d'Età",
+
+                section2Title: "2. Configura l'Ampiezza del Bin",
+                binWidthLabel: "Intervallo numerico per ogni colonna",
+                suggestBtn: "Suggerisci Ampiezza",
+                binWidthDesc: "Determina la dimensione numerica specifica di ciascun raggruppamento (colonna) del dataset.",
+                
+                // Chart Customization Card Italian translations
+                section3Title: "3. Impostazioni Grafico",
+                xAxisTitleLabel: "Titolo Asse X",
+                yAxisTitleLabel: "Titolo Asse Y",
+                axisLimitsLabel: "Limiti Asse X (Istogramma)",
+                placeholderMinAuto: "Min (Auto)",
+                placeholderMaxAuto: "Max (Auto)",
+
+                chartPanelTitle: "Visualizzazione della Distribuzione",
+                exportPng: "Esporta PNG",
+                placeholderText: "In attesa di valori per visualizzare il grafico...",
+                statsPanelTitle: "Proprietà Statistiche del Dataset",
+                lblStatN: "Campione (N)",
+                lblStatMean: "Media (μ)",
+                lblStatMedian: "Mediana (M)",
+                lblStatStd: "Deviazione Std (σ)",
+                lblStatMin: "Minimo",
+                lblStatMax: "Massimo",
+                lblStatRange: "Intervallo Totale (Range)",
+                lblStatVariance: "Varianza (σ²)",
+                tablePanelTitle: "Tabella della Distribuzione delle Frequenze",
+                downloadCsv: "Scarica Tabella (.csv)",
+                colBinNum: "# Etichetta",
+                colRange: "Intervallo / Categoria",
+                colAbsFreq: "Frequenza Assoluta",
+                colRelFreq: "Frequenza Relativa (%)",
+                colVisual: "Distribuzione Visiva",
+                tablePlaceholder: "Inserisci i dati per compilare le metriche di distribuzione.",
+                footerText1: "© 2026 Strumento Statistico Interattivo. Applicazione HTML5 lato client pura.",
+                footerText2: "Supporta parser multi-formato, mappatura qualitativa ed esportazioni ad alta risoluzione.",
+                valuesText: "valori",
+                errorTooFew: "⚠️ Inserisci almeno <strong>2 elementi validi</strong> per calcolare la distribuzione.",
+                summaryDesc: "Configurato con intervalli di ampiezza personalizzata pari a = ",
+                categoricalSummary: "Aggregazione di frequenze categoriche calcolata direttamente sui valori unici.",
+                chartLegend: "Frequenza Assoluta",
+                chartLabelSingle: "Bin Singolo Concentrato Sul Valore",
+                chartSuffixFreq: "Frequenza",
+                modeHistogram: "Istogramma",
+                modeBar: "Ortogramma",
+                modePie: "Areogramma"
+            }
+        };
+
+        // Application state initialization
+        let appState = {
+            language: 'en', // Default language set to English
+            chartMode: 'histogram', // Default visualization mode
+            rawData: [], // Holds raw processed elements (numbers or strings)
+            customBinWidth: 5.0,
+            chartInstance: null,
+            binsCalculated: [],
+            // Customizable chart values
+            customXTitle: "",
+            customYTitle: "",
+            customXMin: null,
+            customXMax: null,
+            isPresetActive: true // Tracks whether active data is a preset or custom-entered
+        };
+
+        // Applies all corresponding texts from dictionary based on selected language
+        function applyLanguage() {
+            const dict = translations[appState.language];
+            
+            // Text values updates
+            document.getElementById('app-title').textContent = dict.appTitle;
+            document.getElementById('flag-icon').textContent = dict.flag;
+            document.getElementById('lang-btn-text').textContent = dict.langBtnText;
+            document.getElementById('section1-title').innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ${dict.section1Title}`;
+            document.getElementById('section1-desc').textContent = dict.section1Desc;
+            document.getElementById('preset-title').textContent = dict.presetTitle;
+            
+            document.getElementById('section2-title').innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> ${dict.section2Title}`;
+            document.getElementById('bin-width-label').textContent = dict.binWidthLabel;
+            document.getElementById('suggest-btn').textContent = dict.suggestBtn;
+            document.getElementById('bin-width-desc').textContent = dict.binWidthDesc;
+
+            // Chart Customization Card updates
+            document.getElementById('section3-title').innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span> ${dict.section3Title}`;
+            document.getElementById('lbl-xaxis-title').textContent = dict.xAxisTitleLabel;
+            document.getElementById('lbl-yaxis-title').textContent = dict.yAxisTitleLabel;
+            document.getElementById('lbl-axis-limits').textContent = dict.axisLimitsLabel;
+            document.getElementById('xmin-input').placeholder = dict.placeholderMinAuto;
+            document.getElementById('xmax-input').placeholder = dict.placeholderMaxAuto;
+
+            document.getElementById('chart-panel-title').textContent = dict.chartPanelTitle;
+            document.getElementById('export-png-btn').innerHTML = `
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg> ${dict.exportPng}`;
+            document.getElementById('placeholder-text').textContent = dict.placeholderText;
+            document.getElementById('stats-panel-title').textContent = dict.statsPanelTitle;
+            
+            document.getElementById('lbl-stat-n').textContent = dict.lblStatN;
+            document.getElementById('lbl-stat-mean').textContent = dict.lblStatMean;
+            document.getElementById('lbl-stat-median').textContent = dict.lblStatMedian;
+            document.getElementById('lbl-stat-std').textContent = dict.lblStatStd;
+            document.getElementById('lbl-stat-min').textContent = dict.lblStatMin;
+            document.getElementById('lbl-stat-max').textContent = dict.lblStatMax;
+            document.getElementById('lbl-stat-range').textContent = dict.lblStatRange;
+            document.getElementById('lbl-stat-variance').textContent = dict.lblStatVariance;
+
+            document.getElementById('table-panel-title').textContent = dict.tablePanelTitle;
+            document.getElementById('download-csv-btn').innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg> ${dict.downloadCsv}`;
+
+            document.getElementById('col-bin-num').textContent = dict.colBinNum;
+            document.getElementById('col-range').textContent = dict.colRange;
+            document.getElementById('col-abs-freq').textContent = dict.colAbsFreq;
+            document.getElementById('col-rel-freq').textContent = dict.colRelFreq;
+            document.getElementById('col-visual').textContent = dict.colVisual;
+
+            document.getElementById('footer-text-1').textContent = dict.footerText1;
+            document.getElementById('footer-text-2').textContent = dict.footerText2;
+
+            // Updating button mode labels
+            document.getElementById('btn-mode-histogram').textContent = dict.modeHistogram;
+            document.getElementById('btn-mode-bar').textContent = dict.modeBar;
+            document.getElementById('btn-mode-pie').textContent = dict.modePie;
+
+            updatePresetButtons();
+            processDataInput();
+        }
+
+        // Toggles between Italian and English
+        function toggleLanguage() {
+            appState.language = (appState.language === 'en') ? 'it' : 'en';
+            applyLanguage();
+        }
+
+        // Switches visualization mode dynamically
+        function setChartMode(mode) {
+            appState.chartMode = mode;
+            
+            // Reset button styles
+            const modes = ['histogram', 'bar', 'pie'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`btn-mode-${m}`);
+                if (m === mode) {
+                    btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm";
+                } else {
+                    btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50/50";
+                }
+            });
+
+            // Show/Hide Bin Width settings card and limits card container based on mode choice
+            const binConfigCard = document.getElementById('bin-config-card');
+            const axisLimitsContainer = document.getElementById('axis-limits-container');
+            if (mode === 'histogram') {
+                binConfigCard.classList.remove('hidden');
+                axisLimitsContainer.classList.remove('hidden');
+            } else {
+                binConfigCard.classList.add('hidden');
+                axisLimitsContainer.classList.add('hidden');
+            }
+
+            // Update Presets based on context
+            updatePresetButtons();
+
+            // Load an appropriate mode-specific preset only if the user hasn't typed custom values
+            if (appState.isPresetActive) {
+                if (mode === 'histogram') {
+                    loadPreset('heights');
+                } else {
+                    loadPreset('colors');
+                }
+            } else {
+                // Instantly reprocess user's custom data for the newly selected chart mode
+                processDataInput();
+            }
+        }
+
+        // Updates dynamic presets layout and content depending on the visual mode
+        function updatePresetButtons() {
+            const dict = translations[appState.language];
+            const isHistogram = appState.chartMode === 'histogram';
+            
+            const btn1 = document.getElementById('preset-btn-1');
+            const btn2 = document.getElementById('preset-btn-2');
+            const btn3 = document.getElementById('preset-btn-3');
+            const btn4 = document.getElementById('preset-btn-4');
+
+            if (isHistogram) {
+                btn1.innerHTML = `📊 <span class="truncate">${dict.presetHeights}</span>`;
+                btn2.innerHTML = `👫 <span class="truncate">${dict.presetHeightsMF}</span>`;
+                btn3.innerHTML = `📝 <span class="truncate">${dict.presetScores}</span>`;
+                btn4.innerHTML = `🎲 <span class="truncate">${dict.presetDice}</span>`;
+                
+                btn1.onclick = () => loadPreset('heights');
+                btn2.onclick = () => loadPreset('heights_mf');
+                btn3.onclick = () => loadPreset('scores');
+                btn4.onclick = () => loadPreset('dice');
+            } else {
+                btn1.innerHTML = `🎨 <span class="truncate">${dict.presetColors}</span>`;
+                btn2.innerHTML = `⭐ <span class="truncate">${dict.presetRatings}</span>`;
+                btn3.innerHTML = `👥 <span class="truncate">${dict.presetAgeGroups}</span>`;
+                btn4.innerHTML = `🎲 <span class="truncate">${dict.presetDice}</span>`;
+                
+                btn1.onclick = () => loadPreset('colors');
+                btn2.onclick = () => loadPreset('ratings');
+                btn3.onclick = () => loadPreset('age_groups');
+                btn4.onclick = () => loadPreset('dice');
+            }
+        }
+
+        // Window startup execution
+        window.onload = function() {
+            const dataInputEl = document.getElementById('data-input');
+            
+            // Mark appState as custom (not preset) when user actively types or edits data
+            dataInputEl.addEventListener('input', function() {
+                appState.isPresetActive = false;
+            });
+
+            // Bind input field parsing with debounce safety checks
+            dataInputEl.addEventListener('input', debounce(processDataInput, 250));
+            
+            // Set English as default starting language configuration
+            applyLanguage();
+            
+            // Set starting chart mode
+            setChartMode('histogram');
+        };
+
+        // Utility debounce limits rapid system re-calculation triggers on keystrokes
+        function debounce(func, delay) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        // Updates the customized titles of X and Y axes
+        function updateChartLabels() {
+            appState.customXTitle = document.getElementById('xaxis-title-input').value.trim();
+            appState.customYTitle = document.getElementById('yaxis-title-input').value.trim();
+            if (appState.rawData.length >= 2) {
+                recalculateHistogram();
+            }
+        }
+
+        // Updates custom bounds/limits for the X axis
+        function updateChartLimits() {
+            const minVal = parseFloat(document.getElementById('xmin-input').value);
+            const maxVal = parseFloat(document.getElementById('xmax-input').value);
+            appState.customXMin = isNaN(minVal) ? null : minVal;
+            appState.customXMax = isNaN(maxVal) ? null : maxVal;
+            if (appState.rawData.length >= 2) {
+                recalculateHistogram();
+            }
+        }
+
+        // Loads simulated datasets for instant analytics with significantly boosted sample sizes
+        function loadPreset(type) {
+            let sampleValues = [];
+            const textarea = document.getElementById('data-input');
+            const widthInput = document.getElementById('bin-width-input');
+            const isIt = appState.language === 'it';
+            
+            // Mark the state as a preset active so switching modes auto-replaces it
+            appState.isPresetActive = true;
+
+            // Reset custom scale/labels when loading a preset to avoid stale ranges
+            document.getElementById('xaxis-title-input').value = "";
+            document.getElementById('yaxis-title-input').value = "";
+            document.getElementById('xmin-input').value = "";
+            document.getElementById('xmax-input').value = "";
+            appState.customXTitle = "";
+            appState.customYTitle = "";
+            appState.customXMin = null;
+            appState.customXMax = null;
+
+            if (type === 'heights') {
+                // Human height simulation (Normal Bell curve) - Continuous - Increased to 1200 values
+                const mean = 172.5;
+                const stdDev = 6.2;
+                for (let i = 0; i < 1200; i++) {
+                    let u1 = Math.random();
+                    let u2 = Math.random();
+                    let z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                    sampleValues.push((z * stdDev + mean).toFixed(1));
+                }
+                appState.customBinWidth = 3.0;
+                widthInput.value = 3;
+            } 
+            else if (type === 'heights_mf') {
+                // Bimodal distribution: Women and Men combined - Increased to 1200 values (600 each)
+                // Generate female heights (Mean ~162, SD ~4.2)
+                for (let i = 0; i < 600; i++) {
+                    let u1 = Math.random();
+                    let u2 = Math.random();
+                    let z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                    sampleValues.push((z * 4.2 + 162.0).toFixed(1));
+                }
+                // Generate male heights (Mean ~178, SD ~4.2)
+                for (let i = 0; i < 600; i++) {
+                    let u1 = Math.random();
+                    let u2 = Math.random();
+                    let z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                    sampleValues.push((z * 4.2 + 178.0).toFixed(1));
+                }
+                appState.customBinWidth = 2.0;
+                widthInput.value = 2;
+            }
+            else if (type === 'scores') {
+                // Exam grades (0-100 uniform random skewed with peak) - Continuous - Increased to 800 values
+                for (let i = 0; i < 800; i++) {
+                    const score = Math.floor(60 + Math.random() * 25 + Math.random() * 15);
+                    sampleValues.push(Math.min(100, score));
+                }
+                appState.customBinWidth = 5.0;
+                widthInput.value = 5;
+            }
+            else if (type === 'colors') {
+                // Qualitative Categorical data (Car Colors) - Increased to 500 values
+                const pool = isIt 
+                    ? ['Rosso', 'Blu', 'Bianco', 'Nero', 'Argento', 'Grigio']
+                    : ['Red', 'Blue', 'White', 'Black', 'Silver', 'Grey'];
+                const weights = [0.30, 0.20, 0.25, 0.15, 0.07, 0.03]; // color distribution
+                for (let i = 0; i < 500; i++) {
+                    const r = Math.random();
+                    let cumulative = 0;
+                    for (let j = 0; j < pool.length; j++) {
+                        cumulative += weights[j];
+                        if (r <= cumulative) {
+                            sampleValues.push(pool[j]);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (type === 'ratings') {
+                // Discrete/Categorical Ratings (1 to 5 Stars) - Increased to 800 values
+                const stars = isIt 
+                    ? ['5 Stelle', '4 Stelle', '3 Stelle', '2 Stelle', '1 Stella']
+                    : ['5 Stars', '4 Stars', '3 Stars', '2 Stars', '1 Star'];
+                const weights = [0.45, 0.30, 0.12, 0.08, 0.05];
+                for (let i = 0; i < 800; i++) {
+                    const r = Math.random();
+                    let cumulative = 0;
+                    for (let j = 0; j < stars.length; j++) {
+                        cumulative += weights[j];
+                        if (r <= cumulative) {
+                            sampleValues.push(stars[j]);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (type === 'age_groups') {
+                // Age range bins - Discrete/Qualitative - Increased to 700 values
+                const brackets = ['18-24', '25-34', '35-49', '50-64', '65+'];
+                const weights = [0.15, 0.35, 0.28, 0.15, 0.07];
+                for (let i = 0; i < 700; i++) {
+                    const r = Math.random();
+                    let cumulative = 0;
+                    for (let j = 0; j < brackets.length; j++) {
+                        cumulative += weights[j];
+                        if (r <= cumulative) {
+                            sampleValues.push(brackets[j]);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (type === 'dice') {
+                // Simulation of a SINGLE standard 6-sided die (Uniform Discrete) - Increased to 1000 values
+                for (let i = 0; i < 1000; i++) {
+                    const dieResult = Math.floor(Math.random() * 6) + 1;
+                    sampleValues.push(dieResult);
+                }
+                if (appState.chartMode === 'histogram') {
+                    appState.customBinWidth = 1.0;
+                    widthInput.value = 1.0;
+                }
+            }
+
+            textarea.value = sampleValues.join(', ');
+            processDataInput();
+        }
+
+        // Formulates active calculations to output statistics summary
+        function processDataInput() {
+            const inputVal = document.getElementById('data-input').value;
+            const feedbackEl = document.getElementById('validation-feedback');
+            const dataCountBadge = document.getElementById('data-count-badge');
+            const dict = translations[appState.language];
+
+            // Clean list split by commas, semicolons, or newlines
+            const tokens = inputVal.split(/[,;\n]+/).map(t => t.trim()).filter(t => t.length > 0);
+            dataCountBadge.textContent = `${tokens.length} ${dict.valuesText}`;
+
+            if (tokens.length < 2) {
+                feedbackEl.innerHTML = dict.errorTooFew;
+                feedbackEl.classList.remove('hidden');
+                appState.rawData = [];
+                toggleChartAndTableVisibility(false);
+                clearStatistics();
+                return;
+            }
+
+            feedbackEl.classList.add('hidden');
+
+            if (appState.chartMode === 'histogram') {
+                // Histogram requires valid coerced numeric data
+                const numericValues = tokens.map(Number).filter(n => !isNaN(n));
+                if (numericValues.length < 2) {
+                    feedbackEl.innerHTML = dict.errorTooFew;
+                    feedbackEl.classList.remove('hidden');
+                    appState.rawData = [];
+                    toggleChartAndTableVisibility(false);
+                    clearStatistics();
+                    return;
+                }
+                // Sorted ascending for continuous statistical calculation
+                appState.rawData = numericValues.sort((a, b) => a - b);
+            } else {
+                // Discrete charts handle text/categorical tokens directly
+                appState.rawData = tokens;
+            }
+            
+            recalculateHistogram();
+        }
+
+        // Force system recalculation sequence
+        function triggerRecalculation() {
+            const widthInputVal = parseFloat(document.getElementById('bin-width-input').value);
+            if (!isNaN(widthInputVal) && widthInputVal > 0) {
+                appState.customBinWidth = widthInputVal;
+            }
+            if (appState.rawData.length >= 2) {
+                recalculateHistogram();
+            }
+        }
+
+        // Automatic smart utility suggesting an ideal starting bin size based on calculated ranges
+        function autoSuggestWidth() {
+            if (appState.rawData.length < 2 || appState.chartMode !== 'histogram') return;
+            const min = appState.rawData[0];
+            const max = appState.rawData[appState.rawData.length - 1];
+            const datasetRange = max - min;
+            
+            let suggestedValue = datasetRange / 10;
+            if (suggestedValue > 1) {
+                suggestedValue = Math.round(suggestedValue);
+            } else {
+                suggestedValue = parseFloat(suggestedValue.toPrecision(2));
+            }
+            
+            suggestedValue = Math.max(0.0001, suggestedValue);
+            document.getElementById('bin-width-input').value = suggestedValue;
+            appState.customBinWidth = suggestedValue;
+            triggerRecalculation();
+        }
+
+        // Math algorithm outputs descriptive statistical fields
+        function calculateStatistics(arr) {
+            // Check if values can be evaluated numerically (even if in Bar/Pie modes)
+            const numericValues = arr.map(Number).filter(n => !isNaN(n));
+            const isAllNumeric = numericValues.length === arr.length;
+
+            if (!isAllNumeric) {
+                // If it's qualitative, numerical summaries (mean, dev, range) do not apply
+                return {
+                    n: arr.length,
+                    min: "N/A",
+                    max: "N/A",
+                    range: "N/A",
+                    mean: "N/A",
+                    median: "N/A",
+                    variance: "N/A",
+                    stdDev: "N/A"
+                };
+            }
+
+            // Numeric Array Calculations
+            const sortedNumeric = [...numericValues].sort((a, b) => a - b);
+            const n = sortedNumeric.length;
+            const min = sortedNumeric[0];
+            const max = sortedNumeric[n - 1];
+            const range = max - min;
+
+            const sum = sortedNumeric.reduce((acc, val) => acc + val, 0);
+            const mean = sum / n;
+
+            let median;
+            const middleIndex = Math.floor(n / 2);
+            if (n % 2 !== 0) {
+                median = sortedNumeric[middleIndex];
+            } else {
+                median = (sortedNumeric[middleIndex - 1] + sortedNumeric[middleIndex]) / 2;
+            }
+
+            let variance = 0;
+            if (n > 1) {
+                const sumSquareResiduals = sortedNumeric.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0);
+                variance = sumSquareResiduals / (n - 1);
+            }
+            const stdDev = Math.sqrt(variance);
+
+            return { n, min, max, range, mean, median, variance, stdDev };
+        }
+
+        // Toggle UI panel views based on visibility status
+        function toggleChartAndTableVisibility(visible) {
+            const placeholder = document.getElementById('chart-placeholder');
+            const canvas = document.getElementById('histogramChart');
+            if (visible) {
+                placeholder.classList.add('hidden');
+                canvas.classList.remove('hidden');
+            } else {
+                placeholder.classList.remove('hidden');
+                canvas.classList.add('hidden');
+            }
+        }
+
+        // Empty text values inside descriptive stat panels
+        function clearStatistics() {
+            const statisticElements = ['stat-n', 'stat-mean', 'stat-median', 'stat-std', 'stat-min', 'stat-max', 'stat-range', 'stat-variance'];
+            statisticElements.forEach(elemId => document.getElementById(elemId).textContent = '-');
+            
+            const dict = translations[appState.language];
+            document.getElementById('bins-table-body').innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-4 py-6 text-center text-slate-400 italic">${dict.tablePlaceholder}</td>
+                </tr>
+            `;
+            document.getElementById('binning-summary').textContent = dict.placeholderText;
+        }
+
+        // Distributes numerical array values across standard bin buckets [min, max)
+        function createHistogramBins(data, width) {
+            const dict = translations[appState.language];
+            
+            // If in non-histogram discrete mode, compile counts categorially
+            if (appState.chartMode !== 'histogram') {
+                const counts = {};
+                data.forEach(item => {
+                    counts[item] = (counts[item] || 0) + 1;
+                });
+
+                const uniqueCategories = Object.keys(counts);
+                // Sort categories naturally (numerically if possible, else alphabetically)
+                uniqueCategories.sort((a, b) => {
+                    const numA = Number(a);
+                    const numB = Number(b);
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        return numA - numB;
+                    }
+                    return a.localeCompare(b);
+                });
+
+                const totalLength = data.length;
+                const bins = uniqueCategories.map(cat => {
+                    return {
+                        min: null,
+                        max: null,
+                        label: cat,
+                        center: cat,
+                        count: counts[cat],
+                        relative: parseFloat(((counts[cat] / totalLength) * 100).toFixed(2))
+                    };
+                });
+
+                return { bins, summaryText: dict.categoricalSummary };
+            }
+
+            // Standard continuous histogram logic
+            const stats = calculateStatistics(data);
+
+            // Establish base binning limits (applying X limits custom values if provided)
+            let startingPoint = (appState.customXMin !== null && !isNaN(appState.customXMin)) ? appState.customXMin : stats.min;
+            let endingPoint = (appState.customXMax !== null && !isNaN(appState.customXMax)) ? appState.customXMax : stats.max;
+
+            let targetWidth = width;
+            if (targetWidth <= 0) targetWidth = 1.0;
+
+            // Integer Centering Logic: check if all values in dataset are integers and bin width is integer
+            const isAllIntegers = data.every(val => Number.isInteger(val));
+            const isBinWidthInteger = Number.isInteger(targetWidth);
+
+            if (isAllIntegers && isBinWidthInteger) {
+                // Offset startingPoint by half a bin size to ensure integers fall perfectly at bin midpoints.
+                // Shift startingPoint left relative to the nearest mathematical integer boundary.
+                const baseFloor = Math.floor(startingPoint);
+                startingPoint = baseFloor - (targetWidth / 2);
+            }
+
+            let datasetRange = endingPoint - startingPoint;
+
+            if (datasetRange <= 0) {
+                return {
+                    bins: [{
+                        min: startingPoint - 0.5,
+                        max: startingPoint + 0.5,
+                        label: `[${(startingPoint - 0.5).toFixed(2)} , ${(startingPoint + 0.5).toFixed(2)}]`,
+                        center: startingPoint.toFixed(2),
+                        count: data.length,
+                        relative: 100
+                    }],
+                    summaryText: `${dict.chartLabelSingle} ${startingPoint}.`
+                };
+            }
+
+            let computedBinCount = Math.ceil(datasetRange / targetWidth);
+            if (isAllIntegers && isBinWidthInteger) {
+                // Recalculate range and add 1 extra safe buffer bin to fully cover all upper values
+                const extendedRange = endingPoint - startingPoint;
+                computedBinCount = Math.ceil(extendedRange / targetWidth) + 1;
+            }
+
+            if (computedBinCount > 200) {
+                computedBinCount = 200;
+                targetWidth = datasetRange / computedBinCount;
+            }
+
+            const bins = [];
+            for (let i = 0; i < computedBinCount; i++) {
+                const bMin = startingPoint + (i * targetWidth);
+                const bMax = startingPoint + ((i + 1) * targetWidth);
+                const isLastIdx = (i === computedBinCount - 1);
+                const label = `[${bMin.toFixed(2)}, ${bMax.toFixed(2)}${isLastIdx ? ']' : ')'}`;
+                
+                // Calculating the exact central value (midpoint) of each bin
+                const midpoint = bMin + (targetWidth / 2);
+
+                bins.push({
+                    min: bMin,
+                    max: bMax,
+                    label: label,
+                    center: midpoint.toFixed(2),
+                    count: 0,
+                    relative: 0
+                });
+            }
+
+            data.forEach(val => {
+                let allocated = false;
+                for (let i = 0; i < computedBinCount; i++) {
+                    const bin = bins[i];
+                    const isLastIdx = (i === computedBinCount - 1);
+                    
+                    if (isLastIdx) {
+                        if (val >= bin.min && val <= bin.max) {
+                            bin.count++;
+                            allocated = true;
+                            break;
+                        }
+                    } else {
+                        if (val >= bin.min && val < bin.max) {
+                            bin.count++;
+                            allocated = true;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            // Clean-up trailing empty padding bins created by integer centering extending beyond max boundaries
+            if (isAllIntegers && isBinWidthInteger && bins.length > 1) {
+                while (bins.length > 0 && bins[bins.length - 1].count === 0 && bins[bins.length - 1].min > endingPoint) {
+                    bins.pop();
+                }
+            }
+
+            bins.forEach(bin => {
+                bin.relative = parseFloat(((bin.count / data.length) * 100).toFixed(2));
+            });
+
+            const summaryText = `${dict.summaryDesc}${targetWidth.toFixed(4)}.`;
+            return { bins, summaryText };
+        }
+
+        // Complete UI and functional repaint cycle
+        function recalculateHistogram() {
+            if (appState.rawData.length < 2) return;
+
+            const stats = calculateStatistics(appState.rawData);
+            
+            // Paint metrics fields
+            document.getElementById('stat-n').textContent = stats.n;
+            document.getElementById('stat-mean').textContent = isNaN(stats.mean) ? stats.mean : stats.mean.toFixed(3);
+            document.getElementById('stat-median').textContent = isNaN(stats.median) ? stats.median : stats.median.toFixed(3);
+            document.getElementById('stat-std').textContent = isNaN(stats.stdDev) ? stats.stdDev : stats.stdDev.toFixed(3);
+            document.getElementById('stat-min').textContent = isNaN(stats.min) ? stats.min : stats.min.toFixed(2);
+            document.getElementById('stat-max').textContent = isNaN(stats.max) ? stats.max : stats.max.toFixed(2);
+            document.getElementById('stat-range').textContent = isNaN(stats.range) ? stats.range : stats.range.toFixed(2);
+            document.getElementById('stat-variance').textContent = isNaN(stats.variance) ? stats.variance : stats.variance.toFixed(3);
+
+            const { bins, summaryText } = createHistogramBins(appState.rawData, appState.customBinWidth);
+            appState.binsCalculated = bins;
+            
+            document.getElementById('binning-summary').textContent = summaryText;
+            
+            toggleChartAndTableVisibility(true);
+
+            // Redraw Chart.js and compile corresponding frequency table records
+            renderChart(bins);
+            renderTable(bins);
+        }
+
+        function renderChart(bins) {
+            const canvasElement = document.getElementById('histogramChart');
+            const ctx = canvasElement.getContext('2d');
+            const dict = translations[appState.language];
+            
+            // For histograms, we use the bin centers (midpoints) as tick labels instead of full intervals.
+            const labels = appState.chartMode === 'histogram' 
+                ? bins.map(bin => bin.center) 
+                : bins.map(bin => bin.label);
+                
+            const frequencyData = bins.map(bin => bin.count);
+
+            if (appState.chartInstance) {
+                appState.chartInstance.destroy();
+            }
+
+            const gradientFill = ctx.createLinearGradient(0, 0, 0, 350);
+            gradientFill.addColorStop(0, 'rgba(79, 70, 229, 0.85)'); // Indigo-600
+            gradientFill.addColorStop(1, 'rgba(129, 140, 248, 0.3)');
+
+            const palette = [
+                '#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', 
+                '#8b5cf6', '#3b82f6', '#14b8a6', '#f43f5e', '#64748b'
+            ];
+
+            const isPieMode = appState.chartMode === 'pie';
+            const isBarMode = appState.chartMode === 'bar';
+
+            const dataset = {
+                label: dict.chartLegend,
+                data: frequencyData
+            };
+
+            if (isPieMode) {
+                dataset.backgroundColor = bins.map((_, i) => palette[i % palette.length]);
+                dataset.borderColor = '#ffffff';
+                dataset.borderWidth = 2;
+            } else if (isBarMode) {
+                dataset.backgroundColor = bins.map((_, i) => palette[i % palette.length] + 'dd');
+                dataset.borderColor = bins.map((_, i) => palette[i % palette.length]);
+                dataset.borderWidth = 1.5;
+                dataset.borderRadius = 6;
+                dataset.barPercentage = 0.65;
+                dataset.categoryPercentage = 0.8;
+            } else {
+                dataset.backgroundColor = gradientFill;
+                dataset.borderColor = 'rgba(79, 70, 229, 1)';
+                dataset.borderWidth = 1.5;
+                dataset.borderRadius = { topLeft: 5, topRight: 5 };
+                dataset.barPercentage = 0.98;
+                dataset.categoryPercentage = 1.0;
+            }
+
+            // Determine custom X and Y axes labels (with graceful automatic translation fallbacks)
+            const xTitle = appState.customXTitle || (appState.chartMode === 'histogram' 
+                ? (appState.language === 'en' ? 'Bin Center' : 'Centro del Bin')
+                : (appState.language === 'en' ? 'Category' : 'Categoria'));
+                
+            const yTitle = appState.customYTitle || (appState.language === 'en' ? 'Frequency' : 'Frequenza');
+
+            const chartConfig = {
+                type: isPieMode ? 'pie' : 'bar', // Using 'pie' instead of 'doughnut' for a solid circle
+                data: {
+                    labels: labels,
+                    datasets: [dataset]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: isPieMode,
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    family: 'Inter',
+                                    size: 11
+                                },
+                                color: '#475569'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#e2e8f0',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                title: function(context) {
+                                    // Display the accurate numeric mathematical range in tooltip title for maximum precision
+                                    const index = context[0].dataIndex;
+                                    return bins[index].label;
+                                },
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const percentageValue = ((value / appState.rawData.length) * 100).toFixed(1);
+                                    return `${dict.chartSuffixFreq}: ${value} (${percentageValue}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            if (!isPieMode) {
+                chartConfig.options.scales = {
+                    x: {
+                        title: {
+                            display: true,
+                            text: xTitle,
+                            color: '#64748b',
+                            font: {
+                                family: 'Inter',
+                                size: 11,
+                                weight: '600'
+                            }
+                        },
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#475569',
+                            font: {
+                                size: 10,
+                                family: 'Inter',
+                                weight: '500'
+                            },
+                            maxRotation: 45,
+                            minRotation: 0
+                        },
+                        border: {
+                            color: '#cbd5e1'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: yTitle,
+                            color: '#64748b',
+                            font: {
+                                family: 'Inter',
+                                size: 11,
+                                weight: '600'
+                            }
+                        },
+                        grid: {
+                            color: '#f1f5f9'
+                        },
+                        ticks: {
+                            color: '#475569',
+                            font: {
+                                size: 10,
+                                family: 'Inter',
+                                weight: '500'
+                            },
+                            stepSize: 1
+                        },
+                        border: {
+                            color: '#cbd5e1'
+                        }
+                    }
+                };
+            }
+
+            appState.chartInstance = new Chart(ctx, chartConfig);
+        }
+
+        function renderTable(bins) {
+            const tableBody = document.getElementById('bins-table-body');
+            tableBody.innerHTML = '';
+
+            const maxBinFrequency = Math.max(...bins.map(bin => bin.count));
+
+            bins.forEach((bin, idx) => {
+                const trElement = document.createElement('tr');
+                trElement.className = "hover:bg-slate-50/70 transition-colors";
+                
+                const normalizedFillWidth = maxBinFrequency > 0 ? (bin.count / maxBinFrequency) * 100 : 0;
+
+                // Let's display both the precise interval range AND the bin center in the data table for extreme clarity
+                const displayInterval = appState.chartMode === 'histogram' 
+                    ? `<div class="font-mono text-xs text-indigo-600 font-semibold">${bin.label}</div>
+                       <div class="text-[10px] text-slate-400 mt-0.5">${appState.language === 'en' ? 'Center' : 'Centro'}: ${bin.center}</div>`
+                    : `<div class="font-mono text-xs text-indigo-600 font-semibold">${bin.label}</div>`;
+
+                trElement.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-slate-500">#${idx + 1}</td>
+                    <td class="px-4 py-3">${displayInterval}</td>
+                    <td class="px-4 py-3 text-right font-bold text-slate-900">${bin.count}</td>
+                    <td class="px-4 py-3 text-right text-slate-600 font-medium">${bin.relative}%</td>
+                    <td class="px-4 py-3">
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 max-w-[150px]">
+                            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full shadow-sm" style="width: ${normalizedFillWidth}%"></div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(trElement);
+            });
+        }
+
+        // Export diagram to client in high-fidelity PNG image format
+        function downloadChart() {
+            if (!appState.chartInstance) return;
+            
+            const fileUri = appState.chartInstance.toBase64Image();
+            const link = document.createElement('a');
+            link.download = `data_analysis_${Date.now()}.png`;
+            link.href = fileUri;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // CSV compiler exports statistics to standard spreadsheets
+        function downloadCSV() {
+            if (appState.binsCalculated.length === 0) return;
+
+            let fileCsvContent = "data:text/csv;charset=utf-8,";
+            const dict = translations[appState.language];
+            
+            // Add custom center field to the export if we're on a continuous histogram configuration
+            const isHist = appState.chartMode === 'histogram';
+            const extraHeader = isHist ? `,"${appState.language === 'en' ? 'Bin Center' : 'Centro del Bin'}"` : "";
+
+            fileCsvContent += `"${dict.colBinNum}","${dict.colRange}","${dict.colAbsFreq}","${dict.colRelFreq}"${extraHeader}\n`;
+
+            appState.binsCalculated.forEach((bin, idx) => {
+                const scrubbedLabel = bin.label.replace(/,/g, " -");
+                const extraVal = isHist ? `,"${bin.center}"` : "";
+                fileCsvContent += `"${idx + 1}","${scrubbedLabel}","${bin.count}","${bin.relative}"${extraVal}\n`;
+            });
+
+            const targetUri = encodeURI(fileCsvContent);
+            const downloadLink = document.createElement('a');
+            downloadLink.setAttribute("href", targetUri);
+            downloadLink.setAttribute("download", `distribution_table_${Date.now()}.csv`);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+</body>
+</html>
