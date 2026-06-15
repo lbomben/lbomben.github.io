@@ -2,6 +2,6 @@
 
 
 <a href="https://lbomben.github.io"> Visita il sito </a> <br>
-<a href="https://lbomben.github.io/tutorial.html" > Tutorial per creare un sito simile </a>
+<a href="https://lbomben.github.io/tutorial.html" > Tutorial per creare un sito simile </a> <br>
 <a href="https://html.onlineviewer.net/" > Sito per test html in tempo reale </a>
 
