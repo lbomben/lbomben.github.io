@@ -12,34 +12,34 @@
     canvas { touch-action: none; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col">
 
   <!-- Top Header -->
-  <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+  <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        <div class="p-2 bg-indigo-600 rounded-lg shadow-lg">
+        <div class="p-2 bg-indigo-600 rounded-lg shadow-md">
           <i class="fa-solid fa-chart-line text-xl text-white"></i>
         </div>
         <div>
-          <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 class="text-xl font-bold text-slate-900">
             Le Rette nel Piano Cartesiano
           </h1>
-          <p class="text-xs text-slate-400">Laboratorio di Geometria Analitica Interattiva</p>
+          <p class="text-xs text-slate-600 font-medium">Laboratorio di Geometria Analitica Interattiva</p>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-700/60 text-sm font-medium w-full sm:w-auto overflow-x-auto">
-        <button id="tab1-btn" onclick="switchTab(1)" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-indigo-400 bg-slate-800 shadow flex items-center justify-center space-x-2 whitespace-nowrap">
+      <nav class="flex bg-slate-200/80 p-1 rounded-xl border border-slate-300 text-sm font-medium w-full sm:w-auto overflow-x-auto">
+        <button id="tab1-btn" onclick="switchTab(1)" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-indigo-700 bg-white shadow-sm font-semibold flex items-center justify-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-list-check text-xs"></i>
           <span>1. Punti e Retta</span>
         </button>
-        <button id="tab2-btn" onclick="switchTab(2)" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-slate-400 hover:text-slate-200 flex items-center justify-center space-x-2 whitespace-nowrap">
+        <button id="tab2-btn" onclick="switchTab(2)" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-slate-700 hover:text-slate-900 flex items-center justify-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-sliders text-xs"></i>
           <span>2. Esplora m e q</span>
         </button>
-        <button id="tab3-btn" onclick="switchTab(3)" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-slate-400 hover:text-slate-200 flex items-center justify-center space-x-2 whitespace-nowrap">
+        <button id="tab3-btn" onclick="switchTab(3)" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-slate-700 hover:text-slate-900 flex items-center justify-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-location-crosshairs text-xs"></i>
           <span>3. Intersezione Rette</span>
         </button>
@@ -55,65 +55,65 @@
       <div class="lg:col-span-5 space-y-6">
         
         <!-- Equation Input Card -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl">
-          <h2 class="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-square-root-variable text-indigo-400"></i>
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md">
+          <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-square-root-variable text-indigo-600"></i>
             1. Definisci l'Equazione della Retta
           </h2>
-          <p class="text-xs text-slate-400 mb-4">
-            Inserisci un'equazione del tipo <code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300">y = mx + q</code> (es: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300">y = x</code>, <code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300">y = 2x - 3</code>, <code class="bg-slate-900 px-1.5 py-0.5 rounded text-indigo-300">y = -0.5x + 1</code>).
+          <p class="text-xs text-slate-600 mb-4 font-medium">
+            Inserisci un'equazione del tipo <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700 border border-slate-200">y = mx + q</code> (es: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700 border border-slate-200">y = x</code>, <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700 border border-slate-200">y = 2x - 3</code>).
           </p>
 
           <div class="flex gap-2">
             <div class="relative flex-grow">
               <input type="text" id="t1-equation" value="y = x" placeholder="es. y = 2x + 1"
-                     class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-2.5 font-mono text-indigo-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
+                     class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 font-mono text-slate-900 font-semibold focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-sm">
             </div>
-            <button onclick="updateTab1Equation()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2 text-sm">
+            <button onclick="updateTab1Equation()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2 text-sm">
               <i class="fa-solid fa-check"></i> Imposta
             </button>
           </div>
-          <div id="t1-equation-status" class="mt-2 text-xs text-emerald-400 font-mono hidden">
+          <div id="t1-equation-status" class="mt-2 text-xs text-emerald-700 font-mono font-semibold hidden">
             <i class="fa-solid fa-circle-check"></i> Equazione riconosciuta: <span id="t1-parsed-text">y = x</span>
           </div>
         </div>
 
         <!-- Add Points & Table Card -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl space-y-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md space-y-4">
           <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
-              <i class="fa-solid fa-table text-indigo-400"></i>
+            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-table text-indigo-600"></i>
               2. Tabella dei Punti
             </h2>
-            <button onclick="clearTab1Points()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/50 px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+            <button onclick="clearTab1Points()" class="text-xs text-rose-700 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1.5 rounded-lg transition flex items-center gap-1 font-semibold">
               <i class="fa-solid fa-trash-can"></i> Svuota
             </button>
           </div>
 
           <!-- Input x value form -->
-          <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-700/60 flex items-center gap-3">
-            <label for="t1-input-x" class="text-sm font-medium text-slate-300 whitespace-nowrap">Valore X:</label>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+            <label for="t1-input-x" class="text-sm font-semibold text-slate-700 whitespace-nowrap">Valore X:</label>
             <input type="number" id="t1-input-x" step="0.5" value="0" 
-                   class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 font-mono text-center text-slate-100 focus:outline-none focus:border-indigo-500 text-sm">
-            <button onclick="addPointFromInput()" class="flex-grow bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-1.5 px-3 rounded-lg transition text-sm flex items-center justify-center gap-1 shadow">
+                   class="w-24 bg-white border border-slate-300 rounded-lg px-3 py-1.5 font-mono text-center text-slate-900 font-bold focus:outline-none focus:border-indigo-600 text-sm">
+            <button onclick="addPointFromInput()" class="flex-grow bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-1.5 px-3 rounded-lg transition text-sm flex items-center justify-center gap-1 shadow">
               <i class="fa-solid fa-plus text-xs"></i> Calcola Y e Aggiungi
             </button>
           </div>
 
           <!-- Quick presets for x -->
-          <div class="flex items-center gap-1.5 flex-wrap text-xs text-slate-400">
+          <div class="flex items-center gap-1.5 flex-wrap text-xs text-slate-600 font-medium">
             <span>Aggiungi rapido X:</span>
-            <button onclick="quickAddX(-3)" class="bg-slate-700/60 hover:bg-slate-700 px-2.5 py-1 rounded-md transition text-slate-200 font-mono">-3</button>
-            <button onclick="quickAddX(-1)" class="bg-slate-700/60 hover:bg-slate-700 px-2.5 py-1 rounded-md transition text-slate-200 font-mono">-1</button>
-            <button onclick="quickAddX(0)" class="bg-slate-700/60 hover:bg-slate-700 px-2.5 py-1 rounded-md transition text-slate-200 font-mono">0</button>
-            <button onclick="quickAddX(1)" class="bg-slate-700/60 hover:bg-slate-700 px-2.5 py-1 rounded-md transition text-slate-200 font-mono">1</button>
-            <button onclick="quickAddX(3)" class="bg-slate-700/60 hover:bg-slate-700 px-2.5 py-1 rounded-md transition text-slate-200 font-mono">3</button>
+            <button onclick="quickAddX(-3)" class="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-md transition text-slate-800 font-mono font-bold">-3</button>
+            <button onclick="quickAddX(-1)" class="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-md transition text-slate-800 font-mono font-bold">-1</button>
+            <button onclick="quickAddX(0)" class="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-md transition text-slate-800 font-mono font-bold">0</button>
+            <button onclick="quickAddX(1)" class="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-md transition text-slate-800 font-mono font-bold">1</button>
+            <button onclick="quickAddX(3)" class="bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded-md transition text-slate-800 font-mono font-bold">3</button>
           </div>
 
           <!-- Points Table -->
-          <div class="overflow-x-auto max-h-60 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900/50">
+          <div class="overflow-x-auto max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white">
             <table class="w-full text-sm text-left">
-              <thead class="text-xs uppercase bg-slate-800/90 text-slate-400 sticky top-0 border-b border-slate-700">
+              <thead class="text-xs uppercase bg-slate-100 text-slate-700 font-bold sticky top-0 border-b border-slate-200">
                 <tr>
                   <th class="px-4 py-2 text-center">Punto</th>
                   <th class="px-4 py-2 text-center">x</th>
@@ -121,15 +121,15 @@
                   <th class="px-4 py-2 text-center">Azioni</th>
                 </tr>
               </thead>
-              <tbody id="t1-table-body" class="divide-y divide-slate-800 font-mono">
+              <tbody id="t1-table-body" class="divide-y divide-slate-200 font-mono font-semibold text-slate-800">
                 <!-- Rows injected dynamically -->
               </tbody>
             </table>
           </div>
 
           <!-- Helper indicator -->
-          <div id="t1-status-msg" class="p-3 bg-amber-950/40 border border-amber-800/40 rounded-xl text-amber-300 text-xs flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm"></i>
+          <div id="t1-status-msg" class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
             <span>Inserisci almeno <strong>2 punti</strong> per visualizzare la retta in trasparenza sul piano cartesiano.</span>
           </div>
         </div>
@@ -137,26 +137,26 @@
       </div>
 
       <!-- Right Panel: Canvas Plotter -->
-      <div class="lg:col-span-7 bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl flex flex-col h-full min-h-[500px]">
+      <div class="lg:col-span-7 bg-white rounded-2xl p-5 border border-slate-200 shadow-md flex flex-col h-full min-h-[500px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-2">
-            <span class="inline-block w-3 h-3 rounded-full bg-cyan-400"></span>
-            <h3 class="font-semibold text-slate-200">Piano Cartesiano</h3>
+            <span class="inline-block w-3 h-3 rounded-full bg-sky-600"></span>
+            <h3 class="font-bold text-slate-800">Piano Cartesiano</h3>
           </div>
-          <div class="flex items-center space-x-2 text-xs">
-            <button onclick="autoFitTab1Points()" class="bg-indigo-600/80 hover:bg-indigo-600 text-indigo-100 px-2.5 py-1 rounded transition flex items-center gap-1 shadow" title="Adatta ai punti">
+          <div class="flex items-center space-x-2 text-xs font-semibold">
+            <button onclick="autoFitTab1Points()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded transition flex items-center gap-1 shadow-sm" title="Adatta ai punti">
               <i class="fa-solid fa-expand"></i> Mostra Tutti
             </button>
-            <button onclick="resetCanvasZoom(1)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-slate-200 transition" title="Ripristina Vista">
+            <button onclick="resetCanvasZoom(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded transition" title="Ripristina Vista">
               <i class="fa-solid fa-arrows-to-dot"></i> Centra
             </button>
-            <span id="t1-coord-badge" class="bg-slate-900/90 text-cyan-300 font-mono px-2.5 py-1 rounded border border-slate-700">
+            <span id="t1-coord-badge" class="bg-slate-100 text-slate-900 font-mono font-bold px-2.5 py-1 rounded border border-slate-300">
               (x: 0.0, y: 0.0)
             </span>
           </div>
         </div>
 
-        <div class="relative flex-grow w-full bg-slate-950 rounded-xl overflow-hidden border border-slate-700/80 shadow-inner flex items-center justify-center">
+        <div class="relative flex-grow w-full bg-white rounded-xl overflow-hidden border border-slate-300 shadow-inner flex items-center justify-center">
           <canvas id="t1-canvas" class="w-full h-full cursor-crosshair"></canvas>
         </div>
       </div>
@@ -168,40 +168,40 @@
       <div class="lg:col-span-5 space-y-6">
         
         <!-- Live Equation Box -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl text-center">
-          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Equazione della Retta</span>
-          <div class="text-3xl font-extrabold font-mono text-indigo-400 my-2 tracking-wide" id="t2-eq-display">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md text-center">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Equazione della Retta</span>
+          <div class="text-3xl font-extrabold font-mono text-indigo-600 my-2 tracking-wide" id="t2-eq-display">
             y = 2x + 1
           </div>
-          <div class="flex justify-center gap-2 text-xs font-medium">
-            <span class="bg-indigo-950/80 text-indigo-300 border border-indigo-700/50 px-2.5 py-1 rounded-full">
-              m (pendenza) = <strong id="t2-m-val">2</strong>
+          <div class="flex justify-center gap-2 text-xs font-semibold">
+            <span class="bg-indigo-50 text-indigo-900 border border-indigo-200 px-3 py-1 rounded-full">
+              m (pendenza) = <strong id="t2-m-val" class="text-indigo-700">2</strong>
             </span>
-            <span class="bg-emerald-950/80 text-emerald-300 border border-emerald-700/50 px-2.5 py-1 rounded-full">
-              q (intercetta) = <strong id="t2-q-val">1</strong>
+            <span class="bg-emerald-50 text-emerald-900 border border-emerald-200 px-3 py-1 rounded-full">
+              q (intercetta) = <strong id="t2-q-val" class="text-emerald-700">1</strong>
             </span>
           </div>
         </div>
 
         <!-- Sliders Box -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl space-y-5">
-          <h3 class="font-semibold text-slate-200 border-b border-slate-700 pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-indigo-400"></i> Controlli Parametrici
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md space-y-5">
+          <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-2 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-indigo-600"></i> Controlli Parametrici
           </h3>
 
           <!-- Slope m Slider & Input -->
           <div>
             <div class="flex justify-between items-center text-sm mb-1">
-              <label for="t2-input-m" class="font-medium text-indigo-300 flex items-center gap-1">
+              <label for="t2-input-m" class="font-bold text-indigo-700 flex items-center gap-1">
                 <span>Pendenza (m):</span>
               </label>
               <input type="number" id="t2-input-m" step="0.1" value="2" oninput="syncTab2FromInput('m')"
-                     class="w-24 bg-slate-900 border border-indigo-500/60 rounded-lg px-2 py-1 font-mono text-indigo-300 text-right font-bold text-sm focus:outline-none focus:border-indigo-400">
+                     class="w-24 bg-slate-50 border border-indigo-300 rounded-lg px-2 py-1 font-mono text-indigo-700 text-right font-bold text-sm focus:outline-none focus:border-indigo-600">
             </div>
             <input type="range" id="t2-slider-m" min="-10" max="10" step="0.1" value="2"
                    oninput="syncTab2FromSlider('m')"
-                   class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
-            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+            <div class="flex justify-between text-[10px] text-slate-500 font-semibold mt-1">
               <span>-10 (decrescente)</span>
               <span>0 (orizzontale)</span>
               <span>+10 (crescente)</span>
@@ -211,16 +211,16 @@
           <!-- Intercept q Slider & Input -->
           <div>
             <div class="flex justify-between items-center text-sm mb-1">
-              <label for="t2-input-q" class="font-medium text-emerald-300 flex items-center gap-1">
+              <label for="t2-input-q" class="font-bold text-emerald-700 flex items-center gap-1">
                 <span>Intercetta Asse Y (q):</span>
               </label>
               <input type="number" id="t2-input-q" step="0.1" value="1" oninput="syncTab2FromInput('q')"
-                     class="w-24 bg-slate-900 border border-emerald-500/60 rounded-lg px-2 py-1 font-mono text-emerald-300 text-right font-bold text-sm focus:outline-none focus:border-emerald-400">
+                     class="w-24 bg-slate-50 border border-emerald-300 rounded-lg px-2 py-1 font-mono text-emerald-700 text-right font-bold text-sm focus:outline-none focus:border-emerald-600">
             </div>
             <input type="range" id="t2-slider-q" min="-10" max="10" step="0.1" value="1"
                    oninput="syncTab2FromSlider('q')"
-                   class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
-            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+            <div class="flex justify-between text-[10px] text-slate-500 font-semibold mt-1">
               <span>-10 (sotto l'origine)</span>
               <span>0 (passa per l'origine)</span>
               <span>+10 (sopra l'origine)</span>
@@ -228,53 +228,53 @@
           </div>
 
           <!-- Toggles for Visual Highlights -->
-          <div class="pt-3 border-t border-slate-700/80 space-y-2">
-            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
-              <input type="checkbox" id="t2-show-triangle" checked onchange="drawTab2()" class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+          <div class="pt-3 border-t border-slate-200 space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+              <input type="checkbox" id="t2-show-triangle" checked onchange="drawTab2()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
               <span>Mostra triangolo della pendenza (&Delta;y / &Delta;x)</span>
             </label>
-            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
-              <input type="checkbox" id="t2-show-intercept" checked onchange="drawTab2()" class="rounded border-slate-700 text-emerald-600 focus:ring-emerald-500">
-              <span>Evidenzia intercetta con l'asse y <code class="text-emerald-400">(0, q)</code></span>
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+              <input type="checkbox" id="t2-show-intercept" checked onchange="drawTab2()" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+              <span>Evidenzia intercetta con l'asse y <code class="text-emerald-700 font-bold">(0, q)</code></span>
             </label>
           </div>
         </div>
 
         <!-- Educational Explanations Card -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl space-y-3 text-xs text-slate-300">
-          <h4 class="font-semibold text-slate-100 flex items-center gap-1.5 text-sm">
-            <i class="fa-solid fa-lightbulb text-amber-400"></i> Cosa rappresentano m e q?
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md space-y-3 text-xs text-slate-700 font-medium">
+          <h4 class="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
+            <i class="fa-solid fa-lightbulb text-amber-500"></i> Cosa rappresentano m e q?
           </h4>
-          <div id="t2-explanation-m" class="p-2.5 rounded-lg bg-indigo-950/40 border border-indigo-800/40">
-            <strong class="text-indigo-300">m (Pendenza / Coefficiente angolare):</strong> 
-            Indica l'inclinazione della retta. Per ogni passo di 1 unità a destra (+x), la retta sale o scende di <span id="t2-m-exp-val" class="font-bold text-indigo-300">2</span> unità in y.
+          <div id="t2-explanation-m" class="p-2.5 rounded-lg bg-indigo-50 border border-indigo-200">
+            <strong class="text-indigo-900">m (Pendenza / Coefficiente angolare):</strong> 
+            Indica l'inclinazione della retta. Per ogni passo di 1 unità a destra (+x), la retta sale o scende di <span id="t2-m-exp-val" class="font-bold text-indigo-800">2</span> unità in y.
           </div>
-          <div id="t2-explanation-q" class="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-800/40">
-            <strong class="text-emerald-300">q (Ordinata all'origine / Intercetta):</strong> 
-            È il punto in cui la retta taglia l'asse delle ordinate (Y). La retta passa esattamente per il punto <span id="t2-q-exp-val" class="font-bold text-emerald-300">(0, 1)</span>.
+          <div id="t2-explanation-q" class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
+            <strong class="text-emerald-900">q (Ordinata all'origine / Intercetta):</strong> 
+            È il punto in cui la retta taglia l'asse delle ordinate (Y). La retta passa esattamente per il punto <span id="t2-q-exp-val" class="font-bold text-emerald-800">(0, 1)</span>.
           </div>
         </div>
 
       </div>
 
       <!-- Right Panel: Canvas Plotter -->
-      <div class="lg:col-span-7 bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl flex flex-col h-full min-h-[500px]">
+      <div class="lg:col-span-7 bg-white rounded-2xl p-5 border border-slate-200 shadow-md flex flex-col h-full min-h-[500px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-2">
-            <span class="inline-block w-3 h-3 rounded-full bg-indigo-400"></span>
-            <h3 class="font-semibold text-slate-200">Grafico Dinamico</h3>
+            <span class="inline-block w-3 h-3 rounded-full bg-indigo-600"></span>
+            <h3 class="font-bold text-slate-800">Grafico Dinamico</h3>
           </div>
-          <div class="flex items-center space-x-2 text-xs">
-            <button onclick="resetCanvasZoom(2)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-slate-200 transition">
+          <div class="flex items-center space-x-2 text-xs font-semibold">
+            <button onclick="resetCanvasZoom(2)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded transition">
               <i class="fa-solid fa-arrows-to-dot"></i> Centra
             </button>
-            <span id="t2-coord-badge" class="bg-slate-900/90 text-indigo-300 font-mono px-2.5 py-1 rounded border border-slate-700">
+            <span id="t2-coord-badge" class="bg-slate-100 text-slate-900 font-mono font-bold px-2.5 py-1 rounded border border-slate-300">
               (x: 0.0, y: 0.0)
             </span>
           </div>
         </div>
 
-        <div class="relative flex-grow w-full bg-slate-950 rounded-xl overflow-hidden border border-slate-700/80 shadow-inner flex items-center justify-center">
+        <div class="relative flex-grow w-full bg-white rounded-xl overflow-hidden border border-slate-300 shadow-inner flex items-center justify-center">
           <canvas id="t2-canvas" class="w-full h-full cursor-crosshair"></canvas>
         </div>
       </div>
@@ -286,102 +286,102 @@
       <div class="lg:col-span-5 space-y-6">
         
         <!-- Retta 1 (r1) Controls -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-indigo-500/40 shadow-xl space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-700 pb-2">
-            <h3 class="font-semibold text-indigo-400 flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
+        <div class="bg-white rounded-2xl p-5 border border-indigo-200 shadow-md space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h3 class="font-bold text-indigo-700 flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
               Prima Retta r₁
             </h3>
-            <span class="font-mono font-bold text-indigo-300 text-sm" id="t3-r1-eq-text">y = 1x + 2</span>
+            <span class="font-mono font-extrabold text-indigo-700 text-sm" id="t3-r1-eq-text">y = 1x + 2</span>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="text-xs text-slate-400 block">Pendenza m₁:</label>
+                <label class="text-xs text-slate-600 font-bold block">Pendenza m₁:</label>
                 <input type="number" id="t3-input-m1" step="0.1" value="1" oninput="syncTab3FromInput('m1')"
-                       class="w-16 bg-slate-900 border border-indigo-500/60 rounded px-1.5 py-0.5 font-mono text-indigo-300 text-right font-bold text-xs focus:outline-none">
+                       class="w-16 bg-slate-50 border border-indigo-300 rounded px-1.5 py-0.5 font-mono text-indigo-700 text-right font-bold text-xs focus:outline-none">
               </div>
-              <input type="range" id="t3-m1" min="-10" max="10" step="0.1" value="1" oninput="syncTab3FromSlider('m1')" class="w-full accent-indigo-500">
+              <input type="range" id="t3-m1" min="-10" max="10" step="0.1" value="1" oninput="syncTab3FromSlider('m1')" class="w-full accent-indigo-600">
             </div>
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="text-xs text-slate-400 block">Intercetta q₁:</label>
+                <label class="text-xs text-slate-600 font-bold block">Intercetta q₁:</label>
                 <input type="number" id="t3-input-q1" step="0.1" value="2" oninput="syncTab3FromInput('q1')"
-                       class="w-16 bg-slate-900 border border-indigo-500/60 rounded px-1.5 py-0.5 font-mono text-indigo-300 text-right font-bold text-xs focus:outline-none">
+                       class="w-16 bg-slate-50 border border-indigo-300 rounded px-1.5 py-0.5 font-mono text-indigo-700 text-right font-bold text-xs focus:outline-none">
               </div>
-              <input type="range" id="t3-q1" min="-10" max="10" step="0.1" value="2" oninput="syncTab3FromSlider('q1')" class="w-full accent-indigo-500">
+              <input type="range" id="t3-q1" min="-10" max="10" step="0.1" value="2" oninput="syncTab3FromSlider('q1')" class="w-full accent-indigo-600">
             </div>
           </div>
         </div>
 
         <!-- Retta 2 (r2) Controls -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-rose-500/40 shadow-xl space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-700 pb-2">
-            <h3 class="font-semibold text-rose-400 flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+        <div class="bg-white rounded-2xl p-5 border border-rose-200 shadow-md space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+            <h3 class="font-bold text-rose-700 flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-rose-600"></span>
               Seconda Retta r₂
             </h3>
-            <span class="font-mono font-bold text-rose-300 text-sm" id="t3-r2-eq-text">y = -1x + 4</span>
+            <span class="font-mono font-extrabold text-rose-700 text-sm" id="t3-r2-eq-text">y = -1x + 4</span>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="text-xs text-slate-400 block">Pendenza m₂:</label>
+                <label class="text-xs text-slate-600 font-bold block">Pendenza m₂:</label>
                 <input type="number" id="t3-input-m2" step="0.1" value="-1" oninput="syncTab3FromInput('m2')"
-                       class="w-16 bg-slate-900 border border-rose-500/60 rounded px-1.5 py-0.5 font-mono text-rose-300 text-right font-bold text-xs focus:outline-none">
+                       class="w-16 bg-slate-50 border border-rose-300 rounded px-1.5 py-0.5 font-mono text-rose-700 text-right font-bold text-xs focus:outline-none">
               </div>
-              <input type="range" id="t3-m2" min="-10" max="10" step="0.1" value="-1" oninput="syncTab3FromSlider('m2')" class="w-full accent-rose-500">
+              <input type="range" id="t3-m2" min="-10" max="10" step="0.1" value="-1" oninput="syncTab3FromSlider('m2')" class="w-full accent-rose-600">
             </div>
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="text-xs text-slate-400 block">Intercetta q₂:</label>
+                <label class="text-xs text-slate-600 font-bold block">Intercetta q₂:</label>
                 <input type="number" id="t3-input-q2" step="0.1" value="4" oninput="syncTab3FromInput('q2')"
-                       class="w-16 bg-slate-900 border border-rose-500/60 rounded px-1.5 py-0.5 font-mono text-rose-300 text-right font-bold text-xs focus:outline-none">
+                       class="w-16 bg-slate-50 border border-rose-300 rounded px-1.5 py-0.5 font-mono text-rose-700 text-right font-bold text-xs focus:outline-none">
               </div>
-              <input type="range" id="t3-q2" min="-10" max="10" step="0.1" value="4" oninput="syncTab3FromSlider('q2')" class="w-full accent-rose-500">
+              <input type="range" id="t3-q2" min="-10" max="10" step="0.1" value="4" oninput="syncTab3FromSlider('q2')" class="w-full accent-rose-600">
             </div>
           </div>
         </div>
 
         <!-- Intersection Analysis Card -->
-        <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl space-y-3">
-          <h3 class="font-semibold text-slate-200 flex items-center gap-2">
-            <i class="fa-solid fa-calculator text-amber-400"></i>
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md space-y-3">
+          <h3 class="font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-amber-600"></i>
             Analisi dell'Intersezione
           </h3>
 
-          <div id="t3-intersection-box" class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2">
+          <div id="t3-intersection-box" class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
             <!-- Dynamic calculation content -->
           </div>
 
           <!-- Perpendicularity or Special Status Badge -->
-          <div id="t3-special-badge" class="hidden p-2.5 rounded-lg text-xs font-semibold text-center border">
+          <div id="t3-special-badge" class="hidden p-2.5 rounded-lg text-xs font-bold text-center border">
           </div>
         </div>
 
       </div>
 
       <!-- Right Panel: Canvas Plotter -->
-      <div class="lg:col-span-7 bg-slate-800 rounded-2xl p-5 border border-slate-700 shadow-xl flex flex-col h-full min-h-[500px]">
+      <div class="lg:col-span-7 bg-white rounded-2xl p-5 border border-slate-200 shadow-md flex flex-col h-full min-h-[500px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-2">
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-            <h3 class="font-semibold text-slate-200">Piano Cartesiano Condiviso</h3>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+            <h3 class="font-bold text-slate-800">Piano Cartesiano Condiviso</h3>
           </div>
-          <div class="flex items-center space-x-2 text-xs">
-            <button onclick="resetCanvasZoom(3)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-slate-200 transition">
+          <div class="flex items-center space-x-2 text-xs font-semibold">
+            <button onclick="resetCanvasZoom(3)" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded transition">
               <i class="fa-solid fa-arrows-to-dot"></i> Centra
             </button>
-            <span id="t3-coord-badge" class="bg-slate-900/90 text-amber-300 font-mono px-2.5 py-1 rounded border border-slate-700">
+            <span id="t3-coord-badge" class="bg-slate-100 text-slate-900 font-mono font-bold px-2.5 py-1 rounded border border-slate-300">
               (x: 0.0, y: 0.0)
             </span>
           </div>
         </div>
 
-        <div class="relative flex-grow w-full bg-slate-950 rounded-xl overflow-hidden border border-slate-700/80 shadow-inner flex items-center justify-center">
+        <div class="relative flex-grow w-full bg-white rounded-xl overflow-hidden border border-slate-300 shadow-inner flex items-center justify-center">
           <canvas id="t3-canvas" class="w-full h-full cursor-crosshair"></canvas>
         </div>
       </div>
@@ -390,8 +390,8 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-slate-800/60 border-t border-slate-700/60 py-3 text-center text-xs text-slate-400">
-    <p>Laboratorio Didattico di Matematica &bull; Retta nel Piano Cartesiano &bull; Sviluppato in HTML5 & Canvas</p>
+  <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-600 font-medium">
+    <p>Laboratorio Didattico di Matematica &bull; Retta nel Piano Cartesiano &bull; Ottimizzato per LIM</p>
   </footer>
 
   <script>
@@ -503,10 +503,10 @@
         const btn = document.getElementById(`tab${n}-btn`);
         const section = document.getElementById(`tab${n}`);
         if (n === tabNum) {
-          btn.className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-indigo-400 bg-slate-800 shadow flex items-center justify-center space-x-2 whitespace-nowrap";
+          btn.className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-indigo-700 bg-white shadow-sm font-semibold flex items-center justify-center space-x-2 whitespace-nowrap";
           section.classList.remove('hidden');
         } else {
-          btn.className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-slate-400 hover:text-slate-200 flex items-center justify-center space-x-2 whitespace-nowrap";
+          btn.className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg transition-all duration-200 text-slate-700 hover:text-slate-900 flex items-center justify-center space-x-2 whitespace-nowrap";
           section.classList.add('hidden');
         }
       });
@@ -521,7 +521,7 @@
     }
 
     /**
-     * Draws Cartesian Grid on a Canvas
+     * Draws Cartesian Grid on a Canvas (Optimized for LIM / White mode)
      */
     function drawCartesianGrid(ctx, canvas, state) {
       const width = canvas.width;
@@ -530,8 +530,8 @@
       const centerX = width / 2 + state.offsetX;
       const centerY = height / 2 + state.offsetY;
 
-      // Clear background
-      ctx.fillStyle = '#020617'; // slate-950
+      // Clear background - Pure White for LIM visibility
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, width, height);
 
       // Grid line settings
@@ -543,7 +543,7 @@
       const minY = Math.floor((centerY - height) / scale);
       const maxY = Math.ceil((centerY - 0) / scale);
 
-      ctx.strokeStyle = '#1e293b'; // slate-800
+      ctx.strokeStyle = '#e2e8f0'; // slate-200 light grid
       ctx.beginPath();
       for (let x = minX; x <= maxX; x++) {
         const canvasX = centerX + x * scale;
@@ -557,9 +557,9 @@
       }
       ctx.stroke();
 
-      // Main Axes
-      ctx.strokeStyle = '#64748b'; // slate-500
-      ctx.lineWidth = 2;
+      // Main Axes - Bold Dark Slate for high contrast on LIM
+      ctx.strokeStyle = '#334155'; // slate-700
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       // X Axis
       ctx.moveTo(0, centerY);
@@ -570,23 +570,23 @@
       ctx.stroke();
 
       // Draw Axis Arrows
-      ctx.fillStyle = '#94a3b8';
+      ctx.fillStyle = '#1e293b';
       // X Arrow
       ctx.beginPath();
-      ctx.moveTo(width - 8, centerY - 5);
+      ctx.moveTo(width - 10, centerY - 6);
       ctx.lineTo(width, centerY);
-      ctx.lineTo(width - 8, centerY + 5);
+      ctx.lineTo(width - 10, centerY + 6);
       ctx.fill();
       // Y Arrow
       ctx.beginPath();
-      ctx.moveTo(centerX - 5, 8);
+      ctx.moveTo(centerX - 6, 10);
       ctx.lineTo(centerX, 0);
-      ctx.lineTo(centerX + 5, 8);
+      ctx.lineTo(centerX + 6, 10);
       ctx.fill();
 
       // Numbers & Tick marks
-      ctx.fillStyle = '#64748b';
-      ctx.font = '11px Inter, sans-serif';
+      ctx.fillStyle = '#0f172a'; // High contrast text
+      ctx.font = 'bold 12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
@@ -595,8 +595,8 @@
         if (x === 0) continue;
         const canvasX = centerX + x * scale;
         ctx.beginPath();
-        ctx.moveTo(canvasX, centerY - 3);
-        ctx.lineTo(canvasX, centerY + 3);
+        ctx.moveTo(canvasX, centerY - 4);
+        ctx.lineTo(canvasX, centerY + 4);
         ctx.stroke();
         ctx.fillText(x.toString(), canvasX, centerY + 6);
       }
@@ -608,16 +608,16 @@
         if (y === 0) continue;
         const canvasY = centerY - y * scale;
         ctx.beginPath();
-        ctx.moveTo(centerX - 3, canvasY);
-        ctx.lineTo(centerX + 3, canvasY);
+        ctx.moveTo(centerX - 4, canvasY);
+        ctx.lineTo(centerX + 4, canvasY);
         ctx.stroke();
-        ctx.fillText(y.toString(), centerX - 6, canvasY);
+        ctx.fillText(y.toString(), centerX - 7, canvasY);
       }
 
       // Origin (0,0) label
-      ctx.fillText('0', centerX - 6, centerY + 12);
-      ctx.fillText('X', width - 12, centerY + 12);
-      ctx.fillText('Y', centerX + 12, 12);
+      ctx.fillText('0', centerX - 7, centerY + 12);
+      ctx.fillText('X', width - 14, centerY + 14);
+      ctx.fillText('Y', centerX + 14, 14);
 
       return { centerX, centerY, scale };
     }
@@ -692,40 +692,23 @@
         if (pt.y > maxY) maxY = pt.y;
       });
 
-      // Include origin for context if points are near 0
-      if (minX > -1) minX = -1;
-      if (maxX < 1) maxX = 1;
-      if (minY > -1) minY = -1;
-      if (maxY < 1) maxY = 1;
+      minX = Math.min(minX, 0);
+      maxX = Math.max(maxX, 0);
+      minY = Math.min(minY, 0);
+      maxY = Math.max(maxY, 0);
 
-      // Ensure non-zero range
-      if (minX === maxX) { minX -= 2; maxX += 2; }
-      if (minY === maxY) { minY -= 2; maxY += 2; }
+      const rangeX = Math.max(maxX - minX, 4);
+      const rangeY = Math.max(maxY - minY, 4);
 
-      // Add generous margin
-      const padX = Math.max((maxX - minX) * 0.25, 2);
-      const padY = Math.max((maxY - minY) * 0.25, 2);
-
-      minX -= padX;
-      maxX += padX;
-      minY -= padY;
-      maxY += padY;
-
-      const rangeX = maxX - minX;
-      const rangeY = maxY - minY;
-
-      const scaleX = canvas.width / rangeX;
-      const scaleY = canvas.height / rangeY;
-
-      let newScale = Math.min(scaleX, scaleY);
-      newScale = Math.max(10, Math.min(newScale, 120));
-
+      const padding = 1.4;
+      const scaleX = canvas.width / (rangeX * padding);
+      const scaleY = canvas.height / (rangeY * padding);
+      
+      canvasStates[1].scale = Math.min(scaleX, scaleY, 60);
       const midX = (minX + maxX) / 2;
       const midY = (minY + maxY) / 2;
-
-      canvasStates[1].scale = newScale;
-      canvasStates[1].offsetX = -midX * newScale;
-      canvasStates[1].offsetY = midY * newScale;
+      canvasStates[1].offsetX = -midX * canvasStates[1].scale;
+      canvasStates[1].offsetY = midY * canvasStates[1].scale;
 
       drawTab1();
     }
@@ -733,45 +716,40 @@
     function updateTab1Equation() {
       const input = document.getElementById('t1-equation').value;
       const parsed = parseEquation(input);
-
-      const statusEl = document.getElementById('t1-equation-status');
-      const textEl = document.getElementById('t1-parsed-text');
+      const statusDiv = document.getElementById('t1-equation-status');
+      const parsedText = document.getElementById('t1-parsed-text');
 
       if (parsed.valid) {
+        tab1State.equationStr = input;
         tab1State.m = parsed.m;
         tab1State.q = parsed.q;
-        tab1State.equationStr = formatEquation(parsed.m, parsed.q);
+        parsedText.textContent = formatEquation(parsed.m, parsed.q);
+        statusDiv.classList.remove('hidden');
 
-        statusEl.classList.remove('hidden');
-        textEl.textContent = tab1State.equationStr;
-
-        // Recalculate y for existing x points in table
-        tab1State.points.forEach(pt => {
-          pt.y = tab1State.m * pt.x + tab1State.q;
+        tab1State.points.forEach(p => {
+          p.y = tab1State.m * p.x + tab1State.q;
         });
 
         renderTab1Table();
-        autoFitTab1Points();
+        drawTab1();
       } else {
-        alert("Equazione non valida. Usa il formato come 'y = 2x + 1', 'y = -x' o 'y = 3'.");
+        statusDiv.classList.add('hidden');
       }
     }
 
     function addPointFromInput() {
-      const xVal = parseFloat(document.getElementById('t1-input-x').value);
-      if (isNaN(xVal)) return;
+      const xValInput = document.getElementById('t1-input-x');
+      const x = parseFloat(xValInput.value);
+      if (isNaN(x)) return;
 
-      const yVal = tab1State.m * xVal + tab1State.q;
-
-      // Avoid exact duplicates
-      const exists = tab1State.points.some(p => Math.abs(p.x - xVal) < 0.0001);
-      if (!exists) {
-        tab1State.points.push({ x: xVal, y: yVal });
+      const y = tab1State.m * x + tab1State.q;
+      
+      if (!tab1State.points.some(p => Math.abs(p.x - x) < 0.001)) {
+        tab1State.points.push({ x, y });
         tab1State.points.sort((a, b) => a.x - b.x);
+        renderTab1Table();
+        drawTab1();
       }
-
-      renderTab1Table();
-      autoFitTab1Points();
     }
 
     function quickAddX(val) {
@@ -779,42 +757,7 @@
       addPointFromInput();
     }
 
-    function removeTab1Point(index) {
-      tab1State.points.splice(index, 1);
-      renderTab1Table();
-      autoFitTab1Points();
-    }
-
-    function clearTab1Points() {
-      tab1State.points = [];
-      renderTab1Table();
-      resetCanvasZoom(1);
-    }
-
-    function addPointFromInput() {
-      const xVal = parseFloat(document.getElementById('t1-input-x').value);
-      if (isNaN(xVal)) return;
-
-      const yVal = tab1State.m * xVal + tab1State.q;
-
-      // Avoid exact duplicates
-      const exists = tab1State.points.some(p => Math.abs(p.x - xVal) < 0.0001);
-      if (!exists) {
-        tab1State.points.push({ x: xVal, y: yVal });
-        // Sort points by X for neat display
-        tab1State.points.sort((a, b) => a.x - b.x);
-      }
-
-      renderTab1Table();
-      drawTab1();
-    }
-
-    function quickAddX(val) {
-      document.getElementById('t1-input-x').value = val;
-      addPointFromInput();
-    }
-
-    function removeTab1Point(index) {
+    function removePoint(index) {
       tab1State.points.splice(index, 1);
       renderTab1Table();
       drawTab1();
@@ -828,29 +771,27 @@
 
     function renderTab1Table() {
       const tbody = document.getElementById('t1-table-body');
+      const statusMsg = document.getElementById('t1-status-msg');
       tbody.innerHTML = '';
 
-      const count = tab1State.points.length;
-      const statusMsg = document.getElementById('t1-status-msg');
-
-      if (count >= 2) {
-        statusMsg.className = "p-3 bg-emerald-950/40 border border-emerald-800/40 rounded-xl text-emerald-300 text-xs flex items-center gap-2";
-        statusMsg.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i> <span>Ottimo! Con <strong>${count} punti</strong> la retta è ora visibile in trasparenza sul piano cartesiano.</span>`;
+      if (tab1State.points.length >= 2) {
+        statusMsg.classList.add('hidden');
       } else {
-        statusMsg.className = "p-3 bg-amber-950/40 border border-amber-800/40 rounded-xl text-amber-300 text-xs flex items-center gap-2";
-        statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm"></i> <span>Servono ancora <strong>${2 - count}</strong> punto/i per visualizzare la retta in trasparenza.</span>`;
+        statusMsg.classList.remove('hidden');
       }
 
-      tab1State.points.forEach((pt, i) => {
+      tab1State.points.forEach((pt, index) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/50 transition-colors";
+        tr.className = 'border-b border-slate-800 hover:bg-slate-800/50 transition';
+        const pointLabel = String.fromCharCode(65 + (index % 26)) + (index >= 26 ? Math.floor(index/26) : '');
+        
         tr.innerHTML = `
-          <td class="px-4 py-2 text-center text-cyan-400 font-bold">P<sub>${i+1}</sub></td>
+          <td class="px-4 py-2 text-center font-bold text-cyan-400">${pointLabel}</td>
           <td class="px-4 py-2 text-center text-slate-200">${pt.x}</td>
-          <td class="px-4 py-2 text-center text-indigo-300">${pt.y}</td>
+          <td class="px-4 py-2 text-center text-indigo-300">${Number.isInteger(pt.y) ? pt.y : pt.y.toFixed(2)}</td>
           <td class="px-4 py-2 text-center">
-            <button onclick="removeTab1Point(${i})" class="text-rose-400 hover:text-rose-300 p-1 transition" title="Rimuovi">
-              <i class="fa-solid fa-xmark text-sm"></i>
+            <button onclick="removePoint(${index})" class="text-rose-400 hover:text-rose-300 p-1 text-xs">
+              <i class="fa-solid fa-xmark"></i>
             </button>
           </td>
         `;
@@ -860,420 +801,270 @@
 
     function drawTab1() {
       const canvas = document.getElementById('t1-canvas');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const { centerX, centerY, scale } = drawCartesianGrid(ctx, canvas, canvasStates[1]);
+      const grid = drawCartesianGrid(ctx, canvas, canvasStates[1]);
 
-      // If 2 or more points entered, draw line in transparency
       if (tab1State.points.length >= 2) {
-        drawInfiniteLine(
-          ctx,
-          tab1State.m,
-          tab1State.q,
-          centerX,
-          centerY,
-          scale,
-          canvas.width,
-          canvas.height,
-          'rgba(56, 189, 248, 0.45)', // translucent cyan
-          4
-        );
+        drawInfiniteLine(ctx, tab1State.m, tab1State.q, grid.centerX, grid.centerY, grid.scale, canvas.width, canvas.height, '#0284c7', 3.5, false);
+      } else if (tab1State.points.length === 1) {
+        drawInfiniteLine(ctx, tab1State.m, tab1State.q, grid.centerX, grid.centerY, grid.scale, canvas.width, canvas.height, 'rgba(2, 132, 199, 0.45)', 2.5, true);
       }
 
-      // Draw user points
-      tab1State.points.forEach((pt, i) => {
-        const { X, Y } = mathToCanvas(pt.x, pt.y, centerX, centerY, scale);
-
-        // Point glow
+      tab1State.points.forEach((pt, idx) => {
+        const coords = mathToCanvas(pt.x, pt.y, grid.centerX, grid.centerY, grid.scale);
+        
         ctx.beginPath();
-        ctx.arc(X, Y, 8, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.arc(coords.X, coords.Y, 6.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#0284c7';
         ctx.fill();
-
-        // Point dot
-        ctx.beginPath();
-        ctx.arc(X, Y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#38bdf8'; // cyan-400
+        ctx.lineWidth = 2;
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.fill();
         ctx.stroke();
 
-        // Point Label
-        ctx.fillStyle = '#e2e8f0';
-        ctx.font = 'bold 12px Inter, sans-serif';
-        ctx.fillText(`P${i+1}(${pt.x}, ${pt.y})`, X + 8, Y - 8);
+        const label = String.fromCharCode(65 + (idx % 26));
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText(`${label}(${pt.x}, ${Number.isInteger(pt.y) ? pt.y : pt.y.toFixed(1)})`, coords.X + 10, coords.Y - 10);
       });
     }
 
     /* ========================================================================
-       TAB 2: ESPLORA M E Q LOGIC
+       TAB 2 & TAB 3 CONTROLS & SYNC FUNCTIONS
        ======================================================================== */
 
-    function syncTab2FromSlider(param) {
-      const slider = document.getElementById(`t2-slider-${param}`);
-      const input = document.getElementById(`t2-input-${param}`);
-      input.value = slider.value;
-      updateTab2();
-    }
+    function updateTab2Displays() {
+      const m = tab2State.m;
+      const q = tab2State.q;
 
-    function syncTab2FromInput(param) {
-      const slider = document.getElementById(`t2-slider-${param}`);
-      const input = document.getElementById(`t2-input-${param}`);
-      let val = parseFloat(input.value);
-      if (!isNaN(val)) {
-        slider.value = val;
-        updateTab2();
-      }
-    }
+      const eqDisplay = document.getElementById('t2-eq-display');
+      if (eqDisplay) eqDisplay.textContent = formatEquation(m, q);
 
-    function updateTab2() {
-      const m = parseFloat(document.getElementById('t2-input-m').value) || 0;
-      const q = parseFloat(document.getElementById('t2-input-q').value) || 0;
+      const mVal = document.getElementById('t2-m-val');
+      if (mVal) mVal.textContent = m;
 
-      tab2State.m = m;
-      tab2State.q = q;
+      const qVal = document.getElementById('t2-q-val');
+      if (qVal) qVal.textContent = q;
 
-      document.getElementById('t2-m-val').textContent = m;
-      document.getElementById('t2-q-val').textContent = q;
+      const mExpVal = document.getElementById('t2-m-exp-val');
+      if (mExpVal) mExpVal.textContent = m;
 
-      document.getElementById('t2-eq-display').textContent = formatEquation(m, q);
-
-      // Explanation text updates
-      document.getElementById('t2-m-exp-val').textContent = Math.abs(m);
-      document.getElementById('t2-q-exp-val').textContent = `(0, ${q})`;
+      const qExpVal = document.getElementById('t2-q-exp-val');
+      if (qExpVal) qExpVal.textContent = `(0, ${q})`;
 
       drawTab2();
     }
 
-    function drawTab2() {
-      const canvas = document.getElementById('t2-canvas');
-      const ctx = canvas.getContext('2d');
-      const { centerX, centerY, scale } = drawCartesianGrid(ctx, canvas, canvasStates[2]);
-
-      const m = tab2State.m;
-      const q = tab2State.q;
-
-      // Draw Main Line
-      drawInfiniteLine(
-        ctx,
-        m,
-        q,
-        centerX,
-        centerY,
-        scale,
-        canvas.width,
-        canvas.height,
-        '#818cf8', // indigo-400
-        3.5
-      );
-
-      const showTriangle = document.getElementById('t2-show-triangle').checked;
-      const showIntercept = document.getElementById('t2-show-intercept').checked;
-
-      // Slope triangle (if m != 0 and enabled)
-      if (showTriangle && m !== 0) {
-        // Pick an anchor point, e.g. x1 = 1, x2 = 2
-        const x1 = 1;
-        const y1 = m * x1 + q;
-        const x2 = 2;
-        const y2 = m * x2 + q;
-
-        const p1 = mathToCanvas(x1, y1, centerX, centerY, scale);
-        const p2 = mathToCanvas(x2, y1, centerX, centerY, scale); // corner
-        const p3 = mathToCanvas(x2, y2, centerX, centerY, scale);
-
-        // Draw triangle fill
-        ctx.fillStyle = 'rgba(129, 140, 248, 0.15)';
-        ctx.beginPath();
-        ctx.moveTo(p1.X, p1.Y);
-        ctx.lineTo(p2.X, p2.Y);
-        ctx.lineTo(p3.X, p3.Y);
-        ctx.closePath();
-        ctx.fill();
-
-        // Horizontal dx line
-        ctx.strokeStyle = '#38bdf8'; // cyan
-        ctx.lineWidth = 2;
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(p1.X, p1.Y);
-        ctx.lineTo(p2.X, p2.Y);
-        ctx.stroke();
-
-        // Vertical dy line
-        ctx.strokeStyle = '#f43f5e'; // rose
-        ctx.beginPath();
-        ctx.moveTo(p2.X, p2.Y);
-        ctx.lineTo(p3.X, p3.Y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Labels
-        ctx.fillStyle = '#38bdf8';
-        ctx.font = '11px Inter, sans-serif';
-        ctx.fillText('Δx = 1', (p1.X + p2.X) / 2, p1.Y + 10);
-
-        ctx.fillStyle = '#f43f5e';
-        ctx.fillText(`Δy = ${m}`, p2.X + 8, (p2.Y + p3.Y) / 2);
+    function syncTab2FromSlider(param) {
+      if (param === 'm') {
+        const val = parseFloat(document.getElementById('t2-slider-m').value);
+        tab2State.m = isNaN(val) ? 0 : val;
+        document.getElementById('t2-input-m').value = tab2State.m;
+      } else if (param === 'q') {
+        const val = parseFloat(document.getElementById('t2-slider-q').value);
+        tab2State.q = isNaN(val) ? 0 : val;
+        document.getElementById('t2-input-q').value = tab2State.q;
       }
-
-      // Highlight Y Intercept (0, q)
-      if (showIntercept) {
-        const interceptPos = mathToCanvas(0, q, centerX, centerY, scale);
-
-        ctx.beginPath();
-        ctx.arc(interceptPos.X, interceptPos.Y, 9, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(52, 211, 153, 0.3)';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(interceptPos.X, interceptPos.Y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#34d399'; // emerald-400
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = '#34d399';
-        ctx.font = 'bold 12px Inter, sans-serif';
-        ctx.fillText(`Intercetta (0, ${q})`, interceptPos.X + 10, interceptPos.Y - 10);
-      }
+      updateTab2Displays();
     }
 
-    /* ========================================================================
-       TAB 3: INTERSEZIONE DI DUE RETTE LOGIC
-       ======================================================================== */
+    function syncTab2FromInput(param) {
+      if (param === 'm') {
+        const val = parseFloat(document.getElementById('t2-input-m').value);
+        if (!isNaN(val)) {
+          tab2State.m = val;
+          document.getElementById('t2-slider-m').value = val;
+        }
+      } else if (param === 'q') {
+        const val = parseFloat(document.getElementById('t2-input-q').value);
+        if (!isNaN(val)) {
+          tab2State.q = val;
+          document.getElementById('t2-slider-q').value = val;
+        }
+      }
+      updateTab2Displays();
+    }
 
     function syncTab3FromSlider(param) {
       const slider = document.getElementById(`t3-${param}`);
       const input = document.getElementById(`t3-input-${param}`);
-      input.value = slider.value;
+      if (slider && input) {
+        const val = parseFloat(slider.value);
+        if (!isNaN(val)) {
+          tab3State[param] = val;
+          input.value = val;
+        }
+      }
       updateTab3();
     }
 
     function syncTab3FromInput(param) {
       const slider = document.getElementById(`t3-${param}`);
       const input = document.getElementById(`t3-input-${param}`);
-      let val = parseFloat(input.value);
-      if (!isNaN(val)) {
-        slider.value = val;
-        updateTab3();
+      if (slider && input) {
+        const val = parseFloat(input.value);
+        if (!isNaN(val)) {
+          tab3State[param] = val;
+          slider.value = val;
+        }
+      }
+      updateTab3();
+    }
+
+    function drawTab2() {
+      const canvas = document.getElementById('t2-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const grid = drawCartesianGrid(ctx, canvas, canvasStates[2]);
+
+      const m = tab2State.m;
+      const q = tab2State.q;
+
+      drawInfiniteLine(ctx, m, q, grid.centerX, grid.centerY, grid.scale, canvas.width, canvas.height, '#4f46e5', 3.5);
+
+      const showTriangle = document.getElementById('t2-show-triangle').checked;
+      if (showTriangle) {
+        const x1 = 1;
+        const y1 = m * x1 + q;
+        const x2 = 2;
+        const y2 = m * x2 + q;
+
+        const p1 = mathToCanvas(x1, y1, grid.centerX, grid.centerY, grid.scale);
+        const p2 = mathToCanvas(x2, y1, grid.centerX, grid.centerY, grid.scale);
+        const p3 = mathToCanvas(x2, y2, grid.centerX, grid.centerY, grid.scale);
+
+        ctx.save();
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(p1.X, p1.Y);
+        ctx.lineTo(p2.X, p2.Y);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#e11d48';
+        ctx.beginPath();
+        ctx.moveTo(p2.X, p2.Y);
+        ctx.lineTo(p3.X, p3.Y);
+        ctx.stroke();
+
+        ctx.restore();
+
+        ctx.fillStyle = '#0369a1';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText('Δx = 1', (p1.X + p2.X) / 2, p1.Y + 14);
+
+        ctx.fillStyle = '#be123c';
+        ctx.fillText(`Δy = ${m}`, p2.X + 15, (p2.Y + p3.Y) / 2);
+      }
+
+      const showIntercept = document.getElementById('t2-show-intercept').checked;
+      if (showIntercept) {
+        const interceptPos = mathToCanvas(0, q, grid.centerX, grid.centerY, grid.scale);
+        ctx.beginPath();
+        ctx.arc(interceptPos.X, interceptPos.Y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#059669';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        ctx.fillStyle = '#047857';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText(`(0, ${q})`, interceptPos.X + 10, interceptPos.Y - 10);
       }
     }
 
     function updateTab3() {
-      tab3State.m1 = parseFloat(document.getElementById('t3-input-m1').value) || 0;
-      tab3State.q1 = parseFloat(document.getElementById('t3-input-q1').value) || 0;
-      tab3State.m2 = parseFloat(document.getElementById('t3-input-m2').value) || 0;
-      tab3State.q2 = parseFloat(document.getElementById('t3-input-q2').value) || 0;
-
       document.getElementById('t3-r1-eq-text').textContent = formatEquation(tab3State.m1, tab3State.q1);
       document.getElementById('t3-r2-eq-text').textContent = formatEquation(tab3State.m2, tab3State.q2);
 
-      calculateAndRenderIntersection();
-      drawTab3();
-    }
-
-    function calculateAndRenderIntersection() {
-      const { m1, q1, m2, q2 } = tab3State;
       const box = document.getElementById('t3-intersection-box');
       const badge = document.getElementById('t3-special-badge');
 
-      badge.classList.add('hidden');
-
-      // Check perpendicularity condition: m1 * m2 === -1
-      if (Math.abs(m1 * m2 + 1) < 0.001) {
-        badge.classList.remove('hidden');
-        badge.className = "p-2.5 rounded-lg text-xs font-semibold text-center bg-purple-950/60 border border-purple-700/60 text-purple-300";
-        badge.innerHTML = '<i class="fa-solid fa-square-check"></i> Rette Perpendicolari! (m₁ &bull; m₂ = -1)';
-      }
+      const m1 = tab3State.m1;
+      const q1 = tab3State.q1;
+      const m2 = tab3State.m2;
+      const q2 = tab3State.q2;
 
       if (Math.abs(m1 - m2) < 0.0001) {
-        // Parallel lines
         if (Math.abs(q1 - q2) < 0.0001) {
-          // Coincident
-          box.innerHTML = `
-            <div class="text-amber-400 font-semibold text-sm flex items-center gap-1.5">
-              <i class="fa-solid fa-clone"></i> Rette Coincidenti
-            </div>
-            <p class="text-xs text-slate-300">
-              Le due rette hanno la stessa pendenza (m₁ = m₂ = ${m1}) e la stessa intercetta (q₁ = q₂ = ${q1}). Hanno <strong>infiniti punti di intersezione</strong>.
-            </p>
-          `;
+          box.innerHTML = `<div class="text-amber-800 font-bold text-sm"><i class="fa-solid fa-clone"></i> Rette Coincidenti</div><p class="text-xs text-slate-700 mt-1 font-medium">Hanno la stessa pendenza e la stessa intercetta. Esistono infiniti punti di intersezione.</p>`;
+          badge.className = "p-2.5 rounded-lg text-xs font-bold text-center bg-amber-50 text-amber-900 border border-amber-300";
+          badge.textContent = "Rette Coincidenti (Infiniti punti in comune)";
+          badge.classList.remove('hidden');
         } else {
-          // Parallel distinct
-          box.innerHTML = `
-            <div class="text-rose-400 font-semibold text-sm flex items-center gap-1.5">
-              <i class="fa-solid fa-arrows-split-up-and-left"></i> Rette Parallele
-            </div>
-            <p class="text-xs text-slate-300">
-              Le due rette hanno la stessa pendenza (m₁ = m₂ = ${m1}) ma intercette diverse. <strong>Non si intersecano mai</strong> (Nessuna soluzione).
-            </p>
-          `;
+          box.innerHTML = `<div class="text-rose-800 font-bold text-sm"><i class="fa-solid fa-arrows-left-right"></i> Rette Parallele Distinte</div><p class="text-xs text-slate-700 mt-1 font-medium">m₁ = m₂ (${m1}). Le rette non si intersecano mai in nessun punto del piano.</p>`;
+          badge.className = "p-2.5 rounded-lg text-xs font-bold text-center bg-rose-50 text-rose-900 border border-rose-300";
+          badge.textContent = "Rette Parallele (Nessuna intersezione)";
+          badge.classList.remove('hidden');
         }
       } else {
-        // Single intersection point
-        // m1*x + q1 = m2*x + q2 => (m1 - m2)*x = q2 - q1 => x = (q2 - q1) / (m1 - m2)
-        const xIntersect = (q2 - q1) / (m1 - m2);
-        const yIntersect = m1 * xIntersect + q1;
-
-        // Clean rounding for display
-        const xDisp = Number.isInteger(xIntersect) ? xIntersect : xIntersect.toFixed(2);
-        const yDisp = Number.isInteger(yIntersect) ? yIntersect : yIntersect.toFixed(2);
+        const xInt = (q2 - q1) / (m1 - m2);
+        const yInt = m1 * xInt + q1;
 
         box.innerHTML = `
-          <div class="text-amber-400 font-semibold text-sm flex items-center gap-1.5">
-            <i class="fa-solid fa-location-dot"></i> Punto di Intersezione P
+          <div class="text-emerald-800 font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-dot"></i> Punto di Intersezione P
           </div>
-          <div class="text-xl font-bold font-mono text-amber-300 text-center py-1">
-            P = (${xDisp}, ${yDisp})
+          <div class="font-mono text-lg text-indigo-700 font-extrabold mt-1">
+            P = (${xInt.toFixed(2)}, ${yInt.toFixed(2)})
           </div>
-          <div class="text-[11px] font-mono text-slate-400 bg-slate-950 p-2 rounded border border-slate-800 space-y-1">
-            <div>m₁x + q₁ = m₂x + q₂</div>
-            <div>${m1}x + (${q1}) = ${m2}x + (${q2})</div>
-            <div>x = (${q2} - ${q1}) / (${m1} - ${m2}) = <strong>${xDisp}</strong></div>
-            <div>y = ${m1}(${xDisp}) + ${q1} = <strong>${yDisp}</strong></div>
+          <div class="text-xs text-slate-700 mt-2 font-mono font-medium">
+            Uguagliando: ${m1}x + ${q1} = ${m2}x + ${q2}<br>
+            &Delta;m = ${(m1 - m2).toFixed(2)}x &rArr; x = ${xInt.toFixed(2)}
           </div>
         `;
+
+        if (Math.abs(m1 * m2 + 1) < 0.001) {
+          badge.className = "p-2.5 rounded-lg text-xs font-bold text-center bg-indigo-50 text-indigo-900 border border-indigo-300";
+          badge.innerHTML = `<i class="fa-solid fa-arrows-to-circle"></i> Rette Perpendicolari (m₁ &bull; m₂ = -1)`;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
       }
+
+      drawTab3();
     }
 
     function drawTab3() {
       const canvas = document.getElementById('t3-canvas');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      const { centerX, centerY, scale } = drawCartesianGrid(ctx, canvas, canvasStates[3]);
+      const grid = drawCartesianGrid(ctx, canvas, canvasStates[3]);
 
-      const { m1, q1, m2, q2 } = tab3State;
+      const m1 = tab3State.m1, q1 = tab3State.q1;
+      const m2 = tab3State.m2, q2 = tab3State.q2;
 
-      // Draw Line 1 (r1)
-      drawInfiniteLine(
-        ctx,
-        m1,
-        q1,
-        centerX,
-        centerY,
-        scale,
-        canvas.width,
-        canvas.height,
-        '#6366f1', // indigo-500
-        3.5
-      );
+      drawInfiniteLine(ctx, m1, q1, grid.centerX, grid.centerY, grid.scale, canvas.width, canvas.height, '#4f46e5', 3.5);
+      drawInfiniteLine(ctx, m2, q2, grid.centerX, grid.centerY, grid.scale, canvas.width, canvas.height, '#e11d48', 3.5);
 
-      // Draw Line 2 (r2)
-      drawInfiniteLine(
-        ctx,
-        m2,
-        q2,
-        centerX,
-        centerY,
-        scale,
-        canvas.width,
-        canvas.height,
-        '#f43f5e', // rose-500
-        3.5
-      );
-
-      // Plot intersection point if exists
       if (Math.abs(m1 - m2) >= 0.0001) {
-        const xIntersect = (q2 - q1) / (m1 - m2);
-        const yIntersect = m1 * xIntersect + q1;
+        const xInt = (q2 - q1) / (m1 - m2);
+        const yInt = m1 * xInt + q1;
+        const ptCanvas = mathToCanvas(xInt, yInt, grid.centerX, grid.centerY, grid.scale);
 
-        const pos = mathToCanvas(xIntersect, yIntersect, centerX, centerY, scale);
-
-        // Pulsing glow effect
         ctx.beginPath();
-        ctx.arc(pos.X, pos.Y, 12, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(251, 191, 36, 0.35)'; // amber glow
+        ctx.arc(ptCanvas.X, ptCanvas.Y, 7.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#d97706';
         ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(pos.X, pos.Y, 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#fbbf24'; // amber-400
-        ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
-        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
         ctx.stroke();
 
-        const xDisp = Number.isInteger(xIntersect) ? xIntersect : xIntersect.toFixed(2);
-        const yDisp = Number.isInteger(yIntersect) ? yIntersect : yIntersect.toFixed(2);
-
-        ctx.fillStyle = '#fbbf24';
-        ctx.font = 'bold 12px Inter, sans-serif';
-        ctx.fillText(`P(${xDisp}, ${yDisp})`, pos.X + 12, pos.Y - 12);
+        ctx.fillStyle = '#b45309';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText(`P(${xInt.toFixed(1)}, ${yInt.toFixed(1)})`, ptCanvas.X + 12, ptCanvas.Y - 12);
       }
     }
 
     /* ========================================================================
-       MOUSE INTERACTION & RESPONSIVENESS
+       CANVAS INTERACTION & RESIZING
        ======================================================================== */
 
-    function attachCanvasEvents(tabNum, canvasId, badgeId) {
-      const canvas = document.getElementById(canvasId);
-      const badge = document.getElementById(badgeId);
-      const state = canvasStates[tabNum];
-
-      let isDragging = false;
-      let startX = 0, startY = 0;
-
-      // Mouse Move (Coordinates display & Pan)
-      canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-
-        if (isDragging) {
-          state.offsetX += mouseX - startX;
-          state.offsetY += mouseY - startY;
-          startX = mouseX;
-          startY = mouseY;
-
-          if (tabNum === 1) drawTab1();
-          if (tabNum === 2) drawTab2();
-          if (tabNum === 3) drawTab3();
-          return;
-        }
-
-        const centerX = canvas.width / 2 + state.offsetX;
-        const centerY = canvas.height / 2 + state.offsetY;
-        const mathPos = canvasToMath(mouseX, mouseY, centerX, centerY, state.scale);
-
-        badge.textContent = `(x: ${mathPos.x.toFixed(1)}, y: ${mathPos.y.toFixed(1)})`;
-      });
-
-      // Mouse Drag Start
-      canvas.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        const rect = canvas.getBoundingClientRect();
-        startX = e.clientX - rect.left;
-        startY = e.clientY - rect.top;
-      });
-
-      // Mouse Drag End
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-
-      // Wheel Zoom
-      canvas.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-        const newScale = state.scale * zoomFactor;
-
-        // Keep scale within sensible boundaries
-        if (newScale >= 10 && newScale <= 150) {
-          state.scale = newScale;
-          if (tabNum === 1) drawTab1();
-          if (tabNum === 2) drawTab2();
-          if (tabNum === 3) drawTab3();
-        }
-      }, { passive: false });
-    }
-
     function resetCanvasZoom(tabNum) {
-      canvasStates[tabNum].scale = 35;
-      canvasStates[tabNum].offsetX = 0;
-      canvasStates[tabNum].offsetY = 0;
-
+      canvasStates[tabNum] = { scale: 35, offsetX: 0, offsetY: 0 };
       if (tabNum === 1) drawTab1();
       if (tabNum === 2) drawTab2();
       if (tabNum === 3) drawTab3();
@@ -1282,33 +1073,101 @@
     function resizeAllCanvases() {
       [1, 2, 3].forEach(n => {
         const canvas = document.getElementById(`t${n}-canvas`);
-        if (canvas && canvas.parentElement) {
+        if (canvas && canvas.offsetParent !== null) {
           const rect = canvas.parentElement.getBoundingClientRect();
-          const dpr = window.devicePixelRatio || 1;
-          
           canvas.width = rect.width;
           canvas.height = rect.height;
-
-          if (n === 1) drawTab1();
-          if (n === 2) drawTab2();
-          if (n === 3) drawTab3();
         }
       });
     }
 
-    window.addEventListener('resize', resizeAllCanvases);
+    function setupCanvasInteractions(tabNum) {
+      const canvas = document.getElementById(`t${tabNum}-canvas`);
+      if (!canvas) return;
 
+      let isDragging = false;
+      let startX = 0, startY = 0;
+
+      canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          const grid = {
+            centerX: canvas.width / 2 + canvasStates[tabNum].offsetX,
+            centerY: canvas.height / 2 + canvasStates[tabNum].offsetY,
+            scale: canvasStates[tabNum].scale
+          };
+          const mathPos = canvasToMath(mouseX, mouseY, grid.centerX, grid.centerY, grid.scale);
+          const badge = document.getElementById(`t${tabNum}-coord-badge`);
+          if (badge) {
+            badge.textContent = `(x: ${mathPos.x.toFixed(1)}, y: ${mathPos.y.toFixed(1)})`;
+          }
+        }
+
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        canvasStates[tabNum].offsetX += dx;
+        canvasStates[tabNum].offsetY += dy;
+
+        if (tabNum === 1) drawTab1();
+        if (tabNum === 2) drawTab2();
+        if (tabNum === 3) drawTab3();
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+        const newScale = canvasStates[tabNum].scale * zoomFactor;
+        if (newScale >= 10 && newScale <= 200) {
+          canvasStates[tabNum].scale = newScale;
+          if (tabNum === 1) drawTab1();
+          if (tabNum === 2) drawTab2();
+          if (tabNum === 3) drawTab3();
+        }
+      }, { passive: false });
+    }
+
+    // Initial setup on window load
     window.onload = function() {
-      attachCanvasEvents(1, 't1-canvas', 't1-coord-badge');
-      attachCanvasEvents(2, 't2-canvas', 't2-coord-badge');
-      attachCanvasEvents(3, 't3-canvas', 't3-coord-badge');
+      resizeAllCanvases();
+      setupCanvasInteractions(1);
+      setupCanvasInteractions(2);
+      setupCanvasInteractions(3);
 
-      updateTab1Equation();
-      updateTab2();
+      tab1State.points = [
+        { x: -1, y: -1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 2 }
+      ];
+
+      renderTab1Table();
+      updateTab2Displays();
       updateTab3();
 
-      resizeAllCanvases();
+      drawTab1();
     };
+
+    window.addEventListener('resize', () => {
+      resizeAllCanvases();
+      if (currentTab === 1) drawTab1();
+      if (currentTab === 2) drawTab2();
+      if (currentTab === 3) drawTab3();
+    });
   </script>
 </body>
 </html>
