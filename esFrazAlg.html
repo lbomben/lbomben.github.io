@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercizi sulle Frazioni Algebriche - Scheda Didattica Completa</title>
+    
+    <!-- Tailwind CSS for UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX CSS & JS for mathematical typesetting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Custom KaTeX adjustment for proper line height */
+        .katex-display {
+            margin: 0.5em 0 !important;
+        }
+
+        /* Custom animation for solution toggle */
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* Dedicated styles for printing / PDF export */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+            }
+            .page-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+            .exercise-card {
+                break-inside: avoid;
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                margin-bottom: 0.5rem !important;
+                padding: 0.6rem !important;
+            }
+            details[open] summary ~ * {
+                animation: none !important;
+            }
+            details summary {
+                display: none !important;
+            }
+            .print-show-solution {
+                display: block !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+    <!-- Action Toolbar (Hidden during Print) -->
+    <header class="no-print max-w-5xl mx-auto mb-6 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                <i class="fa-solid fa-calculator text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800">Scheda Esercizi: Frazioni Algebriche</h1>
+                <p class="text-sm text-slate-500">Raccolta Completa Graduata (82 Esercizi) - Scuola Sec. II Grado</p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <button onclick="toggleAllSolutions()" id="toggle-solutions-btn" class="flex-1 sm:flex-none px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition duration-150 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-eye text-slate-500"></i>
+                <span>Mostra Tutti gli Svolgimenti</span>
+            </button>
+            <button onclick="downloadPDF()" class="flex-1 sm:flex-none px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md hover:shadow-lg transition duration-150 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Scarica / Stampa PDF</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Document Container -->
+    <main class="page-container max-w-5xl mx-auto bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-10">
+        
+        <!-- Printable Document Header -->
+        <div class="border-b-2 border-slate-800 pb-6 mb-8 flex justify-between items-end">
+            <div>
+                <span class="text-xs font-bold tracking-widest text-blue-600 uppercase">Scheda Didattica Integrale</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Eserciziario di Algebra: Frazioni Algebriche</h1>
+                <p class="text-sm text-slate-600 mt-1">Condizioni di esistenza, operazioni, equazioni fratte e problemi applicati</p>
+            </div>
+            <div class="text-right text-xs text-slate-500 hidden sm:block">
+                <p><span class="font-semibold text-slate-700">Classe:</span> Secondo Anno</p>
+                <p><span class="font-semibold text-slate-700">Livello:</span> Base / Intermedio / Avanzato</p>
+            </div>
+        </div>
+
+        <!-- Instructional Note -->
+        <div class="no-print mb-8 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-900 rounded-r-xl text-sm flex items-start gap-3">
+            <i class="fa-solid fa-circle-info text-amber-500 text-lg mt-0.5"></i>
+            <div>
+                <p class="font-semibold">Struttura della scheda:</p>
+                <p class="text-xs mt-0.5 text-amber-800">
+                    Ciascuna categoria contiene 15 esercizi numerati progressivamente. Gli ultimi 5 esercizi di ogni sezione presentano un livello di difficoltà superiore (scomposizioni avanzate, trinomi particolari o frazioni a tre termini). Il **primo esercizio** di ogni sezione offre lo svolgimento guidato espandibile.
+                </p>
+            </div>
+        </div>
+
+        <!-- SEZIONE 1: Condizioni di Esistenza -->
+        <section class="mb-10">
+            <div class="flex items-center gap-3 mb-4 pb-2 border-b border-slate-200">
+                <span class="w-7 h-7 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center text-sm">1</span>
+                <h2 class="text-lg font-bold text-slate-800">Condizioni di Esistenza (C.E.)</h2>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Determina il dominio/condizioni di esistenza delle seguenti frazioni algebriche.</p>
+
+            <div class="space-y-3">
+                <!-- Ex 1 (con svolgimento) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-baseline gap-3">
+                            <span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 1.</span>
+                            <div class="text-base text-slate-900 font-medium">
+                                \(\frac{3x + 1}{x^2 - 4}\)
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto">
+                            <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                            <span>\(x \neq \pm 2\)</span>
+                        </div>
+                    </div>
+                    
+                    <details class="mt-3 border-t border-slate-200 pt-3 group">
+                        <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 no-print select-none">
+                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-open:rotate-90"></i>
+                            <span>Mostra Svolgimento Passo-Passo</span>
+                        </summary>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700 space-y-2">
+                            <p class="font-semibold text-slate-800">Svolgimento guidato:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li>Affinché la frazione sia definita, il denominatore deve essere diverso da zero: \(x^2 - 4 \neq 0\).</li>
+                                <li>Scomponiamo il denominatore (differenza di quadrati): \((x - 2)(x + 2) \neq 0\).</li>
+                                <li>Legge di annullamento del prodotto: \(x - 2 \neq 0 \implies x \neq 2\) e \(x + 2 \neq 0 \implies x \neq -2\).</li>
+                                <li><strong>Condizione Finale:</strong> \(C.E.: x \neq \pm 2\).</li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Ex 2-10 (Livello Base/Intermedio) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 2.</span><div class="text-base text-slate-900 font-medium">\(\frac{x - 5}{2x^2 + 6x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq 0 \land x \neq -3\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 3.</span><div class="text-base text-slate-900 font-medium">\(\frac{a^2 + 1}{a^2 - 5a + 6}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(a \neq 2 \land a \neq 3\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 4.</span><div class="text-base text-slate-900 font-medium">\(\frac{7x}{x^2 + 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\forall x \in \mathbb{R}\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 5.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x - 3}{x^2 - 6x + 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq 3\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 6.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 1}{x^3 - 8}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq 2\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 7.</span><div class="text-base text-slate-900 font-medium">\(\frac{4a}{a^3 - a}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(a \neq 0 \land a \neq \pm 1\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 8.</span><div class="text-base text-slate-900 font-medium">\(\frac{x + 2}{x^3 + 3x^2 + 3x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq -1\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 9.</span><div class="text-base text-slate-900 font-medium">\(\frac{5}{2x^2 - 8x + 8}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq 2\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 10.</span><div class="text-base text-slate-900 font-medium">\(\frac{x - 1}{x^2 + x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\forall x \in \mathbb{R}\)</span></div>
+                </div>
+
+                <!-- Difficoltà Superiore (11-15) -->
+                <div class="pt-2 pb-1 text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-2">
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                    <span>Livello Avanzato (Esercizi 11-15)</span>
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                </div>
+
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 11.</span><div class="text-base text-slate-900 font-medium">\(\frac{3x - 2}{x^3 - 4x^2 + 4x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq 0 \land x \neq 2\)</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 12.</span><div class="text-base text-slate-900 font-medium">\(\frac{a + 5}{a^4 - 16}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(a \neq \pm 2\)</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 13.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x + 1}{x^3 + 2x^2 - x - 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq \pm 1 \land x \neq -2\)</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 14.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 4}{x^3 - 3x^2 - 4x + 12}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq \pm 2 \land x \neq 3\)</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 15.</span><div class="text-base text-slate-900 font-medium">\(\frac{1}{\frac{x - 1}{x + 2} - 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x \neq -2 \land x \neq -5\)</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 2: Semplificazione -->
+        <section class="mb-10 page-break">
+            <div class="flex items-center gap-3 mb-4 pb-2 border-b border-slate-200">
+                <span class="w-7 h-7 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center text-sm">2</span>
+                <h2 class="text-lg font-bold text-slate-800">Semplificazione di Frazioni Algebriche</h2>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Scomponi in fattori numeratore e denominatore e riduci ai minimi termini.</p>
+
+            <div class="space-y-3">
+                <!-- Ex 16 (con svolgimento) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-baseline gap-3">
+                            <span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 16.</span>
+                            <div class="text-base text-slate-900 font-medium">
+                                \(\frac{x^2 - 9}{x^2 + 6x + 9}\)
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto">
+                            <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                            <span>\(\frac{x - 3}{x + 3}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(con \(x \neq -3\))</span></span>
+                        </div>
+                    </div>
+                    
+                    <details class="mt-3 border-t border-slate-200 pt-3 group">
+                        <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 no-print select-none">
+                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-open:rotate-90"></i>
+                            <span>Mostra Svolgimento Passo-Passo</span>
+                        </summary>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700 space-y-2">
+                            <p class="font-semibold text-slate-800">Svolgimento guidato:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li>Scomponiamo il numeratore: \(x^2 - 9 = (x - 3)(x + 3)\).</li>
+                                <li>Scomponiamo il denominatore: \(x^2 + 6x + 9 = (x + 3)^2\).</li>
+                                <li>Condizioni di Esistenza: \((x+3)^2 \neq 0 \implies x \neq -3\).</li>
+                                <li>Semplifichiamo il fattore comune \((x + 3)\):
+                                    $$\frac{(x - 3)(x + 3)}{(x + 3)^2} = \frac{x - 3}{x + 3}$$
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Ex 17-25 -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 17.</span><div class="text-base text-slate-900 font-medium">\(\frac{2a^2 - 8a}{a^2 - 16}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{2a}{a + 4}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq \pm 4\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 18.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^3 - x}{x^2 - 2x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x(x + 1)}{x - 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 19.</span><div class="text-base text-slate-900 font-medium">\(\frac{3ab + 6b}{a^2 + 4a + 4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{3b}{a + 2}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq -2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 20.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 5x + 6}{x^2 - 4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x - 3}{x + 2}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 21.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x^2 + 4x}{x^3 + 8}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{2x}{x^2 - 2x + 4}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq -2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 22.</span><div class="text-base text-slate-900 font-medium">\(\frac{a^2 - ab}{a^2 - 2ab + b^2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{a}{a - b}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq b\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 23.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 7x + 12}{x^2 - 16}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x - 3}{x + 4}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 4\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 24.</span><div class="text-base text-slate-900 font-medium">\(\frac{3x^2 - 12}{6x + 12}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x - 2}{2}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq -2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 25.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^3 - 27}{x^2 - 6x + 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x^2 + 3x + 9}{x - 3}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 3\))</span></span></div>
+                </div>
+
+                <!-- Difficoltà Superiore (26-30) -->
+                <div class="pt-2 pb-1 text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-2">
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                    <span>Livello Avanzato (Esercizi 26-30)</span>
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                </div>
+
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 26.</span><div class="text-base text-slate-900 font-medium">\(\frac{ax + 2a - bx - 2b}{a^2 - 2ab + b^2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x + 2}{a - b}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq b\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 27.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^4 - 16}{x^3 + 2x^2 + 4x + 8}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x - 2\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq -2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 28.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x^2 + 5x - 3}{x^2 + 6x + 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{2x - 1}{x + 3}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq -3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 29.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^3 - x^2 - 4x + 4}{x^2 - 3x + 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x + 2\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 1 \land x \neq 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 30.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^3 - 8}{x^3 - 2x^2 + 4x - 8}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x^2 + 2x + 4}{x^2 + 4}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 2\))</span></span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 3: Addizione e Sottrazione -->
+        <section class="mb-10">
+            <div class="flex items-center gap-3 mb-4 pb-2 border-b border-slate-200">
+                <span class="w-7 h-7 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center text-sm">3</span>
+                <h2 class="text-lg font-bold text-slate-800">Addizione e Sottrazione</h2>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Calcola il minimo comune denominatore (m.c.d.) ed effettua le somme algebriche.</p>
+
+            <div class="space-y-3">
+                <!-- Ex 31 (con svolgimento) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-baseline gap-3">
+                            <span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 31.</span>
+                            <div class="text-base text-slate-900 font-medium">
+                                \(\frac{1}{x - 1} + \frac{2}{x + 1} - \frac{2x}{x^2 - 1}\)
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto">
+                            <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                            <span>\(\frac{1}{x + 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 1\))</span></span>
+                        </div>
+                    </div>
+                    
+                    <details class="mt-3 border-t border-slate-200 pt-3 group">
+                        <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 no-print select-none">
+                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-open:rotate-90"></i>
+                            <span>Mostra Svolgimento Passo-Passo</span>
+                        </summary>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700 space-y-2">
+                            <p class="font-semibold text-slate-800">Svolgimento guidato:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li>Scomponiamo i denominatori: \(x^2 - 1 = (x - 1)(x + 1)\).</li>
+                                <li><strong>C.E.:</strong> \(x \neq 1 \land x \neq -1\).</li>
+                                <li>mcm = \((x - 1)(x + 1)\). Riduciamo ad unico denominatore:
+                                    $$\frac{1(x + 1) + 2(x - 1) - 2x}{(x - 1)(x + 1)}$$
+                                </li>
+                                <li>Sommiamo al numeratore: \(\frac{x + 1 + 2x - 2 - 2x}{(x - 1)(x + 1)} = \frac{x - 1}{(x - 1)(x + 1)}\).</li>
+                                <li>Semplifichiamo \((x - 1)\): \(\frac{1}{x + 1}\).</li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Ex 32-40 -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 32.</span><div class="text-base text-slate-900 font-medium">\(\frac{a + 1}{a - 2} - \frac{a - 1}{a + 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{6a}{a^2 - 4}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq \pm 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 33.</span><div class="text-base text-slate-900 font-medium">\(\frac{3}{2x - 4} + \frac{1}{x + 2} - \frac{x}{x^2 - 4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{3x + 2}{2(x^2 - 4)}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 34.</span><div class="text-base text-slate-900 font-medium">\(\frac{x}{x - 3} - \frac{3}{x + 3} - \frac{18}{x^2 - 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(1\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 35.</span><div class="text-base text-slate-900 font-medium">\(\frac{2}{x} + \frac{1}{x - 1} - \frac{3}{x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{3x - 2}{x(x^2 - 1)}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 0, \pm 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 36.</span><div class="text-base text-slate-900 font-medium">\(\frac{a}{a - b} + \frac{b}{b - a}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(1\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq b\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 37.</span><div class="text-base text-slate-900 font-medium">\(\frac{x + 1}{x^2 - 4} - \frac{1}{2 - x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{2x + 3}{x^2 - 4}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 38.</span><div class="text-base text-slate-900 font-medium">\(\frac{1}{x^2 - x} - \frac{1}{x^2 + x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{2}{x(x^2 - 1)}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 0, \pm 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 39.</span><div class="text-base text-slate-900 font-medium">\(\frac{3}{x + 2} + \frac{2x}{x^2 - 4} - \frac{1}{x - 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{4}{x + 2}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 40.</span><div class="text-base text-slate-900 font-medium">\(\frac{x - 2}{x^2 + 2x + 1} + \frac{3}{x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{4x + 1}{(x + 1)^2}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq -1\))</span></span></div>
+                </div>
+
+                <!-- Difficoltà Superiore (41-45) -->
+                <div class="pt-2 pb-1 text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-2">
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                    <span>Livello Avanzato (Esercizi 41-45)</span>
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                </div>
+
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 41.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x}{x^2 - 5x + 6} - \frac{1}{x - 2} + \frac{3}{x - 3}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{4x - 9}{(x - 2)(x - 3)}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 2, 3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 42.</span><div class="text-base text-slate-900 font-medium">\(\frac{a + 2}{a^2 - 2a + 1} - \frac{a - 2}{a^2 - 1} - \frac{2}{a + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{4 - 2a^2}{(a - 1)^2(a + 1)}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq \pm 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 43.</span><div class="text-base text-slate-900 font-medium">\(\frac{x}{x^2 - 9} + \frac{1}{2x + 6} - \frac{x - 1}{3x - 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{-2x^2 + 5x - 3}{6(x^2 - 9)}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 44.</span><div class="text-base text-slate-900 font-medium">\(\frac{1}{x^2 - 3x + 2} + \frac{2}{x^2 - 4x + 3} - \frac{3}{x^2 - 5x + 6}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(0\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 1, 2, 3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 45.</span><div class="text-base text-slate-900 font-medium">\(\frac{a^2 + b^2}{a^2 - b^2} - \frac{a - b}{a + b} - \frac{a + b}{a - b}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(-1\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq \pm b\))</span></span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 4: Moltiplicazione e Divisione -->
+        <section class="mb-10 page-break">
+            <div class="flex items-center gap-3 mb-4 pb-2 border-b border-slate-200">
+                <span class="w-7 h-7 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center text-sm">4</span>
+                <h2 class="text-lg font-bold text-slate-800">Moltiplicazione, Divisione e Potenze</h2>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Scomponi i termini, applica la semplificazione incrociata e risolvi le espressioni.</p>
+
+            <div class="space-y-3">
+                <!-- Ex 46 (con svolgimento) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-baseline gap-3">
+                            <span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 46.</span>
+                            <div class="text-base text-slate-900 font-medium">
+                                \(\frac{x^2 - 4}{x^2 + x} \cdot \frac{x + 1}{x - 2}\)
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto">
+                            <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                            <span>\(\frac{x + 2}{x}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq -1, 0, 2\))</span></span>
+                        </div>
+                    </div>
+                    
+                    <details class="mt-3 border-t border-slate-200 pt-3 group">
+                        <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 no-print select-none">
+                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-open:rotate-90"></i>
+                            <span>Mostra Svolgimento Passo-Passo</span>
+                        </summary>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700 space-y-2">
+                            <p class="font-semibold text-slate-800">Svolgimento guidato:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li>Scomponiamo: \(x^2 - 4 = (x - 2)(x + 2)\) e \(x^2 + x = x(x + 1)\).</li>
+                                <li>C.E.: \(x \neq 0, x \neq -1, x \neq 2\).</li>
+                                <li>Riscriviamo il prodotto:
+                                    $$\frac{(x - 2)(x + 2)}{x(x + 1)} \cdot \frac{x + 1}{x - 2}$$
+                                </li>
+                                <li>Semplifichiamo a croce \((x - 2)\) e \((x + 1)\):
+                                    $$\frac{x + 2}{x}$$
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Ex 47-55 -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 47.</span><div class="text-base text-slate-900 font-medium">\(\frac{a^2 - b^2}{2a + 2b} : \frac{a - b}{4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(2\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq \pm b\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 48.</span><div class="text-base text-slate-900 font-medium">\(\left(\frac{x + 1}{x - 1}\right)^2 \cdot \frac{x^2 - 1}{x^2 + 2x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x + 1}{x - 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 49.</span><div class="text-base text-slate-900 font-medium">\(\frac{3x^2 - 3y^2}{xy} : \frac{x + y}{2x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{6(x - y)}{y}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x,y \neq 0, x \neq -y\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 50.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 9}{x^2 - 4} \cdot \frac{x + 2}{x + 3}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x - 3}{x - 2}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 2, -3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 51.</span><div class="text-base text-slate-900 font-medium">\(\frac{a^3 - a}{a^2 + 2a + 1} : \frac{a - 1}{a + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(a\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq \pm 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 52.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 5x + 6}{x^2 - 1} \cdot \frac{x + 1}{x - 3}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x - 2}{x - 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 1, 3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 53.</span><div class="text-base text-slate-900 font-medium">\(\left(\frac{2a}{a - 3}\right)^2 : \frac{4a^2}{a^2 - 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{a + 3}{a - 3}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq 0, \pm 3\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 54.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^3 + 8}{x^2 - 4} \cdot \frac{x - 2}{x^2 - 2x + 4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(1\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 55.</span><div class="text-base text-slate-900 font-medium">\(\frac{4x^2 - 1}{2x^2 + x} : \frac{2x - 1}{x^2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 0, \pm \frac{1}{2}\))</span></span></div>
+                </div>
+
+                <!-- Difficoltà Superiore (56-60) -->
+                <div class="pt-2 pb-1 text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-2">
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                    <span>Livello Avanzato (Esercizi 56-60)</span>
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                </div>
+
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 56.</span><div class="text-base text-slate-900 font-medium">\(\left(\frac{x}{y} - \frac{y}{x}\right) : \left(\frac{1}{x} + \frac{1}{y}\right)\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x - y\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x, y \neq 0, x \neq -y\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 57.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - 4x + 4}{x^3 - 8} \cdot \frac{x^2 + 2x + 4}{x - 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(1\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq 2\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 58.</span><div class="text-base text-slate-900 font-medium">\(\left(1 - \frac{1}{a + 1}\right) \cdot \left(1 + \frac{1}{a}\right) : \left(1 - \frac{1}{a^2}\right)\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{a^2}{a - 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a \neq 0, \pm 1\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 59.</span><div class="text-base text-slate-900 font-medium">\(\frac{x^2 - xy - 2y^2}{x^2 - y^2} : \frac{x - 2y}{x + y}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(\frac{x + y}{x - y}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x \neq \pm y, x \neq 2y\))</span></span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 60.</span><div class="text-base text-slate-900 font-medium">\(\left(\frac{a}{b} - \frac{b}{a}\right)^2 : \frac{a^2 - b^2}{a^2 b^2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(a^2 - b^2\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(a, b \neq 0, a \neq \pm b\))</span></span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 5: Equazioni Fratte -->
+        <section class="mb-10 page-break">
+            <div class="flex items-center gap-3 mb-4 pb-2 border-b border-slate-200">
+                <span class="w-7 h-7 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center text-sm">5</span>
+                <h2 class="text-lg font-bold text-slate-800">Equazioni Fratte</h2>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Poni le C.E., risolvi l'equazione fratta e verifica l'accettabilità delle soluzioni.</p>
+
+            <div class="space-y-3">
+                <!-- Ex 61 (con svolgimento) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-baseline gap-3">
+                            <span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 61.</span>
+                            <div class="text-base text-slate-900 font-medium">
+                                \(\frac{2}{x - 1} + \frac{1}{x + 1} = \frac{4}{x^2 - 1}\)
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto">
+                            <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                            <span>\(x = 1 \implies \text{Impossibile}\)</span>
+                        </div>
+                    </div>
+                    
+                    <details class="mt-3 border-t border-slate-200 pt-3 group">
+                        <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 no-print select-none">
+                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-open:rotate-90"></i>
+                            <span>Mostra Svolgimento Passo-Passo</span>
+                        </summary>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700 space-y-2">
+                            <p class="font-semibold text-slate-800">Svolgimento guidato:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li>Scomponiamo: \(x^2 - 1 = (x - 1)(x + 1)\).</li>
+                                <li><strong>C.E.:</strong> \(x \neq 1 \land x \neq -1\).</li>
+                                <li>Moltiplichiamo per il mcm \((x - 1)(x + 1)\):
+                                    $$2(x + 1) + 1(x - 1) = 4$$
+                                </li>
+                                <li>Risolviamo: \(2x + 2 + x - 1 = 4 \implies 3x + 1 = 4 \implies 3x = 3 \implies x = 1\).</li>
+                                <li><strong>Verifica C.E.:</strong> Poiché le C.E. richiedono \(x \neq 1\), la soluzione \(x = 1\) non è accettabile.</li>
+                                <li><strong>Esito:</strong> Equazione Impossibile (\(S = \emptyset\)).</li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Ex 62-70 -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 62.</span><div class="text-base text-slate-900 font-medium">\(\frac{x + 3}{x - 2} - \frac{x - 1}{x + 1} = \frac{5}{x^2 - x - 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 0\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 63.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x - 1}{x + 3} = \frac{2x + 3}{x - 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = -\frac{4}{5}\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 64.</span><div class="text-base text-slate-900 font-medium">\(\frac{1}{x^2 - 4} - \frac{2}{x - 2} = \frac{1}{x + 2}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = -1\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 65.</span><div class="text-base text-slate-900 font-medium">\(\frac{3x - 1}{x - 3} - \frac{2}{x} = 3\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 6\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 66.</span><div class="text-base text-slate-900 font-medium">\(\frac{x + 1}{x - 1} = \frac{x + 5}{x + 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 3\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 67.</span><div class="text-base text-slate-900 font-medium">\(\frac{2}{x - 2} + \frac{3}{x + 2} = \frac{5x}{x^2 - 4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>Indeterminata (\(\forall x \neq \pm 2\))</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 68.</span><div class="text-base text-slate-900 font-medium">\(\frac{x - 2}{x + 3} + \frac{1}{x - 3} = \frac{x^2 + 3}{x^2 - 9}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 6\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 69.</span><div class="text-base text-slate-900 font-medium">\(\frac{4}{x^2 - 1} - \frac{2}{x - 1} = 0\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = -1 \implies \text{Impossibile}\)</span></div>
+                </div>
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-slate-700 text-sm min-w-[2.5rem]">Ex 70.</span><div class="text-base text-slate-900 font-medium">\(\frac{x + 2}{2x - 4} - \frac{x - 2}{3x + 6} = \frac{x^2 + 4}{6x^2 - 24}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 1\)</span></div>
+                </div>
+
+                <!-- Difficoltà Superiore (71-75) -->
+                <div class="pt-2 pb-1 text-xs font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-2">
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                    <span>Livello Avanzato (Esercizi 71-75)</span>
+                    <span class="h-px bg-amber-200 flex-1"></span>
+                </div>
+
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 71.</span><div class="text-base text-slate-900 font-medium">\(\frac{x + 1}{x^2 - 3x + 2} - \frac{2}{x - 1} = \frac{1}{2 - x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>Impossibile (\(S = \emptyset\))</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 72.</span><div class="text-base text-slate-900 font-medium">\(\frac{2x + 1}{x^2 - 4x + 4} - \frac{1}{x - 2} = \frac{3}{x^2 - 2x}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 6\)</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 73.</span><div class="text-base text-slate-900 font-medium">\(\frac{x - 1}{x^2 + 2x - 3} + \frac{x + 3}{x^2 - 1} = \frac{2}{x - 1}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 5\)</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 74.</span><div class="text-base text-slate-900 font-medium">\(\frac{3}{x^2 - x - 6} - \frac{2}{x^2 + x - 2} = \frac{1}{x^2 - 4}\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>Impossibile (\(x = 3 \text{ non acc.}\))</span></div>
+                </div>
+                <div class="exercise-card bg-amber-50/30 border border-amber-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-baseline gap-3"><span class="font-bold text-amber-800 text-sm min-w-[2.5rem]">Ex 75.</span><div class="text-base text-slate-900 font-medium">\(\frac{x}{x - 2} - \frac{2}{x + 2} = \frac{8}{x^2 - 4} + 1\)</div></div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto"><span class="text-xs text-emerald-600 font-normal">Risultato:</span><span>\(x = 4\)</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 6: Problemi Applicati -->
+        <section class="mb-6 page-break">
+            <div class="flex items-center gap-3 mb-4 pb-2 border-b border-slate-200">
+                <span class="w-7 h-7 bg-blue-600 text-white font-bold rounded-lg flex items-center justify-center text-sm">6</span>
+                <h2 class="text-lg font-bold text-slate-800">Problemi Geometrici, Fisici ed Economici</h2>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Modella il problema reale con le frazioni algebriche e calcola l'espressione o il valore richiesto.</p>
+
+            <div class="space-y-4">
+                <!-- Ex 76 (con svolgimento) -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div class="flex items-start gap-3">
+                            <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 76.</span>
+                            <div class="text-sm text-slate-800 leading-relaxed">
+                                <span class="font-semibold text-blue-700 block mb-1">Geometria - Rettangolo</span>
+                                Un rettangolo ha area \(A = \frac{x^2 - 16}{x + 2}\) e base \(b = \frac{x - 4}{x^2 - 4}\).
+                                Determina l'espressione dell'altezza \(h = \frac{A}{b}\) in forma semplificata.
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                            <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                            <span>\(h = (x + 4)(x - 2)\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x > 4\))</span></span>
+                        </div>
+                    </div>
+                    
+                    <details class="mt-3 border-t border-slate-200 pt-3 group">
+                        <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 no-print select-none">
+                            <i class="fa-solid fa-chevron-right text-[10px] transition-transform group-open:rotate-90"></i>
+                            <span>Mostra Svolgimento Passo-Passo</span>
+                        </summary>
+                        <div class="mt-3 p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700 space-y-2">
+                            <p class="font-semibold text-slate-800">Svolgimento guidato:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                                <li>L'altezza \(h\) è data da \(A : b\):
+                                    $$h = \frac{x^2 - 16}{x + 2} : \frac{x - 4}{x^2 - 4} = \frac{x^2 - 16}{x + 2} \cdot \frac{x^2 - 4}{x - 4}$$
+                                </li>
+                                <li>Scomponiamo:
+                                    $$h = \frac{(x - 4)(x + 4)}{x + 2} \cdot \frac{(x - 2)(x + 2)}{x - 4}$$
+                                </li>
+                                <li>Semplifichiamo a croce \((x - 4)\) e \((x + 2)\):
+                                    $$h = (x + 4)(x - 2)$$
+                                </li>
+                                <li>Discussione geometrica: per avere lunghezze positive occorre \(x > 4\).</li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Ex 77-82 -->
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 77.</span>
+                        <div class="text-sm text-slate-800 leading-relaxed">
+                            <span class="font-semibold text-blue-700 block mb-1">Fisica / Portate di Flusso</span>
+                            Due rubinetti versano acqua in una vasca. Il primo ha portata \(V_A = \frac{1}{x + 1}\) L/s, il secondo ha portata \(V_B = \frac{1}{x - 1}\) L/s. Esprimi la portata totale \(V_{\text{tot}} = V_A + V_B\).
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                        <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                        <span>\(V_{\text{tot}} = \frac{2x}{x^2 - 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x > 1\))</span></span>
+                    </div>
+                </div>
+
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 78.</span>
+                        <div class="text-sm text-slate-800 leading-relaxed">
+                            <span class="font-semibold text-blue-700 block mb-1">Geometria - Trapezio</span>
+                            In un trapezio, la base maggiore è \(B = \frac{3x + 6}{x - 1}\), la base minore è \(b = \frac{x + 2}{x - 1}\) e l'altezza è \(h = \frac{x - 1}{x + 2}\). Calcola l'Area del trapezio.
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                        <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                        <span>\(\text{Area} = 2\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x > 1\))</span></span>
+                    </div>
+                </div>
+
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 79.</span>
+                        <div class="text-sm text-slate-800 leading-relaxed">
+                            <span class="font-semibold text-blue-700 block mb-1">Economia - Costo Medio</span>
+                            Un'azienda ha costi fissi per \(500\text{ €}\) e costi variabili di \(15\text{ €}\) per pezzo. Il costo medio per pezzo è \(C(x) = \frac{15x + 500}{x}\). Quanti pezzi \(x\) produrre affinché il costo medio scenda a \(25\text{ €}\)?
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                        <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                        <span>\(x = 50 \text{ pezzi}\)</span>
+                    </div>
+                </div>
+
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 80.</span>
+                        <div class="text-sm text-slate-800 leading-relaxed">
+                            <span class="font-semibold text-blue-700 block mb-1">Fisica - Resistenza Equivalente</span>
+                            In un circuito elettrico, due resistenze in parallelo valgono \(R_1 = \frac{x + 2}{x}\) \(\Omega\) e \(R_2 = \frac{x + 2}{2}\) \(\Omega\). Calcola la resistenza equivalente \(R_{\text{eq}} = \frac{R_1 R_2}{R_1 + R_2}\).
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                        <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                        <span>\(R_{\text{eq}} = \frac{x + 2}{x + 2} = 1 \text{ (se } x = 2 \text{)}\) &nbsp;\(\implies \frac{x + 2}{x + 2}\)</span>
+                    </div>
+                </div>
+
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 81.</span>
+                        <div class="text-sm text-slate-800 leading-relaxed">
+                            <span class="font-semibold text-blue-700 block mb-1">Cinematica - Velocità Media</span>
+                            Un veicolo percorre un tragitto di lunghezza \(d\) all'andata a velocità \(v_1 = x+1\) e al ritorno a velocità \(v_2 = x-1\). Esprimi il tempo totale di percorrenza \(t_{\text{tot}} = \frac{d}{v_1} + \frac{d}{v_2}\) in forma raccolta.
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                        <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                        <span>\(t_{\text{tot}} = \frac{2dx}{x^2 - 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x > 1\))</span></span>
+                    </div>
+                </div>
+
+                <div class="exercise-card bg-slate-50/70 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-slate-700 text-sm min-w-[2.5rem] mt-0.5">Ex 82.</span>
+                        <div class="text-sm text-slate-800 leading-relaxed">
+                            <span class="font-semibold text-blue-700 block mb-1">Geometria - Triangolo Rettangolo</span>
+                            I cateti di un triangolo rettangolo misurano \(a = \frac{2x}{x^2 - 1}\) e \(b = \frac{x^2 - 1}{x^2 + 1}\). Esprimi il doppio dell'Area \(2A = a \cdot b\) in forma semplificata.
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 rounded-lg text-sm font-semibold w-fit self-end sm:self-auto shrink-0">
+                        <span class="text-xs text-emerald-600 font-normal">Risultato:</span>
+                        <span>\(2A = \frac{2x}{x^2 + 1}\) &nbsp; <span class="text-xs text-emerald-600 font-normal">(\(x > 1\))</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Document Footer -->
+        <footer class="mt-12 pt-4 border-t border-slate-200 text-center text-xs text-slate-400">
+            <p>© Scheda Didattica sulle Frazioni Algebriche - Generato per esercitazioni guidate e stampa PDF.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Initialize KaTeX Auto-Render on DOM Load
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\[", right: "\\]", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false}
+                ],
+                throwOnError : false
+            });
+        });
+
+        // Global state for toggling solutions
+        let allExpanded = false;
+
+        function toggleAllSolutions() {
+            const detailsList = document.querySelectorAll("details");
+            const btnText = document.querySelector("#toggle-solutions-btn span");
+            const btnIcon = document.querySelector("#toggle-solutions-btn i");
+
+            allExpanded = !allExpanded;
+
+            detailsList.forEach(detail => {
+                detail.open = allExpanded;
+            });
+
+            if (allExpanded) {
+                btnText.textContent = "Nascondi Tutti gli Svolgimenti";
+                btnIcon.className = "fa-solid fa-eye-slash text-slate-500";
+            } else {
+                btnText.textContent = "Mostra Tutti gli Svolgimenti";
+                btnIcon.className = "fa-solid fa-eye text-slate-500";
+            }
+        }
+
+        function downloadPDF() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
