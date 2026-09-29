@@ -575,6 +575,7 @@
         }
 
         function downloadPDF() {
+            // Apre tutti i dettagli per includere le soluzioni nel PDF
             const details = document.querySelectorAll('.solution-details');
             details.forEach(d => {
                 d.open = true;
@@ -585,14 +586,36 @@
             const btnIcon = document.getElementById('download-btn-icon');
             const originalText = btnText ? btnText.innerText : 'Scarica PDF / Stampa';
 
-            if (btnText) btnText.innerText = 'Preparazione PDF...';
+            if (btnText) btnText.innerText = 'Generazione PDF...';
             if (btnIcon) btnIcon.className = 'fa-solid fa-spinner fa-spin';
 
-            setTimeout(() => {
-                window.print();
-                if (btnText) btnText.innerText = originalText;
-                if (btnIcon) btnIcon.className = 'fa-solid fa-file-pdf';
-            }, 400);
+            const element = document.querySelector('.page-container');
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     'Frazioni_Algebriche_Scheda_Didattica.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] }
+            };
+
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(element).save().then(() => {
+                    if (btnText) btnText.innerText = originalText;
+                    if (btnIcon) btnIcon.className = 'fa-solid fa-file-pdf';
+                }).catch(err => {
+                    console.error('Errore durante la generazione del PDF con html2pdf, ricorso alla stampa:', err);
+                    window.print();
+                    if (btnText) btnText.innerText = originalText;
+                    if (btnIcon) btnIcon.className = 'fa-solid fa-file-pdf';
+                });
+            } else {
+                setTimeout(() => {
+                    window.print();
+                    if (btnText) btnText.innerText = originalText;
+                    if (btnIcon) btnIcon.className = 'fa-solid fa-file-pdf';
+                }, 400);
+            }
         }
 
         // Initialize application on page load
