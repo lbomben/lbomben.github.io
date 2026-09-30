@@ -99,7 +99,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-800">Scheda Esercizi: Frazioni Algebriche</h1>
-                <p class="text-sm text-slate-500">Raccolta Completa Graduata (153 Esercizi) - Scuola Sec. II Grado</p>
+                <p class="text-sm text-slate-500">Raccolta Completa Graduata (153 Esercizi Verificati) - Scuola Sec. II Grado</p>
             </div>
         </div>
 
@@ -141,7 +141,7 @@
             <div>
                 <p class="font-semibold">Struttura della scheda:</p>
                 <p class="text-xs mt-0.5 text-amber-800">
-                    Ciascuna categoria contiene esercizi ordinati per grado crescente di difficoltà. Gli esercizi finali di ciascuna sezione appartengono al **Livello Avanzato**. Il **primo esercizio** di ogni sezione offre uno svolgimento guidato passo-passo.
+                    Ciascuna categoria contiene esercizi ordinati per grado crescente di difficoltà (153 esercizi totali). Gli esercizi finali di ciascuna sezione appartengono al **Livello Avanzato**. Il **primo esercizio** di ogni sezione offre uno svolgimento guidato passo-passo.
                 </p>
             </div>
         </div>
@@ -152,7 +152,7 @@
     </main>
 
     <script>
-        // Master Data Structure containing 143 exercises sequentially ordered across 8 sections
+        // Master Data Structure containing 153 exercises sequentially ordered across 8 sections
         const exerciseData = [
             {
                 sectionNum: 1,
@@ -329,20 +329,20 @@
                     { id: 102, expr: "\\frac{x + 1}{x^2 - 4} = \\frac{1}{x - 2}", result: "S = \\emptyset \\quad (x \\neq \\pm 2)" },
                     { id: 103, expr: "\\frac{2x - 3}{x^2 - 1} + \\frac{1}{x + 1} = \\frac{1}{x - 1}", result: "x = 5/2 \\quad (x \\neq \\pm 1)" },
                     { id: 104, expr: "\\frac{x}{x - 5} - 2 = \\frac{5}{5 - x}", result: "x = 15 \\quad (x \\neq 5)" },
-                    { id: 105, expr: "\\frac{3}{x^2 - 3x} - \\frac{1}{x - 3} = 0", result: "x = 3 \\quad (\\text{non acc.} \\implies S = \\emptyset)" },
+                    { id: 105, expr: "\\frac{3}{x^2 - 3x} - \\frac{1}{x - 3} = 0", result: "S = \\emptyset \\quad (x = 3 \\text{ non acc.})" },
                     { id: 106, expr: "\\frac{x - 1}{x + 2} = \\frac{x + 3}{x - 1}", result: "x = -5/7 \\quad (x \\neq -2, 1)" },
                     { id: 107, expr: "\\frac{x + 3}{x - 2} = 0", result: "x = -3 \\quad (x \\neq 2)" },
                     { id: 108, expr: "\\frac{5}{x + 2} + \\frac{1}{2} = \\frac{3}{x + 2}", result: "x = -6 \\quad (x \\neq -2)" },
-                    { id: 109, expr: "\\frac{2x + 1}{x - 3} - \\frac{x - 5}{x - 3} = 1", result: "S = \\emptyset \\quad (x = 3 \\text{ non acc.})" },
-                    { id: 110, expr: "\\frac{4}{x^2 - 1} = \\frac{2}{x - 1}", result: "x = 1 \\quad (\\text{non acc.} \\implies S = \\emptyset)" },
+                    { id: 109, expr: "\\frac{2x + 1}{x - 3} - \\frac{x - 5}{x - 3} = 1", result: "S = \\emptyset \\quad (\\text{equazione impossibile})" },
+                    { id: 110, expr: "\\frac{4}{x^2 - 1} = \\frac{2}{x - 1}", result: "S = \\emptyset \\quad (x = 1 \\text{ non acc.})" },
                     { id: 111, expr: "\\frac{x - 2}{x + 1} = \\frac{x - 4}{x - 1}", result: "S = \\emptyset \\quad (x \\neq \\pm 1)" },
-                    { id: 112, expr: "\\frac{x^2 - 2x}{x^2 - 4} = 0", result: "x=0 \\quad (x = 2 \\text{ non acc.})", isAdvanced: true },
-                    { id: 113, expr: "\\frac{1}{x-1} + \\frac{2}{x+2} = \\frac{3x}{x^2+x-2}", result: "S = \\mathbb{R} \\setminus \\{-2, 1\\} ", isAdvanced: true },
-                    { id: 114, expr: "\\frac{x+1}{x-1} - \\frac{x-1}{x+1} = \\frac{4}{x^2-1}", result: "x = 1 \\quad (\\text{non acc.} \\implies S = \\emptyset)", isAdvanced: true },
+                    { id: 112, expr: "\\frac{x^2 - 2x}{x^2 - 4} = 0", result: "x = 0 \\quad (x = 2 \\text{ non acc.})", isAdvanced: true },
+                    { id: 113, expr: "\\frac{1}{x-1} + \\frac{2}{x+2} = \\frac{3x}{x^2+x-2}", result: "S = \\mathbb{R} \\setminus \\{-2, 1\\}", isAdvanced: true },
+                    { id: 114, expr: "\\frac{x+1}{x-1} - \\frac{x-1}{x+1} = \\frac{4}{x^2-1}", result: "S = \\emptyset \\quad (x = 1 \\text{ non acc.})", isAdvanced: true },
                     { id: 115, expr: "\\frac{2}{x^2 - 9} + \\frac{1}{x + 3} = \\frac{x}{x - 3}", result: "x = -1 \\quad (x \\neq \\pm 3)", isAdvanced: true },
                     { id: 116, expr: "\\frac{x - a}{x + b} = 0 \\quad (b \\neq -a)", result: "x = a \\quad (x \\neq -b)", isAdvanced: true },
                     { id: 117, expr: "\\frac{2}{x} + \\frac{3}{x^2} = 0", result: "x = -3/2 \\quad (x \\neq 0)", isAdvanced: true },
-                    { id: 118, expr: "\\frac{x^2 + 1}{x^2 - 4} = \\frac{5}{x^2 - 4}", result: "x = -2 \\quad (x = \\pm 2 \\text{ non acc.} \\implies S = \\emptyset)", isAdvanced: true },
+                    { id: 118, expr: "\\frac{x^2 + 1}{x^2 - 4} = \\frac{5}{x^2 - 4}", result: "S = \\emptyset \\quad (x = \\pm 2 \\text{ non acc.})", isAdvanced: true },
                     { id: 119, expr: "\\frac{1}{x - 2} - \\frac{2}{x + 2} = \\frac{x}{x^2 - 4}", result: "x = 3 \\quad (x \\neq \\pm 2)", isAdvanced: true },
                     { id: 120, expr: "\\frac{3x}{x + 1} - \\frac{2x}{x - 1} = 1", result: "x = 1/5 \\quad (x \\neq \\pm 1)", isAdvanced: true },
                     { id: 121, expr: "\\frac{x + 2}{x - 2} + \\frac{x - 2}{x + 2} = \\frac{8}{x^2 - 4}", result: "x = 0 \\quad (x \\neq \\pm 2)", isAdvanced: true },
@@ -366,47 +366,19 @@
                         "2) Se \\(a = 3\\), otteniamo: \\(0x = 5\\) che è un'equazione impossibile (\\(S = \\emptyset\\))."
                     ]},
                     { id: 128, expr: "ax + 1 = x + a^2", result: "a \\neq 1 \\implies x = a + 1; \\, a = 1 \\implies S = \\mathbb{R}" },
-                    { id: 129, expr: "a^2 x - 1 = x + a", result: "a \\neq \\pm 1 \\implies x = \\frac{1}{a - 1}; \\, a = 1 \\implies S = \\emptyset; \\, a = -1 \\implies S = \\mathbb{R}" },
+                    { id: 129, expr: "a^2 x - 1 = x + a", result: "a \\neq \\pm 1 \\implies x = \\frac{1}{a - 1}; \\, a = 1 \\implies S = \\emptyset; \, a = -1 \\implies S = \\mathbb{R}" },
                     { id: 130, expr: "\\frac{x - a}{a} + \\frac{x - 1}{2} = 1 \\quad (a \\neq 0)", result: "a \\neq -2 \\implies x = \\frac{5a}{a+2}; \\, a = -2 \\implies S = \\emptyset" },
                     { id: 131, expr: "\\frac{x}{a - 1} - \\frac{2}{a + 1} = \\frac{x}{a^2 - 1}", result: "a \\neq \\pm 1, a \\neq 0 \\implies x = \\frac{2(a-1)}{a}; \\, a = 0 \\implies S = \\emptyset" },
                     { id: 132, expr: "\\frac{ax - 1}{x - 2} = a \\quad (x \\neq 2)", result: "a = 1/2 \\implies S = \\mathbb{R} \\setminus \\{2\\}; \\, a \\neq 1/2 \\implies S = \\emptyset" },
                     { id: 133, expr: "\\frac{x + a}{x - a} = 3 \\quad (x \\neq a)", result: "a \\neq 0 \\implies x = 2a; \\, a = 0 \\implies C.E. \\text{ non soddisfatte}" },
                     { id: 134, expr: "\\frac{a(x + 1)}{x - 1} = 2a \\quad (x \\neq 1)", result: "a \\neq 0 \\implies x = 3; \\, a = 0 \\implies S = \\mathbb{R} \\setminus \\{1\\}" },
-                    { id: 135, expr: "k(x - 2) = 2x - k^2", result: "k \\neq 2 \\implies x = -k; \\, k = 2 \\implies S = \\mathbb{R}" },
+                    { id: 135, expr: "k(x - 2) = 2x - k^2", result: "k \\neq 2 \\implies x = -k; \, k = 2 \\implies S = \\mathbb{R}" },
                     { id: 136, expr: "\\frac{x - k}{k + 1} + \\frac{x}{k - 1} = 2 \\quad (k \\neq \\pm 1)", result: "k \\neq 0 \\implies x = \\frac{3k^2 - k - 2}{2k}; \\, k = 0 \\implies S = \\emptyset" },
                     { id: 137, expr: "\\frac{ax + b}{a - b} - 1 = \\frac{bx + a}{a - b} \\quad (a \\neq b)", result: "x = 2 \\quad (\\forall a \\neq b)", isAdvanced: true },
                     { id: 138, expr: "\\frac{x - a}{x - b} = \\frac{x + b}{x + a} \\quad (x \\neq b, x \\neq -a)", result: "a^2 \\neq b^2 \\implies S = \\emptyset; \\, a^2 = b^2 \\implies S = \\mathbb{R} \\setminus \\{b, -a\\}", isAdvanced: true },
                     { id: 139, expr: "\\frac{a}{x - a} + \\frac{b}{x - b} = 0 \\quad (x \\neq a, b)", result: "a + b \\neq 0 \\implies x = \\frac{2ab}{a + b} \\, (a,b \\neq 0); \\, a + b = 0 \\implies S = \\emptyset", isAdvanced: true },
                     { id: 140, expr: "\\frac{x^2 - a^2}{x - a} = 2a + 3 \\quad (x \\neq a)", result: "x = a + 3 \\quad (\\forall a)", isAdvanced: true },
                     { id: 141, expr: "\\frac{x + 1}{ax} - \\frac{1}{a} = \\frac{1}{x} \\quad (a \\neq 0, x \\neq 0)", result: "a = 1 \\implies S = \\mathbb{R} \\setminus \\{0\\}; \\, a \\neq 1 \\implies S = \\emptyset", isAdvanced: true }
-                ]
-            },
-            {
-                sectionNum: 7,
-                title: "Equazioni Algebriche Letterali",
-                description: "Discussione e risoluzione di equazioni letterali (intere e fratte) al variare del parametro.",
-                exercises: [
-                    { id: 127, expr: "ax - 2 = 3x + a", result: "a \\neq 3 \\implies x = \\frac{a+2}{a-3}; \\, a = 3 \\implies S = \\emptyset", solution: [
-                        "Isoliamo i termini con l'incognita \\(x\\) a sinistra: \\(ax - 3x = a + 2\\).",
-                        "Raccogliamo \\(x\\): \\((a - 3)x = a + 2\\).",
-                        "<strong>Discussione del parametro:</strong>",
-                        "1) Se \\(a - 3 \\neq 0 \\implies a \\neq 3\\), dividiamo per \\(a - 3\\): \\(x = \\frac{a + 2}{a - 3}\\).",
-                        "2) Se \\(a = 3\\), otteniamo: \\(0x = 5\\) che è un'equazione impossibile (\\(S = \\emptyset\\))."
-                    ]},
-                    { id: 128, expr: "ax + 1 = x + a^2", result: "a \\neq 1 \\implies x = a + 1; \\, a = 1 \\implies S = \\mathbb{R}" },
-                    { id: 129, expr: "a^2 x - 1 = x + a", result: "a \\neq \\pm 1 \\implies x = \\frac{1}{a - 1}; \\, a = 1 \\implies S = \\mathbb{R}; \\, a = -1 \\implies S = \\emptyset" },
-                    { id: 130, expr: "\\frac{x - a}{a} + \\frac{x - 1}{2} = 1 \\quad (a \\neq 0)", result: "a \\neq -2 \\implies x = \\frac{4a}{a+2}; \\, a = -2 \\implies S = \\emptyset" },
-                    { id: 131, expr: "\\frac{x}{a - 1} - \\frac{2}{a + 1} = \\frac{x}{a^2 - 1}", result: "a \\neq \\pm 1, a \\neq 0 \\implies x = \\frac{2}{a}; \\, a = 0 \\implies S = \\emptyset" },
-                    { id: 132, expr: "\\frac{ax - 1}{x - 2} = a \\quad (x \\neq 2)", result: "a \\neq 1/2 \\implies x = \\frac{2a - 1}{a} \\, (a \\neq 0); \\, a = 1/2 \\implies S = \\emptyset" },
-                    { id: 133, expr: "\\frac{x + a}{x - a} = 3 \\quad (x \\neq a)", result: "a \\neq 0 \\implies x = 2a; \\, a = 0 \\implies C.E. \\text{ non soddisfatte}" },
-                    { id: 134, expr: "\\frac{a(x + 1)}{x - 1} = 2a \\quad (x \\neq 1)", result: "a \\neq 0 \\implies x = 3; \\, a = 0 \\implies S = \\mathbb{R} \\setminus \\{1\\}" },
-                    { id: 135, expr: "k(x - 2) = 2x - k^2", result: "k \\neq 2 \\implies x = 2 - k; \\, k = 2 \\implies S = \\mathbb{R}" },
-                    { id: 136, expr: "\\frac{x - k}{k + 1} + \\frac{x}{k - 1} = 2 \\quad (k \\neq \\pm 1)", result: "k \\neq 0 \\implies x = k + 1; \\, k = 0 \\implies S = \\emptyset" },
-                    { id: 137, expr: "\\frac{ax + b}{a - b} - 1 = \\frac{bx + a}{a - b} \\quad (a \\neq b)", result: "a \\neq b \\implies x = 1 \\quad (\\forall a, b)", isAdvanced: true },
-                    { id: 138, expr: "\\frac{x - a}{x - b} = \\frac{x + b}{x + a} \\quad (x \\neq b, x \\neq -a)", result: "a \\neq \\pm b \\implies x = 0; \\, a = -b \\implies S = \\emptyset", isAdvanced: true },
-                    { id: 139, expr: "\\frac{a}{x - a} + \\frac{b}{x - b} = 0 \\quad (x \\neq a, b)", result: "a + b \\neq 0 \\implies x = \\frac{2ab}{a + b} \\, (a,b \\neq 0); \\, a + b = 0 \\implies S = \\emptyset", isAdvanced: true },
-                    { id: 140, expr: "\\frac{x^2 - a^2}{x - a} = 2a + 3 \\quad (x \\neq a)", result: "a \\neq -3/2 \\implies x = a + 3; \\, a = -3/2 \\implies S = \\emptyset", isAdvanced: true },
-                    { id: 141, expr: "\\frac{x + 1}{ax} - \\frac{1}{a} = \\frac{1}{x} \\quad (a \\neq 0, x \\neq 0)", result: "S = \\emptyset \\quad (\\text{Impossibile per ogni } a \\neq 0)", isAdvanced: true }
                 ]
             },
             {
@@ -437,17 +409,16 @@
         ];
 
         function formatExpr(expr) {
-            // If already containing LaTeX inline delimiters or \text commands
+            // Se la stringa racchiude già comandi LaTeX o delimitatori espliciti
             if (expr.includes('\\(') || expr.includes('\\text{')) {
                 return expr;
             }
-            // Rimuove i comandi LaTeX (es. \frac, \left, \right, \quad, \cdot) prima del controllo testo
+            // Rimuove i comandi LaTeX per verificare se la frase contiene testo in italiano
             const cleanExpr = expr.replace(/\\[a-zA-Z]+/g, '');
-            // Se contiene parole italiane composte da 3+ lettere, è un testo di un problema
             if (/[a-zA-ZÀ-ÿ]{3,}/.test(cleanExpr)) {
                 return expr;
             }
-            // Altrimenti è una formula o equazione pura, la racchiude nei delimitatori LaTeX
+            // Altrimenti è una formula matematica pura
             return `\\(${expr}\\)`;
         }
 
@@ -622,7 +593,7 @@
 
             const btnText = document.getElementById('download-btn-text');
             const btnIcon = document.getElementById('download-btn-icon');
-            const originalText = btnText ? btnText.innerText : 'Scarica PDF / Stampa';
+            const originalText = btnText ? btnText.innerText : 'Scarica PDF';
 
             if (btnText) btnText.innerText = 'Generazione PDF...';
             if (btnIcon) btnIcon.className = 'fa-solid fa-spinner fa-spin';
@@ -642,7 +613,7 @@
                     if (btnText) btnText.innerText = originalText;
                     if (btnIcon) btnIcon.className = 'fa-solid fa-file-pdf';
                 }).catch(err => {
-                    console.error('Errore durante la generazione del PDF con html2pdf, ricorso alla stampa:', err);
+                    console.error('Errore durante la generazione del PDF, ricorso alla stampa di sistema:', err);
                     window.print();
                     if (btnText) btnText.innerText = originalText;
                     if (btnIcon) btnIcon.className = 'fa-solid fa-file-pdf';
@@ -656,7 +627,6 @@
             }
         }
 
-        // Initialize application on page load
         window.addEventListener('DOMContentLoaded', () => {
             renderWorksheet();
         });
