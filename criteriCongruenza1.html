@@ -6,94 +6,112 @@
     <title>Simulazione Criteri di Congruenza</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f1f5f9; touch-action: none; overflow: hidden; }
+        body { background-color: #f1f5f9; touch-action: none; overflow-x: hidden; }
         canvas { 
             touch-action: none; 
             background: #ffffff; 
             cursor: crosshair;
-            image-rendering: -webkit-optimize-contrast;
         }
-        .active-tab { border-bottom: 4px solid #4f46e5; color: #4f46e5; background: #fff; }
-        .free-controls select { 
-            font-size: 10px; 
-            padding: 2px; 
-            border-radius: 4px; 
+        .active-tab { 
+            border-bottom: 4px solid #4f46e5; 
+            color: #4f46e5; 
+            background: #ffffff; 
+            font-weight: 700;
+        }
+        .bind-select { 
+            font-size: 11px; 
+            padding: 3px 6px; 
+            border-radius: 6px; 
             border: 1px solid #cbd5e1;
             background: white;
+            color: #1e293b;
+            outline: none;
+        }
+        .bind-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
     </style>
 </head>
-<body class="flex flex-col items-center min-h-screen p-2 md:p-4 font-sans">
-    <a href="https://lbomben.github.io" class="mb-2 text-indigo-600 hover:underline text-sm">Homepage</a>
+<body class="flex flex-col items-center justify-start min-h-screen p-2 md:p-6 font-sans text-slate-800">
+    <a href="https://lbomben.github.io" class="mb-3 text-indigo-600 hover:text-indigo-800 transition-colors text-sm font-medium flex items-center gap-1">
+        ← Torna alla Homepage
+    </a>
 
-    <div class="max-w-5xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col border border-slate-200">
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-200/80">
         <!-- Header -->
-        <div class="bg-slate-900 p-4 text-white text-center">
-            <h1 id="mainTitle" class="text-xl md:text-2xl font-bold">Primo Criterio (LAL)</h1>
-            <p id="mainDesc" class="text-slate-400 text-xs md:text-sm italic">
+        <div class="bg-slate-50 p-5 text-slate-800 text-center relative border-b border-slate-200">
+            <h1 id="mainTitle" class="text-xl md:text-2xl font-bold tracking-tight text-indigo-900">Primo Criterio (LAL)</h1>
+            <p id="mainDesc" class="text-slate-600 text-xs md:text-sm italic mt-1 max-w-2xl mx-auto">
                 "Due triangoli sono congruenti se hanno uguali due lati e l'angolo tra essi compreso."
             </p>
+            <div id="congruenceBadge" class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                ✓ Triangoli Congruenti
+            </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex border-b border-slate-200 bg-slate-50">
-            <button id="tabLAL" class="flex-1 py-3 font-bold text-[10px] md:text-xs uppercase tracking-tighter active-tab">LAL</button>
-            <button id="tabALA" class="flex-1 py-3 font-bold text-[10px] md:text-xs uppercase tracking-tighter text-slate-500">ALA</button>
-            <button id="tabLLL" class="flex-1 py-3 font-bold text-[10px] md:text-xs uppercase tracking-tighter text-slate-500">LLL</button>
-            <button id="tabFREE" class="flex-1 py-3 font-bold text-[10px] md:text-xs uppercase tracking-tighter text-amber-600 bg-amber-50/30">Libera ✨</button>
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-200 bg-slate-50 text-slate-600">
+            <button id="tabLAL" class="flex-1 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all active-tab">LAL</button>
+            <button id="tabALA" class="flex-1 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all hover:text-indigo-600">ALA</button>
+            <button id="tabLLL" class="flex-1 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all hover:text-indigo-600">LLL</button>
+            <button id="tabFREE" class="flex-1 py-3.5 text-xs md:text-sm uppercase tracking-wider transition-all text-amber-700 bg-amber-50/50 hover:bg-amber-100/50">Libera ✨</button>
         </div>
 
         <!-- Pannello Controlli Modalità Libera -->
-        <div id="freePanel" class="hidden bg-amber-50 border-b border-amber-100 p-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-[10px] uppercase font-bold text-amber-900">
-            <div class="flex flex-col gap-1">
+        <div id="freePanel" class="hidden bg-amber-50/90 border-b border-amber-200/80 p-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px] font-semibold text-amber-950">
+            <div class="flex flex-col gap-1.5">
                 <span>Lato DE ≡</span>
                 <select id="bindDE" class="bind-select"><option value="none">Libero</option><option value="AB">Lato AB</option></select>
                 <span>Lato DF ≡</span>
                 <select id="bindDF" class="bind-select"><option value="none">Libero</option><option value="AC">Lato AC</option></select>
             </div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1.5">
                 <span>Lato EF ≡</span>
                 <select id="bindEF" class="bind-select"><option value="none">Libero</option><option value="BC">Lato BC</option></select>
                 <span>Angolo D ≡</span>
                 <select id="bindAD" class="bind-select"><option value="none">Libero</option><option value="A">Angolo A</option></select>
             </div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1.5">
                 <span>Angolo E ≡</span>
                 <select id="bindAE" class="bind-select"><option value="none">Libero</option><option value="B">Angolo B</option></select>
                 <span>Angolo F ≡</span>
                 <select id="bindAF" class="bind-select"><option value="none">Libero</option><option value="C">Angolo C</option></select>
             </div>
-            <div class="flex items-center justify-center">
-                <button id="clearBindsBtn" class="w-full h-full bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-md border border-amber-400 p-1 transition-colors">
+            <div class="flex items-center justify-center pt-2 md:pt-0">
+                <button id="clearBindsBtn" class="w-full h-full min-h-[40px] bg-amber-200/80 hover:bg-amber-300 text-amber-900 rounded-lg border border-amber-300 font-bold text-xs transition-colors shadow-sm">
                     Rimuovi tutti i vincoli
                 </button>
             </div>
         </div>
 
         <!-- Dati Geometrici -->
-        <div class="grid grid-cols-2 gap-px bg-slate-200 text-[10px] md:text-xs font-mono">
-            <div class="p-2 bg-blue-50 text-blue-800 flex flex-col items-center">
-                <span class="font-bold mb-1">TRIANGOLO ABC</span>
-                <div id="stats1" class="text-center"></div>
+        <div class="grid grid-cols-2 gap-px bg-slate-200 text-xs md:text-sm font-mono">
+            <div class="p-3 bg-blue-50/80 text-blue-900 flex flex-col items-center">
+                <span class="font-bold text-blue-700 tracking-wide mb-1">TRIANGOLO ABC</span>
+                <div id="stats1" class="text-center font-medium"></div>
             </div>
-            <div class="p-2 bg-rose-50 text-rose-800 flex flex-col items-center">
-                <span class="font-bold mb-1">TRIANGOLO DEF</span>
-                <div id="stats2" class="text-center"></div>
+            <div class="p-3 bg-rose-50/80 text-rose-900 flex flex-col items-center">
+                <span class="font-bold text-rose-700 tracking-wide mb-1">TRIANGOLO DEF</span>
+                <div id="stats2" class="text-center font-medium"></div>
             </div>
         </div>
 
-        <!-- Canvas -->
-        <div class="relative w-full bg-slate-100 p-1 flex justify-center items-center">
-            <canvas id="geoCanvas" width="800" height="400" class="w-full h-auto max-w-full rounded shadow-inner"></canvas>
+        <!-- Canvas Container -->
+        <div class="relative w-full bg-slate-100/60 p-2 flex justify-center items-center overflow-hidden">
+            <canvas id="geoCanvas" class="w-full h-[380px] md:h-[420px] rounded-xl shadow-inner border border-slate-200/80"></canvas>
         </div>
 
-        <!-- Controlli -->
-        <div class="p-4 bg-white flex gap-2 justify-center border-t border-slate-100">
-            <button id="overlapBtn" class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-bold text-sm shadow-md active:scale-95 transition-all">
-                Verifica Sovrapposizione
+        <!-- Action Controls -->
+        <div class="p-4 bg-white flex flex-wrap gap-3 justify-center border-t border-slate-100">
+            <button id="overlapBtn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-200 active:scale-95 transition-all flex items-center gap-2">
+                <span>🔄</span> <span id="overlapBtnText">Verifica Sovrapposizione</span>
             </button>
-            <button id="resetBtn" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-lg font-bold text-sm hover:bg-slate-300 transition-all">
+            <button id="rotateBtn" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm border border-slate-300 transition-all active:scale-95">
                 Ruota DEF
+            </button>
+            <button id="resetPosBtn" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm border border-slate-300 transition-all active:scale-95">
+                Ripristina
             </button>
         </div>
     </div>
@@ -101,18 +119,26 @@
     <script>
         const canvas = document.getElementById('geoCanvas');
         const ctx = canvas.getContext('2d');
-        const overlapBtn = document.getElementById('overlapBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const clearBindsBtn = document.getElementById('clearBindsBtn');
+        
+        const mainTitle = document.getElementById('mainTitle');
+        const mainDesc = document.getElementById('mainDesc');
+        const congruenceBadge = document.getElementById('congruenceBadge');
+        const freePanel = document.getElementById('freePanel');
         const stats1 = document.getElementById('stats1');
         const stats2 = document.getElementById('stats2');
-        const freePanel = document.getElementById('freePanel');
+        const overlapBtn = document.getElementById('overlapBtn');
+        const overlapBtnText = document.getElementById('overlapBtnText');
+        const rotateBtn = document.getElementById('rotateBtn');
+        const resetPosBtn = document.getElementById('resetPosBtn');
+        const clearBindsBtn = document.getElementById('clearBindsBtn');
+
+        // Geometry state
+        let pA = { x: 140, y: 290 }, pB = { x: 290, y: 290 }, pC = { x: 180, y: 130 };
+        let pD = { x: 480, y: 290 }, pE = { x: 630, y: 290 }, pF = { x: 520, y: 130 };
         
-        let pA, pB, pC; 
-        let pD, pE, pF; 
         let mode = 'LAL';
         let rotation = Math.PI / 4;
-        let overlapFactor = 0; 
+        let overlapFactor = 0;
         let isAnimating = false;
         let activePoint = null;
         let lastKnownDEF = null;
@@ -122,125 +148,144 @@
             D: 'none', E: 'none', F: 'none'
         };
 
-        function init() {
-            pA = { x: 150, y: 300 };
-            pB = { x: 300, y: 300 };
-            pC = { x: 180, y: 150 };
-            pD = { x: 500, y: 300 };
-            pE = { x: 650, y: 300 };
-            pF = { x: 530, y: 150 };
+        const getDist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
 
-            ['DE', 'DF', 'EF'].forEach(id => {
-                document.getElementById('bind' + id).onchange = (e) => {
-                    bindings[id] = e.target.value;
-                    draw();
-                };
-            });
-            document.getElementById('bindAD').onchange = (e) => { bindings.D = e.target.value; draw(); };
-            document.getElementById('bindAE').onchange = (e) => { bindings.E = e.target.value; draw(); };
-            document.getElementById('bindAF').onchange = (e) => { bindings.F = e.target.value; draw(); };
+        const getRad = (pCenter, p1, p2) => {
+            const v1x = p1.x - pCenter.x, v1y = p1.y - pCenter.y;
+            const v2x = p2.x - pCenter.x, v2y = p2.y - pCenter.y;
+            const dot = v1x * v2x + v1y * v2y;
+            const mag = Math.hypot(v1x, v1y) * Math.hypot(v2x, v2y);
+            if (mag === 0) return 0;
+            return Math.acos(Math.max(-1, Math.min(1, dot / mag)));
+        };
 
-            clearBindsBtn.onclick = () => {
-                for (let key in bindings) {
-                    bindings[key] = 'none';
-                }
-                document.querySelectorAll('.bind-select').forEach(select => {
-                    select.value = 'none';
-                });
-                draw();
-            };
+        const getDeg = (pCenter, p1, p2) => getRad(pCenter, p1, p2) * 180 / Math.PI;
 
-            syncDEF();
+        const getOrientation = (p1, p2, p3) => {
+            const cross = (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
+            return cross >= 0 ? 1 : -1;
+        };
+
+        // Ray-Ray Intersection solver
+        function solveRayIntersection(pD, dirD, pE, dirE) {
+            const vDx = Math.cos(dirD), vDy = Math.sin(dirD);
+            const vEx = Math.cos(dirE), vEy = Math.sin(dirE);
+            const denom = vDx * vEy - vDy * vEx;
+            if (Math.abs(denom) < 1e-5) return { x: pD.x + vDx * 100, y: pD.y + vDy * 100 };
+            const t = ((pE.x - pD.x) * vEy - (pE.y - pD.y) * vEx) / denom;
+            return { x: pD.x + vDx * t, y: pD.y + vDy * t };
+        }
+
+        // Circle-Circle Intersection solver
+        function solveCircleIntersection(pD, pE, rD, rE, targetSign) {
+            const dx = pE.x - pD.x, dy = pE.y - pD.y;
+            const d = Math.hypot(dx, dy);
+            if (d === 0 || d > rD + rE || d < Math.abs(rD - rE)) {
+                const angle = Math.atan2(dy, dx);
+                return { x: pD.x + Math.cos(angle + targetSign * 0.5) * rD, y: pD.y + Math.sin(angle + targetSign * 0.5) * rD };
+            }
+            const a = (rD * rD - rE * rE + d * d) / (2 * d);
+            const h = Math.sqrt(Math.max(0, rD * rD - a * a));
+            const x2 = pD.x + (dx * a) / d;
+            const y2 = pD.y + (dy * a) / d;
+            
+            const rx = -dy / d, ry = dx / d;
+
+            const pF1 = { x: x2 + rx * h, y: y2 + ry * h };
+            const pF2 = { x: x2 - rx * h, y: y2 - ry * h };
+
+            return (getOrientation(pD, pE, pF1) === targetSign) ? pF1 : pF2;
+        }
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
             draw();
         }
 
         function syncDEF() {
             if (isAnimating || overlapFactor > 0) return;
 
+            // Preset modes LAL, ALA, LLL maintain strict rigid congruence
             if (mode !== 'FREE') {
                 const vAB = { x: pB.x - pA.x, y: pB.y - pA.y };
                 const vAC = { x: pC.x - pA.x, y: pC.y - pA.y };
-                const rot = (v, a) => ({
-                    x: v.x * Math.cos(a) - v.y * Math.sin(a),
-                    y: v.x * Math.sin(a) + v.y * Math.cos(a)
-                });
-                const rAB = rot(vAB, rotation);
-                const rAC = rot(vAC, rotation);
+                
+                const cosR = Math.cos(rotation), sinR = Math.sin(rotation);
+                const rAB = { x: vAB.x * cosR - vAB.y * sinR, y: vAB.x * sinR + vAB.y * cosR };
+                const rAC = { x: vAC.x * cosR - vAC.y * sinR, y: vAC.x * sinR + vAC.y * cosR };
+
                 pE = { x: pD.x + rAB.x, y: pD.y + rAB.y };
                 pF = { x: pD.x + rAC.x, y: pD.y + rAC.y };
                 return;
             }
 
+            // FREE MODE constraint resolution
             const distAB = getDist(pA, pB);
             const distAC = getDist(pA, pC);
             const distBC = getDist(pB, pC);
+            
             const angA = getRad(pA, pB, pC);
             const angB = getRad(pB, pA, pC);
-            const angC = getRad(pC, pA, pB);
-            const crossABC = (pB.x - pA.x) * (pC.y - pA.y) - (pB.y - pA.y) * (pC.x - pA.x);
-            const sign = crossABC > 0 ? 1 : -1;
+            const signABC = getOrientation(pA, pB, pC);
 
-            if (bindings.DE === 'AB') {
-                const angleAB = Math.atan2(pB.y - pA.y, pB.x - pA.x);
-                pE.x = pD.x + Math.cos(angleAB) * distAB;
-                pE.y = pD.y + Math.sin(angleAB) * distAB;
+            // Step 1: Side DE constraint (preserves vector DE direction)
+            let dirDE = Math.atan2(pE.y - pD.y, pE.x - pD.x);
+            const lenDE = (bindings.DE === 'AB') ? distAB : getDist(pD, pE);
+            pE.x = pD.x + Math.cos(dirDE) * lenDE;
+            pE.y = pD.y + Math.sin(dirDE) * lenDE;
+            dirDE = Math.atan2(pE.y - pD.y, pE.x - pD.x);
+
+            // Step 2: Solve point F depending on angle/side bindings
+            const hasD = bindings.D === 'A';
+            const hasE = bindings.E === 'B';
+            const hasDF = bindings.DF === 'AC';
+            const hasEF = bindings.EF === 'BC';
+
+            if (hasD && hasE) {
+                // Ray-Ray Intersection (ALA)
+                const dirDF = dirDE + signABC * angA;
+                const dirEF = (dirDE + Math.PI) - signABC * angB;
+                pF = solveRayIntersection(pD, dirDF, pE, dirEF);
+            } else if (hasDF && hasEF) {
+                // Circle-Circle Intersection (LLL)
+                pF = solveCircleIntersection(pD, pE, distAC, distBC, signABC);
+            } else if (hasD) {
+                // Angle D constrained
+                const dirDF = dirDE + signABC * angA;
+                const lenDF = hasDF ? distAC : (hasEF ? getDist(pD, pF) : getDist(pD, pF));
+                pF.x = pD.x + Math.cos(dirDF) * lenDF;
+                pF.y = pD.y + Math.sin(dirDF) * lenDF;
+            } else if (hasE) {
+                // Angle E constrained
+                const dirEF = (dirDE + Math.PI) - signABC * angB;
+                const lenEF = hasEF ? distBC : getDist(pE, pF);
+                pF.x = pE.x + Math.cos(dirEF) * lenEF;
+                pF.y = pE.y + Math.sin(dirEF) * lenEF;
+            } else {
+                // Single side constraints without angles
+                if (hasDF) {
+                    const dirDF = Math.atan2(pF.y - pD.y, pF.x - pD.x);
+                    pF.x = pD.x + Math.cos(dirDF) * distAC;
+                    pF.y = pD.y + Math.sin(dirDF) * distAC;
+                }
+                if (hasEF) {
+                    const dirEF = Math.atan2(pF.y - pE.y, pF.x - pE.x);
+                    pF.x = pE.x + Math.cos(dirEF) * distBC;
+                    pF.y = pE.y + Math.sin(dirEF) * distBC;
+                }
             }
-
-            const angleDE = Math.atan2(pE.y - pD.y, pE.x - pD.x);
-
-            if (bindings.D === 'A') {
-                const targetAngF = angleDE + (sign * angA);
-                const dDF = (bindings.DF === 'AC') ? distAC : getDist(pD, pF);
-                pF.x = pD.x + Math.cos(targetAngF) * dDF;
-                pF.y = pD.y + Math.sin(targetAngF) * dDF;
-            } else if (bindings.E === 'B') {
-                const targetAngF = (angleDE + Math.PI) - (sign * angB);
-                const dEF = (bindings.EF === 'BC') ? distBC : getDist(pE, pF);
-                pF.x = pE.x + Math.cos(targetAngF) * dEF;
-                pF.y = pE.y + Math.sin(targetAngF) * dEF;
-            }
-
-            if (bindings.DF === 'AC' && bindings.D !== 'A') {
-                const angDF = Math.atan2(pF.y - pD.y, pF.x - pD.x);
-                pF.x = pD.x + Math.cos(angDF) * distAC;
-                pF.y = pD.y + Math.sin(angDF) * distAC;
-            }
-            if (bindings.EF === 'BC' && bindings.E !== 'B') {
-                const angEF = Math.atan2(pF.y - pE.y, pF.x - pE.x);
-                pF.x = pE.x + Math.cos(angEF) * distBC;
-                pF.y = pE.y + Math.sin(angEF) * distBC;
-            }
-
-            if (bindings.F === 'C') {
-                const angFD_current = Math.atan2(pD.y - pF.y, pD.x - pF.x);
-                const currentDistFE = getDist(pF, pE);
-                const targetAngE = angFD_current + (sign * angC);
-                pE.x = pF.x + Math.cos(targetAngE) * currentDistFE;
-                pE.y = pF.y + Math.sin(targetAngE) * currentDistFE;
-            }
-        }
-
-        function getDist(p1, p2) { return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2); }
-        
-        function getRad(pCenter, p1, p2) {
-            const v1 = { x: p1.x - pCenter.x, y: p1.y - pCenter.y };
-            const v2 = { x: p2.x - pCenter.x, y: p2.y - pCenter.y };
-            const dot = v1.x * v2.x + v1.y * v2.y;
-            const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
-            const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-            return Math.acos(Math.max(-1, Math.min(1, dot / (mag1 * mag2))));
-        }
-
-        function getDeg(pCenter, p1, p2) {
-            return getRad(pCenter, p1, p2) * 180 / Math.PI;
         }
 
         function drawSideMarker(p1, p2, color, count) {
             const midX = (p1.x + p2.x) / 2;
             const midY = (p1.y + p2.y) / 2;
             const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2;
-            const len = 6;
-            const gap = 3;
+            const len = 7, gap = 4;
+            
             ctx.strokeStyle = color;
             ctx.lineWidth = 2;
             for (let i = 0; i < count; i++) {
@@ -257,16 +302,14 @@
         function drawAngleMarker(p, p1, p2, color, isHighlighted) {
             const startAngle = Math.atan2(p1.y - p.y, p1.x - p.x);
             const endAngle = Math.atan2(p2.y - p.y, p2.x - p.x);
-            const r = 25;
-            const v1 = {x: p1.x - p.x, y: p1.y - p.y};
-            const v2 = {x: p2.x - p.x, y: p2.y - p.y};
-            const cross = v1.x * v2.y - v1.y * v2.x;
+            const r = 24;
+            const cross = (p1.x - p.x) * (p2.y - p.y) - (p1.y - p.y) * (p2.x - p.x);
             
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.arc(p.x, p.y, r, startAngle, endAngle, cross < 0);
             ctx.closePath();
-            ctx.fillStyle = color + (isHighlighted ? "40" : "10");
+            ctx.fillStyle = color + (isHighlighted ? "35" : "12");
             ctx.fill();
             if (isHighlighted) {
                 ctx.strokeStyle = color;
@@ -277,21 +320,25 @@
 
         function drawTriangle(pts, color, labels, active) {
             const [p1, p2, p3] = pts;
+            
+            // Triangle fill & stroke
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.lineTo(p3.x, p3.y);
             ctx.closePath();
-            ctx.fillStyle = color + "15";
+            ctx.fillStyle = color + "18";
             ctx.fill();
             ctx.strokeStyle = color;
-            ctx.lineWidth = active ? 3 : 1;
+            ctx.lineWidth = active ? 2.5 : 1.5;
             ctx.stroke();
 
+            // Markers rendering based on mode & bindings
+            const isLAL = mode === 'LAL';
+            const isALA = mode === 'ALA';
+            const isLLL = mode === 'LLL';
+
             if (mode !== 'FREE') {
-                const isLAL = mode === 'LAL';
-                const isALA = mode === 'ALA';
-                const isLLL = mode === 'LLL';
                 if (isLAL || isALA || isLLL) drawSideMarker(p1, p2, color, 1);
                 if (isLAL || isLLL) drawSideMarker(p1, p3, color, 2);
                 if (isLLL) drawSideMarker(p2, p3, color, 3);
@@ -306,23 +353,29 @@
                 if (bindings.F === 'C') drawAngleMarker(p3, p1, p2, color, true);
             }
 
+            // Vertices and Labels
             pts.forEach((p, i) => {
-                const isDraggable = active && (labels[i] === 'A' || labels[i] === 'D' || mode === 'FREE');
+                const label = labels[i];
+                const isDraggable = active && (label === 'A' || label === 'B' || label === 'C' || label === 'D' || mode === 'FREE');
+                
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, isDraggable ? 6 : 4, 0, Math.PI * 2);
-                ctx.fillStyle = isDraggable ? "white" : color;
+                ctx.fillStyle = isDraggable ? "#ffffff" : color;
                 ctx.fill();
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 2;
                 ctx.stroke();
-                ctx.fillStyle = "#1e293b";
-                ctx.font = "bold 12px sans-serif";
-                ctx.fillText(labels[i], p.x - 5, p.y - 12);
+
+                ctx.fillStyle = "#0f172a";
+                ctx.font = "bold 13px sans-serif";
+                ctx.fillText(label, p.x - 5, p.y - 12);
             });
         }
 
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const rect = canvas.getBoundingClientRect();
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            
             syncDEF();
 
             let renderDEF;
@@ -337,22 +390,17 @@
                 const curRot = lerp(0, angABC - angDEF, overlapFactor);
                 
                 const rotatePoint = (p, center, angle) => {
-                    const s = Math.sin(angle);
-                    const c = Math.cos(angle);
-                    const px = p.x - center.x;
-                    const py = p.y - center.y;
-                    return {
-                        x: px * c - py * s + center.x,
-                        y: px * s + py * c + center.y
-                    };
+                    const s = Math.sin(angle), c = Math.cos(angle);
+                    const px = p.x - center.x, py = p.y - center.y;
+                    return { x: px * c - py * s + center.x, y: px * s + py * c + center.y };
                 };
 
                 const eRel = { x: start.E.x - start.D.x + curDx, y: start.E.y - start.D.y + curDy };
                 const fRel = { x: start.F.x - start.D.x + curDx, y: start.F.y - start.D.y + curDy };
-                const curE = rotatePoint(eRel, {x: curDx, y: curDy}, curRot);
-                const curF = rotatePoint(fRel, {x: curDx, y: curDy}, curRot);
+                const curE = rotatePoint(eRel, { x: curDx, y: curDy }, curRot);
+                const curF = rotatePoint(fRel, { x: curDx, y: curDy }, curRot);
 
-                renderDEF = [{x: curDx, y: curDy}, curE, curF];
+                renderDEF = [{ x: curDx, y: curDy }, curE, curF];
             } else {
                 renderDEF = [pD, pE, pF];
             }
@@ -360,113 +408,184 @@
             drawTriangle([pA, pB, pC], "#2563eb", ["A", "B", "C"], overlapFactor === 0);
             drawTriangle(renderDEF, "#e11d48", ["D", "E", "F"], overlapFactor === 0);
 
-            const fmt = (n) => (n/20).toFixed(1);
-            stats1.innerHTML = `AB:${fmt(getDist(pA,pB))} AC:${fmt(getDist(pA,pC))} | A:${getDeg(pA,pB,pC).toFixed(0)}°`;
-            stats2.innerHTML = `DE:${fmt(getDist(renderDEF[0],renderDEF[1]))} DF:${fmt(getDist(renderDEF[0],renderDEF[2]))} | D:${getDeg(renderDEF[0],renderDEF[1],renderDEF[2]).toFixed(0)}°`;
+            // Update Statistics
+            const fmt = (n) => (n / 20).toFixed(1);
+            const ab = getDist(pA, pB), ac = getDist(pA, pC), bc = getDist(pB, pC);
+            const de = getDist(renderDEF[0], renderDEF[1]);
+            const df = getDist(renderDEF[0], renderDEF[2]);
+            const ef = getDist(renderDEF[1], renderDEF[2]);
+
+            const angA_deg = getDeg(pA, pB, pC);
+            const angD_deg = getDeg(renderDEF[0], renderDEF[1], renderDEF[2]);
+
+            stats1.innerHTML = `AB:<b>${fmt(ab)}</b> | AC:<b>${fmt(ac)}</b> | BC:<b>${fmt(bc)}</b><br>∠A:<b>${angA_deg.toFixed(0)}°</b>`;
+            stats2.innerHTML = `DE:<b>${fmt(de)}</b> | DF:<b>${fmt(df)}</b> | EF:<b>${fmt(ef)}</b><br>∠D:<b>${angD_deg.toFixed(0)}°</b>`;
+
+            // Check Congruence
+            const isCongruent = Math.abs(ab - de) < 1.5 && Math.abs(ac - df) < 1.5 && Math.abs(bc - ef) < 1.5;
+            if (isCongruent) {
+                congruenceBadge.className = "mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                congruenceBadge.innerText = "✓ Triangoli Congruenti";
+            } else {
+                congruenceBadge.className = "mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300";
+                congruenceBadge.innerText = "✕ Non Congruenti";
+            }
         }
 
         function animateOverlap(target) {
             if (isAnimating) return;
             isAnimating = true;
-            lastKnownDEF = { D: {...pD}, E: {...pE}, F: {...pF} };
-            const duration = 800;
+            lastKnownDEF = { D: { ...pD }, E: { ...pE }, F: { ...pF } };
+            const duration = 750;
             const startTime = performance.now();
             const startVal = overlapFactor;
+
             function step(now) {
                 const elapsed = now - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
                 overlapFactor = startVal + (target - startVal) * ease;
                 draw();
-                if (progress < 1) requestAnimationFrame(step);
-                else {
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
                     overlapFactor = target;
                     isAnimating = false;
                     if (overlapFactor === 0) lastKnownDEF = null;
-                    overlapBtn.innerText = overlapFactor === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
+                    overlapBtnText.innerText = overlapFactor === 1 ? "Separa Triangoli" : "Verifica Sovrapposizione";
                     draw();
                 }
             }
             requestAnimationFrame(step);
         }
 
-        overlapBtn.onclick = () => animateOverlap(overlapFactor === 0 ? 1 : 0);
-        
-        resetBtn.onclick = () => {
-            if (isAnimating || overlapFactor > 0) return;
-            
-            if (mode !== 'FREE') {
-                rotation += 0.5;
-            } else {
-                // In modalità libera ruotiamo fisicamente i vertici E ed F attorno a D
-                const distE = getDist(pD, pE);
-                const distF = getDist(pD, pF);
-                const angE = Math.atan2(pE.y - pD.y, pE.x - pD.x) + 0.5;
-                const angF = Math.atan2(pF.y - pD.y, pF.x - pD.x) + 0.5;
-                
-                // Aggiorniamo i punti. syncDEF userà queste nuove posizioni come base
-                pE.x = pD.x + Math.cos(angE) * distE;
-                pE.y = pD.y + Math.sin(angE) * distE;
-                pF.x = pD.x + Math.cos(angF) * distF;
-                pF.y = pD.y + Math.sin(angF) * distF;
-            }
-            draw();
-        };
+        function getPointerPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
 
         function handleStart(e) {
             if (isAnimating || overlapFactor > 0) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            const mx = x * (canvas.width / rect.width);
-            const my = y * (canvas.height / rect.height);
-            const pts = [pA, pB, pC, pD, pE, pF];
-            activePoint = pts.find(p => Math.hypot(p.x - mx, p.y - my) < 20);
+            const pos = getPointerPos(e);
+            
+            const draggablePts = (mode === 'FREE') 
+                ? [pA, pB, pC, pD, pE, pF] 
+                : [pA, pB, pC, pD];
+                
+            activePoint = draggablePts.find(p => Math.hypot(p.x - pos.x, p.y - pos.y) < 22);
         }
 
         function handleMove(e) {
             if (!activePoint) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            activePoint.x = x * (canvas.width / rect.width);
-            activePoint.y = y * (canvas.height / rect.height);
+            const pos = getPointerPos(e);
+            
+            if (activePoint === pD && mode === 'FREE') {
+                const dx = pos.x - pD.x;
+                const dy = pos.y - pD.y;
+                pD.x = pos.x; pD.y = pos.y;
+                pE.x += dx; pE.y += dy;
+                pF.x += dx; pF.y += dy;
+            } else {
+                activePoint.x = pos.x;
+                activePoint.y = pos.y;
+            }
             draw();
         }
 
-        canvas.onmousedown = handleStart;
-        window.onmousemove = handleMove;
-        window.onmouseup = () => activePoint = null;
-        canvas.ontouchstart = (e) => { handleStart(e); e.preventDefault(); };
-        canvas.ontouchmove = (e) => { handleMove(e); e.preventDefault(); };
-        canvas.ontouchend = () => activePoint = null;
-
-        function setMode(m, el) {
-            mode = m;
-            document.querySelectorAll('button').forEach(b => b.classList.remove('active-tab'));
+        function setMode(newMode, el) {
+            mode = newMode;
+            document.querySelectorAll('.flex-1').forEach(b => b.classList.remove('active-tab'));
             el.classList.add('active-tab');
             overlapFactor = 0;
             lastKnownDEF = null;
-            
-            if (m === 'FREE') {
+            overlapBtnText.innerText = "Verifica Sovrapposizione";
+
+            if (newMode === 'FREE') {
                 freePanel.classList.remove('hidden');
                 mainTitle.innerText = "Esplorazione Libera";
                 mainDesc.innerText = 'Definisci vincoli personalizzati e verifica la congruenza tramite sovrapposizione rigida.';
             } else {
                 freePanel.classList.add('hidden');
-                if(m==='LAL'){ mainTitle.innerText="Primo Criterio (LAL)"; mainDesc.innerText='"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."'; }
-                if(m==='ALA'){ mainTitle.innerText="Secondo Criterio (ALA)"; mainDesc.innerText='"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."'; }
-                if(m==='LLL'){ mainTitle.innerText="Terzo Criterio (LLL)"; mainDesc.innerText='"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."'; }
+                if (newMode === 'LAL') { 
+                    mainTitle.innerText = "Primo Criterio (LAL)"; 
+                    mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali due lati e l\'angolo tra essi compreso."'; 
+                }
+                if (newMode === 'ALA') { 
+                    mainTitle.innerText = "Secondo Criterio (ALA)"; 
+                    mainDesc.innerText = '"Due triangoli sono congruenti se hanno uguali un lato e i due angoli ad esso adiacenti."'; 
+                }
+                if (newMode === 'LLL') { 
+                    mainTitle.innerText = "Terzo Criterio (LLL)"; 
+                    mainDesc.innerText = '"Due triangoli sono congruenti se hanno i tre lati rispettivamente uguali."'; 
+                }
             }
             draw();
         }
 
-        document.getElementById('tabLAL').onclick = (e) => setMode('LAL', e.target);
-        document.getElementById('tabALA').onclick = (e) => setMode('ALA', e.target);
-        document.getElementById('tabLLL').onclick = (e) => setMode('LLL', e.target);
-        document.getElementById('tabFREE').onclick = (e) => setMode('FREE', e.target);
+        function init() {
+            // Event Listeners
+            canvas.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', () => activePoint = null);
 
-        init();
+            canvas.addEventListener('touchstart', (e) => { handleStart(e); e.preventDefault(); }, { passive: false });
+            window.addEventListener('touchmove', (e) => { handleMove(e); }, { passive: false });
+            window.addEventListener('touchend', () => activePoint = null);
+
+            // Controls setup
+            ['DE', 'DF', 'EF'].forEach(id => {
+                document.getElementById('bind' + id).onchange = (e) => { bindings[id] = e.target.value; draw(); };
+            });
+            document.getElementById('bindAD').onchange = (e) => { bindings.D = e.target.value; draw(); };
+            document.getElementById('bindAE').onchange = (e) => { bindings.E = e.target.value; draw(); };
+            document.getElementById('bindAF').onchange = (e) => { bindings.F = e.target.value; draw(); };
+
+            clearBindsBtn.onclick = () => {
+                for (let key in bindings) bindings[key] = 'none';
+                document.querySelectorAll('.bind-select').forEach(select => select.value = 'none');
+                draw();
+            };
+
+            overlapBtn.onclick = () => animateOverlap(overlapFactor === 0 ? 1 : 0);
+
+            rotateBtn.onclick = () => {
+                if (isAnimating || overlapFactor > 0) return;
+                rotation += Math.PI / 6;
+                if (mode === 'FREE') {
+                    const distE = getDist(pD, pE), distF = getDist(pD, pF);
+                    const angE = Math.atan2(pE.y - pD.y, pE.x - pD.x) + Math.PI / 6;
+                    const angF = Math.atan2(pF.y - pD.y, pF.x - pD.x) + Math.PI / 6;
+                    pE.x = pD.x + Math.cos(angE) * distE; pE.y = pD.y + Math.sin(angE) * distE;
+                    pF.x = pD.x + Math.cos(angF) * distF; pF.y = pD.y + Math.sin(angF) * distF;
+                }
+                draw();
+            };
+
+            resetPosBtn.onclick = () => {
+                pA = { x: 140, y: 290 }; pB = { x: 290, y: 290 }; pC = { x: 180, y: 130 };
+                pD = { x: 480, y: 290 }; pE = { x: 630, y: 290 }; pF = { x: 520, y: 130 };
+                rotation = Math.PI / 4;
+                overlapFactor = 0;
+                lastKnownDEF = null;
+                draw();
+            };
+
+            document.getElementById('tabLAL').onclick = (e) => setMode('LAL', e.target);
+            document.getElementById('tabALA').onclick = (e) => setMode('ALA', e.target);
+            document.getElementById('tabLLL').onclick = (e) => setMode('LLL', e.target);
+            document.getElementById('tabFREE').onclick = (e) => setMode('FREE', e.target);
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
