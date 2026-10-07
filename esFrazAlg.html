@@ -99,7 +99,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-800">Scheda Esercizi: Frazioni Algebriche</h1>
-                <p class="text-sm text-slate-500">Raccolta Completa Graduata (153 Esercizi Verificati) - Scuola Sec. II Grado</p>
+                <p class="text-sm text-slate-500">Raccolta Completa Graduata (163 Esercizi Verificati) - Scuola Sec. II Grado</p>
             </div>
         </div>
 
@@ -141,7 +141,7 @@
             <div>
                 <p class="font-semibold">Struttura della scheda:</p>
                 <p class="text-xs mt-0.5 text-amber-800">
-                    Ciascuna categoria contiene esercizi ordinati per grado crescente di difficoltà (153 esercizi totali). Gli esercizi finali di ciascuna sezione appartengono al **Livello Avanzato**. Il **primo esercizio** di ogni sezione offre uno svolgimento guidato passo-passo.
+                    Ciascuna categoria contiene esercizi ordinati per grado crescente di difficoltà (163 esercizi totali). Gli esercizi finali di ciascuna sezione appartengono al **Livello Avanzato**. Il **primo esercizio** di ogni sezione offre uno svolgimento guidato passo-passo.
                 </p>
             </div>
         </div>
@@ -350,7 +350,17 @@
                     { id: 123, expr: "\\frac{2x-1}{x+3} - \\frac{x-2}{x-1} = \\frac{x^2+5}{x^2+2x-3}", result: "x = 1/2 \\quad (x \\neq -3, 1)", isAdvanced: true },
                     { id: 124, expr: "\\frac{3x+2}{x^2-3x+2} - \\frac{2}{x-1} = \\frac{1}{x-2}", result: "S = \\emptyset \\quad (x \\neq 1, 2)", isAdvanced: true },
                     { id: 125, expr: "\\frac{x+3}{x^2-x} - \\frac{x+1}{x^2+x} = \\frac{4}{x^2-1}", result: "S = \\emptyset \\quad (x \\neq -1, 0, 1)", isAdvanced: true },
-                    { id: 126, expr: "\\frac{x^3+2x}{x^2-4} - x = \\frac{3x+8}{x^2-4}", result: "x = 8/3 \\quad (x \\neq \\pm 2)", isAdvanced: true }
+                    { id: 126, expr: "\\frac{x^3+2x}{x^2-4} - x = \\frac{3x+8}{x^2-4}", result: "x = 8/3 \\quad (x \\neq \\pm 2)", isAdvanced: true },
+                    { id: 127, expr: "\\frac{x+1}{x^2-5x+6} - \\frac{x-2}{x^2-4} = \\frac{2}{x^2-x-6}", result: "x = 0 \\quad (x \\neq \\pm 2, 3)", isAdvanced: true },
+                    { id: 128, expr: "\\frac{x^2 - 3x + 9}{x^3 + 27} + \\frac{x - 3}{x^2 - 9} = \\frac{1}{x - 3}", result: "x = 9 \\quad (x \\neq \\pm 3)", isAdvanced: true },
+                    { id: 129, expr: "\\frac{2x - 1}{(x - 1)^2} - \\frac{2}{x + 1} = \\frac{x + 3}{x^2 - 1}", result: "x = 0 \\lor x = 3 \\quad (x \\neq \\pm 1)", isAdvanced: true },
+                    { id: 130, expr: "\\frac{1}{x^2 - 2x + 1} + \\frac{x}{x^2 - 3x + 2} = \\frac{x + 1}{x^2 - 1}", result: "x = 4/3 \\quad (x = -1 \\text{ non acc.}, x \\neq \\pm 1, 2)", isAdvanced: true },
+                    { id: 131, expr: "\\frac{x^2 + x + 1}{x^3 - 1} - \\frac{x}{x^2 - 2x + 1} = \\frac{1}{1 - x}", result: "x = 2 \\quad (x \\neq 1)", isAdvanced: true },
+                    { id: 132, expr: "\\frac{2x}{x^3 - x^2 - 4x + 4} + \\frac{1}{x^2 - 4} = \\frac{1}{x^2 - 3x + 2}", result: "x = 3/2 \\quad (x \\neq 1, \\pm 2)", isAdvanced: true },
+                    { id: 133, expr: "\\frac{x - 1}{x^3 + 8} + \\frac{1}{x^2 - 2x + 4} = \\frac{1}{x + 2}", result: "x = 1 \\lor x = 3 \\quad (x \\neq -2)", isAdvanced: true },
+                    { id: 134, expr: "\\frac{1}{x^2 - 6x + 9} - \\frac{1}{x^2 - 9} = \\frac{2}{x^3 + 3x^2 - 9x - 27}", result: "x = -6 \\quad (x \\neq \\pm 3)", isAdvanced: true },
+                    { id: 135, expr: "\\frac{3}{2x^2 - 5x + 2} - \\frac{1}{2x - 1} = \\frac{2}{x^2 - 4}", result: "x = -4 \\lor x = 3 \\quad (x \\neq 1/2, \\pm 2)", isAdvanced: true },
+                    { id: 136, expr: "\\frac{x + 3}{x^3 - 3x^2 + 3x - 1} - \\frac{1}{x^2 - 2x + 1} = \\frac{1}{x - 1}", result: "x = 3 \\lor x = -1 \\quad (x \\neq 1)", isAdvanced: true }
                 ]
             },
             {
@@ -358,27 +368,27 @@
                 title: "Equazioni Algebriche Letterali",
                 description: "Discussione e risoluzione di equazioni letterali (intere e fratte) al variare del parametro.",
                 exercises: [
-                    { id: 127, expr: "ax - 2 = 3x + a", result: "a \\neq 3 \\implies x = \\frac{a+2}{a-3}; \\, a = 3 \\implies S = \\emptyset", solution: [
+                    { id: 137, expr: "ax - 2 = 3x + a", result: "a \\neq 3 \\implies x = \\frac{a+2}{a-3}; \\, a = 3 \\implies S = \\emptyset", solution: [
                         "Isoliamo i termini con l'incognita \\(x\\) a sinistra: \\(ax - 3x = a + 2\\).",
                         "Raccogliamo \\(x\\): \\((a - 3)x = a + 2\\).",
                         "<strong>Discussione del parametro:</strong>",
                         "1) Se \\(a - 3 \\neq 0 \\implies a \\neq 3\\), dividiamo per \\(a - 3\\): \\(x = \\frac{a + 2}{a - 3}\\).",
                         "2) Se \\(a = 3\\), otteniamo: \\(0x = 5\\) che è un'equazione impossibile (\\(S = \\emptyset\\))."
                     ]},
-                    { id: 128, expr: "ax + 1 = x + a^2", result: "a \\neq 1 \\implies x = a + 1; \\, a = 1 \\implies S = \\mathbb{R}" },
-                    { id: 129, expr: "a^2 x - 1 = x + a", result: "a \\neq \\pm 1 \\implies x = \\frac{1}{a - 1}; \\, a = 1 \\implies S = \\emptyset; \, a = -1 \\implies S = \\mathbb{R}" },
-                    { id: 130, expr: "\\frac{x - a}{a} + \\frac{x - 1}{2} = 1 \\quad (a \\neq 0)", result: "a \\neq -2 \\implies x = \\frac{5a}{a+2}; \\, a = -2 \\implies S = \\emptyset" },
-                    { id: 131, expr: "\\frac{x}{a - 1} - \\frac{2}{a + 1} = \\frac{x}{a^2 - 1}", result: "a \\neq \\pm 1, a \\neq 0 \\implies x = \\frac{2(a-1)}{a}; \\, a = 0 \\implies S = \\emptyset" },
-                    { id: 132, expr: "\\frac{ax - 1}{x - 2} = a \\quad (x \\neq 2)", result: "a = 1/2 \\implies S = \\mathbb{R} \\setminus \\{2\\}; \\, a \\neq 1/2 \\implies S = \\emptyset" },
-                    { id: 133, expr: "\\frac{x + a}{x - a} = 3 \\quad (x \\neq a)", result: "a \\neq 0 \\implies x = 2a; \\, a = 0 \\implies C.E. \\text{ non soddisfatte}" },
-                    { id: 134, expr: "\\frac{a(x + 1)}{x - 1} = 2a \\quad (x \\neq 1)", result: "a \\neq 0 \\implies x = 3; \\, a = 0 \\implies S = \\mathbb{R} \\setminus \\{1\\}" },
-                    { id: 135, expr: "k(x - 2) = 2x - k^2", result: "k \\neq 2 \\implies x = -k; \, k = 2 \\implies S = \\mathbb{R}" },
-                    { id: 136, expr: "\\frac{x - k}{k + 1} + \\frac{x}{k - 1} = 2 \\quad (k \\neq \\pm 1)", result: "k \\neq 0 \\implies x = \\frac{3k^2 - k - 2}{2k}; \\, k = 0 \\implies S = \\emptyset" },
-                    { id: 137, expr: "\\frac{ax + b}{a - b} - 1 = \\frac{bx + a}{a - b} \\quad (a \\neq b)", result: "x = 2 \\quad (\\forall a \\neq b)", isAdvanced: true },
-                    { id: 138, expr: "\\frac{x - a}{x - b} = \\frac{x + b}{x + a} \\quad (x \\neq b, x \\neq -a)", result: "a^2 \\neq b^2 \\implies S = \\emptyset; \\, a^2 = b^2 \\implies S = \\mathbb{R} \\setminus \\{b, -a\\}", isAdvanced: true },
-                    { id: 139, expr: "\\frac{a}{x - a} + \\frac{b}{x - b} = 0 \\quad (x \\neq a, b)", result: "a + b \\neq 0 \\implies x = \\frac{2ab}{a + b} \\, (a,b \\neq 0); \\, a + b = 0 \\implies S = \\emptyset", isAdvanced: true },
-                    { id: 140, expr: "\\frac{x^2 - a^2}{x - a} = 2a + 3 \\quad (x \\neq a)", result: "x = a + 3 \\quad (\\forall a)", isAdvanced: true },
-                    { id: 141, expr: "\\frac{x + 1}{ax} - \\frac{1}{a} = \\frac{1}{x} \\quad (a \\neq 0, x \\neq 0)", result: "a = 1 \\implies S = \\mathbb{R} \\setminus \\{0\\}; \\, a \\neq 1 \\implies S = \\emptyset", isAdvanced: true }
+                    { id: 138, expr: "ax + 1 = x + a^2", result: "a \\neq 1 \\implies x = a + 1; \\, a = 1 \\implies S = \\mathbb{R}" },
+                    { id: 139, expr: "a^2 x - 1 = x + a", result: "a \\neq \\pm 1 \\implies x = \\frac{1}{a - 1}; \\, a = 1 \\implies S = \\emptyset; \, a = -1 \\implies S = \\mathbb{R}" },
+                    { id: 140, expr: "\\frac{x - a}{a} + \\frac{x - 1}{2} = 1 \\quad (a \\neq 0)", result: "a \\neq -2 \\implies x = \\frac{5a}{a+2}; \\, a = -2 \\implies S = \\emptyset" },
+                    { id: 141, expr: "\\frac{x}{a - 1} - \\frac{2}{a + 1} = \\frac{x}{a^2 - 1}", result: "a \\neq \\pm 1, a \\neq 0 \\implies x = \\frac{2(a-1)}{a}; \\, a = 0 \\implies S = \\emptyset" },
+                    { id: 142, expr: "\\frac{ax - 1}{x - 2} = a \\quad (x \\neq 2)", result: "a = 1/2 \\implies S = \\mathbb{R} \\setminus \\{2\\}; \\, a \\neq 1/2 \\implies S = \\emptyset" },
+                    { id: 143, expr: "\\frac{x + a}{x - a} = 3 \\quad (x \\neq a)", result: "a \\neq 0 \\implies x = 2a; \\, a = 0 \\implies C.E. \\text{ non soddisfatte}" },
+                    { id: 144, expr: "\\frac{a(x + 1)}{x - 1} = 2a \\quad (x \\neq 1)", result: "a \\neq 0 \\implies x = 3; \\, a = 0 \\implies S = \\mathbb{R} \\setminus \\{1\\}" },
+                    { id: 145, expr: "k(x - 2) = 2x - k^2", result: "k \\neq 2 \\implies x = -k; \, k = 2 \\implies S = \\mathbb{R}" },
+                    { id: 146, expr: "\\frac{x - k}{k + 1} + \\frac{x}{k - 1} = 2 \\quad (k \\neq \\pm 1)", result: "k \\neq 0 \\implies x = \\frac{3k^2 - k - 2}{2k}; \\, k = 0 \\implies S = \\emptyset" },
+                    { id: 147, expr: "\\frac{ax + b}{a - b} - 1 = \\frac{bx + a}{a - b} \\quad (a \\neq b)", result: "x = 2 \\quad (\\forall a \\neq b)", isAdvanced: true },
+                    { id: 148, expr: "\\frac{x - a}{x - b} = \\frac{x + b}{x + a} \\quad (x \\neq b, x \\neq -a)", result: "a^2 \\neq b^2 \\implies S = \\emptyset; \\, a^2 = b^2 \\implies S = \\mathbb{R} \\setminus \\{b, -a\\}", isAdvanced: true },
+                    { id: 149, expr: "\\frac{a}{x - a} + \\frac{b}{x - b} = 0 \\quad (x \\neq a, b)", result: "a + b \\neq 0 \\implies x = \\frac{2ab}{a + b} \\, (a,b \\neq 0); \\, a + b = 0 \\implies S = \\emptyset", isAdvanced: true },
+                    { id: 150, expr: "\\frac{x^2 - a^2}{x - a} = 2a + 3 \\quad (x \\neq a)", result: "x = a + 3 \\quad (\\forall a)", isAdvanced: true },
+                    { id: 151, expr: "\\frac{x + 1}{ax} - \\frac{1}{a} = \\frac{1}{x} \\quad (a \\neq 0, x \\neq 0)", result: "a = 1 \\implies S = \\mathbb{R} \\setminus \\{0\\}; \\, a \\neq 1 \\implies S = \\emptyset", isAdvanced: true }
                 ]
             },
             {
@@ -386,24 +396,24 @@
                 title: "Problemi Applicati con Frazioni Algebriche",
                 description: "Risolvi i problemi modellizzandoli mediante equazioni fratte o relazioni algebriche.",
                 exercises: [
-                    { id: 142, expr: "Trova due numeri il cui rapporto è \\(\\frac{2}{3}\\) e la cui somma dei reciproci è \\(\\frac{5}{12}\\).", result: "x = 4, y = 6", solution: [
+                    { id: 152, expr: "Trova due numeri il cui rapporto è \\(\\frac{2}{3}\\) e la cui somma dei reciproci è \\(\\frac{5}{12}\\).", result: "x = 4, y = 6", solution: [
                         "Indichiamo i due numeri con \\(x\\) e \\(y\\). Sappiamo che \\(\\frac{x}{y} = \\frac{2}{3}\\), quindi \\(y = \\frac{3}{2}x\\).",
                         "La somma dei reciproci è: \\(\\frac{1}{x} + \\frac{1}{y} = \\frac{5}{12}\\).",
                         "Sostituendo \\(y\\): \\(\\frac{1}{x} + \\frac{2}{3x} = \\frac{5}{12}\\).",
                         "Moltiplichiamo per il m.c.d. \\(12x\\) (con \\(x \\neq 0\\)): \\(12 + 8 = 5x \\implies 5x = 20 \\implies x = 4\\).",
                         "Di conseguenza, \\(y = \\frac{3}{2}(4) = 6\\). I numeri cercati sono 4 e 6."
                     ]},
-                    { id: 143, expr: "Un rubinetto impiega \\(x\\) ore per riempire una vasca. Insieme a un secondo rubinetto impiegano 3 ore. Se il secondo impiega 5 ore da solo, trova \\(x\\).", result: "x = 7.5 \\text{ ore} \\quad (15/2 \\text{ h})" },
-                    { id: 144, expr: "Trova un numero \\(x\\) tale che, sommandolo sia al numeratore sia al denominatore della frazione \\(\\frac{1}{4}\\), si ottenga una frazione equivalente a \\(\\frac{2}{5}\\).", result: "x = 1" },
-                    { id: 145, expr: "Un treno percorre 180 km a velocità costante \\(v\\). Se la velocità aumentasse di 15 km/h, il tempo di percorrenza diminuirebbe di 1 ora. Trova \\(v\\).", result: "v = 45 \\text{ km/h}" },
-                    { id: 146, expr: "Per stampare un fascicolo, la stampante A impiega 20 minuti in meno della stampante B. Lavorando insieme impiegano 24 minuti. Quanto impiega la stampante A da sola?", result: "t_A = 40 \\text{ min} \\quad (t_B = 60 \\text{ min})" },
-                    { id: 147, expr: "Un serbatoio ha due condutture di scarico. La prima svuota il serbatoio in 4 ore, la seconda in \\(x\\) ore. Aperte insieme svuotano il serbatoio in 2.4 ore. Trova \\(x\\).", result: "x = 6 \\text{ ore}" },
-                    { id: 148, expr: "Il numeratore di una frazione supera di 3 il denominatore. Sottraendo 1 sia al numeratore sia al denominatore, la frazione diventa equivalente a \\(\\frac{4}{3}\\). Determina la frazione originale.", result: "\\frac{13}{10}" },
-                    { id: 149, expr: "Due ciclisti partono da due città distanti 150 km muovendosi l'uno verso l'altro. Il primo viaggia a velocità \\(v\\) km/h, il secondo a una velocità superiore di 10 km/h. Se si incontrano dopo 2 ore, trova \\(v\\).", result: "v_1 = 32.5 \\text{ km/h}, v_2 = 42.5 \\text{ km/h}" },
-                    { id: 150, expr: "Il costo totale di un viaggio di 600 € viene diviso equamente tra i partecipanti. Se si aggiungono 2 persone, la quota individuale diminuisce di 15 €. Quanti erano i partecipanti iniziali?", result: "n = 8 \\text{ partecipanti}", isAdvanced: true },
-                    { id: 151, expr: "Un lavoratore esegue un compito in \\(x\\) giorni. Un secondo lavoratore impiega il doppio del tempo (\\(2x\\)). Insieme ad un terzo lavoratore che impiega 12 giorni da solo, completano l'opera in 3 giorni. Trova \\(x\\).", result: "x = 6 \\text{ giorni}", isAdvanced: true },
-                    { id: 152, expr: "Una comitiva spende 240 € per il noleggio di un pulmino. All'ultimo momento 4 persone si ritirano e la quota di ciascuno dei rimanenti aumenta di 3 €. Quanti erano i componenti iniziali?", result: "n = 20 \\text{ componenti}", isAdvanced: true },
-                    { id: 153, expr: "Un battello percorre 36 km a favore di corrente e 36 km contro corrente impiegando in totale 5 ore. Sapendo che la velocità della corrente è di 3 km/h, calcola la velocità del battello in acqua calma.", result: "v = 15 \\text{ km/h}", isAdvanced: true }
+                    { id: 153, expr: "Un rubinetto impiega \\(x\\) ore per riempire una vasca. Insieme a un secondo rubinetto impiegano 3 ore. Se il secondo impiega 5 ore da solo, trova \\(x\\).", result: "x = 7.5 \\text{ ore} \\quad (15/2 \\text{ h})" },
+                    { id: 154, expr: "Trova un numero \\(x\\) tale che, sommandolo sia al numeratore sia al denominatore della frazione \\(\\frac{1}{4}\\), si ottenga una frazione equivalente a \\(\\frac{2}{5}\\).", result: "x = 1" },
+                    { id: 155, expr: "Un treno percorre 180 km a velocità costante \\(v\\). Se la velocità aumentasse di 15 km/h, il tempo di percorrenza diminuirebbe di 1 ora. Trova \\(v\\).", result: "v = 45 \\text{ km/h}" },
+                    { id: 156, expr: "Per stampare un fascicolo, la stampante A impiega 20 minuti in meno della stampante B. Lavorando insieme impiegano 24 minuti. Quanto impiega la stampante A da sola?", result: "t_A = 40 \\text{ min} \\quad (t_B = 60 \\text{ min})" },
+                    { id: 157, expr: "Un serbatoio ha due condutture di scarico. La prima svuota il serbatoio in 4 ore, la seconda in \\(x\\) ore. Aperte insieme svuotano il serbatoio in 2.4 ore. Trova \\(x\\).", result: "x = 6 \\text{ ore}" },
+                    { id: 158, expr: "Il numeratore di una frazione supera di 3 il denominatore. Sottraendo 1 sia al numeratore sia al denominatore, la frazione diventa equivalente a \\(\\frac{4}{3}\\). Determina la frazione originale.", result: "\\frac{13}{10}" },
+                    { id: 159, expr: "Due ciclisti partono da due città distanti 150 km muovendosi l'uno verso l'altro. Il primo viaggia a velocità \\(v\\) km/h, il secondo a una velocità superiore di 10 km/h. Se si incontrano dopo 2 ore, trova \\(v\\).", result: "v_1 = 32.5 \\text{ km/h}, v_2 = 42.5 \\text{ km/h}" },
+                    { id: 160, expr: "Il costo totale di un viaggio di 600 € viene diviso equamente tra i partecipanti. Se si aggiungono 2 persone, la quota individuale diminuisce di 15 €. Quanti erano i partecipanti iniziali?", result: "n = 8 \\text{ partecipanti}", isAdvanced: true },
+                    { id: 161, expr: "Un lavoratore esegue un compito in \\(x\\) giorni. Un secondo lavoratore impiega il doppio del tempo (\\(2x\\)). Insieme ad un terzo lavoratore che impiega 12 giorni da solo, completano l'opera in 3 giorni. Trova \\(x\\).", result: "x = 6 \\text{ giorni}", isAdvanced: true },
+                    { id: 162, expr: "Una comitiva spende 240 € per il noleggio di un pulmino. All'ultimo momento 4 persone si ritirano e la quota di ciascuno dei rimanenti aumenta di 3 €. Quanti erano i componenti iniziali?", result: "n = 20 \\text{ componenti}", isAdvanced: true },
+                    { id: 163, expr: "Un battello percorre 36 km a favore di corrente e 36 km contro corrente impiegando in totale 5 ore. Sapendo che la velocità della corrente è di 3 km/h, calcola la velocità del battello in acqua calma.", result: "v = 15 \\text{ km/h}", isAdvanced: true }
                 ]
             }
         ];
