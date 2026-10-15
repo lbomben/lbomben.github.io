@@ -23,6 +23,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
+    <!-- Header Navigation -->
     <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -48,8 +49,10 @@
         </div>
     </header>
 
+    <!-- Main Content Area -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6">
 
+        <!-- TAB 1: TEORIA -->
         <section id="tab-teoria" class="space-y-6">
             <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
                 <div class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold uppercase tracking-wider">
@@ -75,7 +78,7 @@
                 </div>
             </div>
 
-            <!-- Detailed Linear Modules with Vectorial Graphics -->
+            <!-- Detailed Linear Modules -->
             <div class="space-y-6">
                 <!-- Step 1: Dominio -->
                 <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
@@ -100,68 +103,9 @@
                             <p class="text-xs text-slate-600">Se $f(x) = \ln(A(x))$, si pone l'argomento strettamente positivo: <br> $A(x) > 0$.</p>
                         </div>
                     </div>
-
-                    <!-- Examples for Domain with Vectorial Graphs -->
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                        <h5 class="font-semibold text-slate-800 text-xs uppercase tracking-wider">Esempi pratici di calcolo del Dominio (in forma di intervalli):</h5>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-                            
-                            <!-- Domain Example A -->
-                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
-                                <span class="block font-bold text-slate-800 text-xs text-center">$f(x) = \frac{x^2 - 1}{x - 3}$</span>
-                                <div class="h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
-                                    <svg viewBox="0 0 250 150" class="w-full h-full">
-                                        <line x1="20" y1="75" x2="230" y2="75" stroke="#94a3b8" stroke-width="1.5" />
-                                        <line x1="70" y1="20" x2="70" y2="130" stroke="#94a3b8" stroke-width="1.5" />
-                                        <rect x="140" y="20" width="20" height="110" fill="#fef2f2" fill-opacity="0.8"/>
-                                        <line x1="150" y1="20" x2="150" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
-                                        <text x="135" y="15" font-size="9" fill="#ef4444" font-weight="bold">Escluso x = 3</text>
-                                    </svg>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed">
-                                    <strong>Esempio A (Fratta):</strong> Denominatore $x - 3 \neq 0 \implies x \neq 3$. In notazione ad intervalli: $D = (-\infty, 3) \cup (3, +\infty)$.
-                                </p>
-                            </div>
-
-                            <!-- Domain Example B -->
-                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
-                                <span class="block font-bold text-slate-800 text-xs text-center">$f(x) = \sqrt{x+2}$</span>
-                                <div class="h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
-                                    <svg viewBox="0 0 250 150" class="w-full h-full">
-                                        <line x1="20" y1="75" x2="230" y2="75" stroke="#94a3b8" stroke-width="1.5" />
-                                        <line x1="110" y1="20" x2="110" y2="130" stroke="#94a3b8" stroke-width="1.5" />
-                                        <rect x="20" y="20" width="60" height="110" fill="#fef2f2" fill-opacity="0.8"/>
-                                        <line x1="80" y1="20" x2="80" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
-                                        <circle cx="80" cy="75" r="4" fill="#4f46e5"/>
-                                        <text x="45" y="15" font-size="9" fill="#ef4444" font-weight="bold">Escluso x &lt; -2</text>
-                                    </svg>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed">
-                                    <strong>Esempio B (Irrazionale):</strong> Si pone $x + 2 \ge 0 \implies x \ge -2$. In notazione ad intervalli: $D = [-2, +\infty)$.
-                                </p>
-                            </div>
-
-                            <!-- Domain Example C -->
-                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
-                                <span class="block font-bold text-slate-800 text-xs text-center">$f(x) = \ln(x-1)$</span>
-                                <div class="h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
-                                    <svg viewBox="0 0 250 150" class="w-full h-full">
-                                        <line x1="20" y1="75" x2="230" y2="75" stroke="#94a3b8" stroke-width="1.5" />
-                                        <line x1="100" y1="20" x2="100" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
-                                        <rect x="20" y="20" width="80" height="110" fill="#fef2f2" fill-opacity="0.8"/>
-                                        <text x="50" y="15" font-size="9" fill="#ef4444" font-weight="bold">Escluso x &le; 1</text>
-                                    </svg>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed">
-                                    <strong>Esempio C (Logaritmica):</strong> Si pone $x - 1 > 0 \implies x > 1$. In notazione ad intervalli: $D = (1, +\infty)$.
-                                </p>
-                            </div>
-
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Step 2: Intersezioni con gli Assi -->
+                <!-- Step 2: Intersezioni -->
                 <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg">2</div>
@@ -180,55 +124,9 @@
                             <p class="text-xs text-slate-600">Si risolve l'equazione $f(x) = 0$. Le soluzioni reali forniscono i punti $(x_1, 0), (x_2, 0)$.</p>
                         </div>
                     </div>
-
-                    <!-- Examples for Intersections with Vectorial Graphs -->
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                        <h5 class="font-semibold text-slate-800 text-xs uppercase tracking-wider">Esempi pratici di calcolo delle Intersezioni:</h5>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                            
-                            <!-- Intersections Example A -->
-                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
-                                <span class="block font-bold text-slate-800 text-xs text-center">$y = 2x + 4$</span>
-                                <div class="h-36 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
-                                    <svg viewBox="0 0 250 150" class="w-full h-full">
-                                        <line x1="20" y1="100" x2="230" y2="100" stroke="#94a3b8" stroke-width="1.5" />
-                                        <line x1="100" y1="20" x2="100" y2="130" stroke="#94a3b8" stroke-width="1.5" />
-                                        <circle cx="100" cy="60" r="4.5" fill="#10b981"/>
-                                        <circle cx="70" cy="100" r="4.5" fill="#10b981"/>
-                                        <text x="108" y="63" font-size="9" fill="#047857" font-weight="bold">(0, 4)</text>
-                                        <text x="65" y="115" font-size="9" fill="#047857" font-weight="bold">(-2, 0)</text>
-                                    </svg>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed">
-                                    <strong>Esempio A ($y = 2x+4$):</strong> Asse $Y$ ($x=0 \implies y=4$, punto $(0,4)$). Asse $X$ ($y=0 \implies 2x+4=0 \implies x=-2$, punto $(-2,0)$).
-                                </p>
-                            </div>
-
-                            <!-- Intersections Example B -->
-                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
-                                <span class="block font-bold text-slate-800 text-xs text-center">$y = x^2 - 4$</span>
-                                <div class="h-36 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
-                                    <svg viewBox="0 0 250 150" class="w-full h-full">
-                                        <line x1="20" y1="90" x2="230" y2="90" stroke="#94a3b8" stroke-width="1.5" />
-                                        <line x1="125" y1="20" x2="125" y2="130" stroke="#94a3b8" stroke-width="1.5" />
-                                        <circle cx="125" cy="120" r="4.5" fill="#10b981"/>
-                                        <circle cx="95" cy="90" r="4.5" fill="#10b981"/>
-                                        <circle cx="155" cy="90" r="4.5" fill="#10b981"/>
-                                        <text x="132" y="123" font-size="9" fill="#047857" font-weight="bold">(0, -4)</text>
-                                        <text x="85" y="80" font-size="9" fill="#047857" font-weight="bold">(-2, 0)</text>
-                                        <text x="148" y="80" font-size="9" fill="#047857" font-weight="bold">(2, 0)</text>
-                                    </svg>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed">
-                                    <strong>Esempio B ($y = x^2-4$):</strong> Asse $Y$ ($f(0)=-4$, punto $(0,-4)$). Asse $X$ ($x^2-4=0 \implies x=\pm 2$, punti $(-2,0)$ e $(2,0)$).
-                                </p>
-                            </div>
-
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Step 3: Studio del Segno -->
+                <!-- Step 3 & 4: Studio del Segno -->
                 <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg">3</div>
@@ -238,18 +136,6 @@
                         Lo studio del segno consiste nel determinare per quali valori del dominio la $y$ risulta positiva, nulla o negativa. Questo passaggio geometrico stabilisce dove il grafico si trova sopra l'asse delle ascisse e dove si trova sotto, permettendo di cancellare le regioni del piano in cui il grafico non può transitare.
                     </p>
 
-                    <!-- General Step-by-Step Guide -->
-                    <div class="p-5 bg-amber-50/50 rounded-xl border border-amber-200 space-y-3">
-                        <h4 class="font-bold text-amber-900 text-sm uppercase tracking-wider"><i class="fa-solid fa-list-ol mr-1.5 text-amber-600"></i> Procedimento Generale da Seguire:</h4>
-                        <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-                            <li><strong>Impostare la disequazione:</strong> Si pone sempre l'espressione algebrica maggiore o uguale a zero: <br> $f(x) \ge 0$ (ovvero $y \ge 0$).</li>
-                            <li><strong>Risolvere la disequazione:</strong> Si scompongono i fattori numerici e letterali, determinando gli intervalli in cui la disequazione è soddisfatta.</li>
-                            <li><strong>3. Rappresentare gli intervalli in cui la y è positiva ($y \ge 0$):</strong> In queste zone il grafico si trova nel semipiano superiore ($y > 0$). Geometricamente, <strong>si cancellano (con tratteggio diagonale continuo) le zone del semipiano inferiore ($y < 0$)</strong> corrispondenti agli intervalli in cui la y risulta negativa.</li>
-                            <li><strong>4. Rappresentare gli intervalli in cui la y è negativa ($y < 0$):</strong> In queste zone il grafico si trova nel semipiano inferiore ($y < 0$). Geometricamente, <strong>si cancellano le zone del semipiano superiore ($y > 0$)</strong> corrispondenti agli intervalli in cui la y risulta positiva o nulla.</li>
-                        </ol>
-                    </div>
-
-                    <!-- Example: Linear Function -->
                     <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
                         <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center">
                             <i class="fa-solid fa-code text-indigo-600 mr-1.5"></i> Esempio (Funzione Lineare): $y = 2x + 4$
@@ -261,40 +147,9 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                            <!-- Case y >= 0 -->
+                            <!-- Case 3: Negatività -->
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                                <span class="block font-bold text-slate-800 text-xs text-center">3. Intervallo in cui la y è positiva: $x \ge -2 \implies y \ge 0$</span>
-                                <div class="h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
-                                    <svg viewBox="0 0 300 200" class="w-full h-full">
-                                        <!-- Axes -->
-                                        <line x1="20" y1="120" x2="280" y2="120" stroke="#94a3b8" stroke-width="1.5" />
-                                        <line x1="150" y1="20" x2="150" y2="180" stroke="#94a3b8" stroke-width="1.5" />
-                                        
-                                        <!-- x = -2 reference line placed at x=90 (150 - 60px left) -->
-                                        <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
-                                        <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
-
-                                        <!-- Hatched region for y < 0 when x < -2 (left side, lower half y > 120) -->
-                                        <g clip-path="url(#lower-clip-left)">
-                                            <rect x="20" y="120" width="70" height="60" fill="#fef3c7" fill-opacity="0.5"/>
-                                            <path d="M 20,130 L 80,190 M 40,130 L 100,190 M 60,130 L 120,190" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
-                                        </g>
-                                        <clipPath id="lower-clip-left">
-                                            <rect x="20" y="120" width="70" height="60"/>
-                                        </clipPath>
-                                        
-                                        <text x="32" y="145" font-size="9" fill="#b45309" font-weight="bold">Cancellato</text>
-                                        <text x="180" y="90" font-size="11" fill="#4f46e5" font-weight="bold">y &ge; 0 (Sopra)</text>
-                                    </svg>
-                                </div>
-                                <p class="text-xs text-slate-600 leading-relaxed">
-                                    Poiché la $y$ è <strong>positiva</strong> ($y \ge 0$) nell'intervallo $x \ge -2$ (a destra di $x = -2$), il grafico si trova nel semipiano superiore. Di conseguenza, nel semipiano inferiore ($y < 0$), <strong>si cancella la zona situata a sinistra di $x = -2$</strong> (poiché lì la $y$ è negativa).
-                                </p>
-                            </div>
-
-                            <!-- Case y < 0 -->
-                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                                <span class="block font-bold text-slate-800 text-xs text-center">4. Intervallo in cui la y è negativa: $x < -2 \implies y < 0$</span>
+                                <span class="block font-bold text-slate-800 text-xs text-center">3. Intervallo in cui la y è negativa: $x < -2 \implies y < 0$</span>
                                 <div class="h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
                                     <svg viewBox="0 0 300 200" class="w-full h-full">
                                         <!-- Axes -->
@@ -305,50 +160,80 @@
                                         <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
                                         <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
 
-                                        <!-- Retain the previous lower-left cancellation -->
-                                        <g clip-path="url(#lower-clip-left-retained)">
-                                            <rect x="20" y="120" width="70" height="60" fill="#fef3c7" fill-opacity="0.3"/>
-                                            <path d="M 20,130 L 80,190 M 40,130 L 100,190 M 60,130 L 120,190" stroke="#d97706" stroke-width="1.0" stroke-opacity="0.5"/>
+                                        <!-- Retained positive hatching (upper right) -->
+                                        <g clip-path="url(#upper-clip-right-retained)">
+                                            <rect x="90" y="20" width="190" height="100" fill="#fef3c7" fill-opacity="0.3"/>
+                                            <path d="M 90,40 L 160,-30 M 120,40 L 190,-30 M 150,40 L 220,-30 M 180,40 L 250,-30 M 210,40 L 280,-30 M 240,40 L 310,-30" stroke="#d97706" stroke-width="1.0" stroke-opacity="0.5"/>
                                         </g>
-                                        <clipPath id="lower-clip-left-retained">
-                                            <rect x="20" y="120" width="70" height="60"/>
-                                        </clipPath>
-
-                                        <!-- Hatched region above x >= -2 (right side, upper half y < 120) -->
-                                        <g clip-path="url(#upper-clip-right)">
-                                            <rect x="90" y="20" width="190" height="100" fill="#fef3c7" fill-opacity="0.5"/>
-                                            <path d="M 90,40 L 160,-30 M 120,40 L 190,-30 M 150,40 L 220,-30 M 180,40 L 250,-30 M 210,40 L 280,-30 M 240,40 L 310,-30" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
-                                        </g>
-                                        <clipPath id="upper-clip-right">
+                                        <clipPath id="upper-clip-right-retained">
                                             <rect x="90" y="20" width="190" height="100"/>
                                         </clipPath>
+
+                                        <!-- Hatched region for y < 0 when x < -2 -->
+                                        <g clip-path="url(#lower-clip-left)">
+                                            <rect x="20" y="120" width="70" height="60" fill="#fef3c7" fill-opacity="0.5"/>
+                                            <path d="M 20,130 L 80,190 M 40,130 L 100,190 M 60,130 L 120,190" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
+                                        </g>
+                                        <clipPath id="lower-clip-left">
+                                            <rect x="20" y="120" width="70" height="60"/>
+                                        </clipPath>
                                         
-                                        <text x="180" y="70" font-size="10" fill="#b45309" font-weight="bold">Cancellato</text>
-                                        <text x="32" y="145" font-size="11" fill="#4f46e5" font-weight="bold">y &lt; 0 (Sotto)</text>
+                                        <text x="32" y="145" font-size="9" fill="#b45309" font-weight="bold">Cancellato</text>
+                                        <!-- Label y < 0 positioned to the LEFT of x = -2 -->
+                                        <text x="30" y="105" font-size="11" fill="#4f46e5" font-weight="bold">y &lt; 0 (Sotto)</text>
                                     </svg>
                                 </div>
                                 <p class="text-xs text-slate-600 leading-relaxed">
-                                    Poiché la $y$ è <strong>negativa</strong> ($y < 0$) nell'intervallo $x < -2$ (a sinistra di $x = -2$), il grafico si trova nel semipiano inferiore. Di conseguenza, nel semipiano superiore ($y > 0$), <strong>si cancella la zona situata a destra di $x = -2$</strong> (poiché lì la $y$ è positiva), mantenendo visibile anche il precedente tratteggio.
+                                    <strong>3.</strong> Poiché la $y$ è <strong>negativa</strong> ($y < 0$) nell'intervallo $x < -2$, il grafico si trova nel semipiano inferiore. Si cancella la zona situata a sinistra di $x = -2$ nel semipiano superiore, mantenendo anche il precedente tratteggio di positività.
+                                </p>
+                            </div>
+
+                            <!-- Case 4: Positività -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                                <span class="block font-bold text-slate-800 text-xs text-center">4. Intervallo in cui la y è positiva: $x \ge -2 \implies y \ge 0$</span>
+                                <div class="h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 300 200" class="w-full h-full">
+                                        <!-- Axes -->
+                                        <line x1="20" y1="120" x2="280" y2="120" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="150" y1="20" x2="150" y2="180" stroke="#94a3b8" stroke-width="1.5" />
+                                        
+                                        <!-- x = -2 reference line placed at x=90 -->
+                                        <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
+                                        <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
+
+                                        <!-- Hatched region for y < 0 when x < -2 -->
+                                        <g clip-path="url(#lower-clip-left)">
+                                            <rect x="20" y="120" width="70" height="60" fill="#fef3c7" fill-opacity="0.5"/>
+                                            <path d="M 20,130 L 80,190 M 40,130 L 100,190 M 60,130 L 120,190" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
+                                        </g>
+                                        <clipPath id="lower-clip-left">
+                                            <rect x="20" y="120" width="70" height="60"/>
+                                        </clipPath>
+                                        
+                                        <text x="32" y="145" font-size="9" fill="#b45309" font-weight="bold">Cancellato</text>
+                                        <text x="180" y="105" font-size="11" fill="#4f46e5" font-weight="bold">y &ge; 0 (Sopra)</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>4.</strong> Poiché la $y$ è <strong>positiva</strong> ($y \ge 0$) nell'intervallo $x \ge -2$, il grafico si trova nel semipiano superiore. Di conseguenza, nel semipiano inferiore ($y < 0$), si cancella la zona situata a sinistra di $x = -2$.
                                 </p>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
+        <!-- TAB 2: LABORATORIO GRAFICO -->
         <section id="tab-laboratorio" class="hidden space-y-4">
             <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 flex flex-col lg:flex-row gap-6">
-                
                 <!-- Controls Sidebar -->
                 <div class="w-full lg:w-96 space-y-4 flex-shrink-0">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900">Laboratorio Grafico</h2>
-                        <p class="text-xs text-slate-500 mt-1">Seleziona una funzione di esempio per visualizzare le zone di piano bloccate ed escluse sul piano cartesiano bianco con tratteggio diagonale continuo.</p>
+                        <p class="text-xs text-slate-500 mt-1">Seleziona una funzione di esempio per visualizzare le zone di piano escluse e la cancellatura del segno sul piano cartesiano.</p>
                     </div>
 
-                    <!-- Preset Selector -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Funzioni di Esempio</label>
                         <div class="grid grid-cols-1 gap-2">
@@ -374,7 +259,6 @@
                     <!-- Layer Toggles -->
                     <div class="space-y-2.5 pt-2 border-t border-slate-200">
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Visualizzazione Strati</label>
-                        
                         <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
                             <span class="flex items-center space-x-2">
                                 <span class="w-3 h-3 rounded-full bg-rose-500"></span>
@@ -382,7 +266,6 @@
                             </span>
                             <input type="checkbox" id="layer-domain" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
                         </label>
-
                         <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
                             <span class="flex items-center space-x-2">
                                 <span class="w-3 h-3 rounded-full bg-amber-500"></span>
@@ -390,7 +273,6 @@
                             </span>
                             <input type="checkbox" id="layer-sign" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
                         </label>
-
                         <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
                             <span class="flex items-center space-x-2">
                                 <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
@@ -398,7 +280,6 @@
                             </span>
                             <input type="checkbox" id="layer-intercepts" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
                         </label>
-
                         <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
                             <span class="flex items-center space-x-2">
                                 <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
@@ -408,7 +289,7 @@
                         </label>
                     </div>
 
-                    <!-- Analysis breakdown card with interactive toggle for steps -->
+                    <!-- Analysis breakdown card -->
                     <div id="analysis-card" class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-xl space-y-3 text-xs">
                         <div class="flex items-center justify-between">
                             <h4 class="font-bold text-indigo-900 flex items-center"><i class="fa-solid fa-file-lines mr-1.5"></i> Report Analitico</h4>
@@ -416,18 +297,15 @@
                                 <i class="fa-solid fa-list-check mr-1"></i> Mostra Svolgimento
                             </button>
                         </div>
-                        <div id="analysis-content" class="text-indigo-800 space-y-1.5">
-                            <!-- Populated via JS -->
-                        </div>
+                        <div id="analysis-content" class="text-indigo-800 space-y-1.5"></div>
                     </div>
                 </div>
 
-                <!-- Canvas Workspace with WHITE background -->
+                <!-- Canvas Workspace -->
                 <div class="flex-grow flex flex-col">
                     <div class="bg-white rounded-2xl overflow-hidden relative shadow-inner border border-slate-200 flex-grow flex items-center justify-center min-h-[450px]">
                         <canvas id="mathCanvas" class="w-full h-full cursor-crosshair block"></canvas>
                         
-                        <!-- Floating legend overlay -->
                         <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md text-slate-800 p-3 rounded-xl border border-slate-200 shadow-md text-xs space-y-1.5 pointer-events-none">
                             <div class="font-semibold text-indigo-700 mb-1">Legenda Grafica:</div>
                             <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span><span>Grafico $f(x)$</span></div>
@@ -435,7 +313,6 @@
                             <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Intersezioni Assi</span></div>
                         </div>
 
-                        <!-- Canvas Zoom / Center controls -->
                         <div class="absolute top-4 right-4 flex space-x-1.5 bg-white/90 backdrop-blur-md p-1 rounded-xl border border-slate-200 shadow-md">
                             <button onclick="zoomIn()" class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition" title="Zoom In"><i class="fa-solid fa-plus text-xs"></i></button>
                             <button onclick="zoomOut()" class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition" title="Zoom Out"><i class="fa-solid fa-minus text-xs"></i></button>
@@ -443,25 +320,21 @@
                         </div>
                     </div>
                     <div class="flex justify-between items-center mt-2 px-1 text-xs text-slate-500">
-                        <span><i class="fa-solid fa-circle-info mr-1"></i> Trascina con il mouse per traslare. Usa la rotellina per lo zoom.</span>
+                        <span><i class="fa-solid fa-circle-info mr-1"></i> Trascina per traslare. Usa la rotellina per lo zoom.</span>
                         <span id="coordinates-display" class="font-mono bg-slate-100 px-2 py-1 rounded text-slate-700">X: 0.00, Y: 0.00</span>
                     </div>
                 </div>
-
             </div>
         </section>
 
+        <!-- TAB 3: ESERCIZI INTERATTIVI (QUIZ) -->
         <section id="tab-quiz" class="hidden space-y-6">
             <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-3">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full">Palestra Interattiva di Cancellazione</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full">Palestra Interattiva di Studio del Segno</span>
                         <h2 class="text-2xl font-bold text-slate-900 tracking-tight mt-1">Esercizi Interattivi</h2>
-                        <p class="text-slate-600 text-sm leading-relaxed mt-1">
-                            Seleziona un esercizio dal menu. Clicca sulle sezioni o sui riquadri del piano cartesiano per applicare il tratteggio di cancellazione corretto in base alla condizione data, quindi verifica il risultato!
-                        </p>
                     </div>
-                    <!-- Exercise Selector with clean text -->
                     <div class="flex items-center space-x-2">
                         <label class="text-xs font-bold text-slate-700">Esercizio:</label>
                         <select id="puzzle-select" onchange="loadPuzzle(this.value)" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -472,19 +345,21 @@
             </div>
 
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6">
-                <!-- Instructions / Goal card -->
+                <!-- Instructions & Title Card -->
                 <div class="w-full md:w-80 space-y-4 flex-shrink-0">
                     <div class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-xl space-y-2">
-                        <div id="puzzle-title" class="font-bold text-indigo-900 text-sm flex items-center"><i class="fa-solid fa-puzzle-piece mr-1.5"></i> <span id="puzzle-title-text"></span></div>
+                        <div id="puzzle-title" class="font-bold text-indigo-900 text-sm flex items-center">
+                            <i class="fa-solid fa-puzzle-piece mr-2 text-indigo-600"></i>
+                            <span id="puzzle-title-text"></span>
+                        </div>
                     </div>
 
                     <div class="space-y-2 pt-2">
                         <div class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Istruzioni d'Uso:</div>
                         <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
-                            <li>Osserva le linee di riferimento sul piano cartesiano.</li>
-                            <li><strong>Clicca</strong> sulle regioni di piano che ritieni vadano cancellate.</li>
-                            <li>Puoi ricliccare per rimuovere il tratteggio.</li>
-                            <li>Premi <strong>Verifica Risposta</strong> per confrontare il tuo lavoro.</li>
+                            <li>Osserva i punti di cambio segno segnati sul piano cartesiano.</li>
+                            <li><strong>Clicca sulle sezioni di piano</strong> che devono essere cancellate in base allo studio del segno $y \ge 0$.</li>
+                            <li>Premi <strong>Verifica Risposta</strong> per verificare la soluzione.</li>
                         </ul>
                     </div>
 
@@ -504,7 +379,7 @@
                     <div class="bg-white rounded-xl overflow-hidden relative shadow-inner border border-slate-200 flex-grow flex items-center justify-center min-h-[400px]">
                         <canvas id="puzzleCanvas" class="w-full h-full cursor-pointer block"></canvas>
                         <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] font-medium pointer-events-none shadow-sm">
-                            <i class="fa-solid fa-hand-pointer mr-1 text-indigo-600"></i> Clicca nelle zone di piano per cancellarle o ripulirle
+                            <i class="fa-solid fa-hand-pointer mr-1 text-indigo-600"></i> Clicca nelle zone del piano per applicare o rimuovere la cancellatura
                         </div>
                     </div>
                 </div>
@@ -513,6 +388,7 @@
 
     </main>
 
+    <!-- Modal dialog for notifications -->
     <div id="message-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-slate-200 space-y-4">
             <h3 id="modal-title" class="font-bold text-slate-900 text-lg">Notifica</h3>
@@ -525,7 +401,7 @@
 
     <script>
         // Initialize KaTeX auto-rendering on load
-        document.addEventListener("DOMContentLoaded", function() {
+        function renderMath() {
             renderMathInElement(document.body, {
                 delimiters: [
                     {left: "$$", right: "$$", display: true},
@@ -533,6 +409,10 @@
                 ],
                 throwOnError: false
             });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMath();
         });
 
         let currentTab = 'teoria';
@@ -565,6 +445,9 @@
             document.getElementById('message-modal').classList.add('hidden');
         }
 
+        // ==========================================
+        // Lab presets & Canvas rendering logic
+        // ==========================================
         let currentPreset = 1;
         let showAnalysisStepsState = false;
         
@@ -577,10 +460,9 @@
                 intercepts: "Asse Y: (0, 1/3). Asse X: (-1,0) e (1,0)",
                 signText: "-1 \\le x \\le 1 \\lor x > 3",
                 steps: [
-                    "<strong>1. Dominio:</strong> Denominatore $x - 3 \\neq 0 \\implies x \\neq 3$.",
-                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = \\frac{0^2 - 1}{0 - 3} = \\frac{-1}{-3} = \\frac{1}{3}$. Punto $(0, 1/3)$.",
-                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> Numeratore $x^2 - 1 = 0 \\implies x = \\pm 1$. Punti $(-1,0)$ e $(1,0)$.",
-                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> Numeratore $\\ge 0$ per $x \\le -1 \\lor x \\ge 1$. Denominatore $>0$ per $x > 3$. Studio del segno: $y \\ge 0$ per $-1 \\le x \\le 1 \\lor x > 3$."
+                    "<strong>1. Dominio:</strong> $x - 3 \\neq 0 \\implies x \\neq 3$.",
+                    "<strong>2. Intersezioni Asse Y:</strong> $(0, 1/3)$. Asse X: $(-1,0)$ e $(1,0)$.",
+                    "<strong>3. Studio del Segno ($y \\ge 0$):</strong> $y \\ge 0$ per $-1 \\le x \\le 1 \\lor x > 3$."
                 ]
             },
             2: {
@@ -591,10 +473,9 @@
                 intercepts: "Asse Y: (0, \\sqrt{2}). Asse X: (-2,0)",
                 signText: "x \\ge -2",
                 steps: [
-                    "<strong>1. Dominio:</strong> Argomento della radice $\\ge 0 \\implies x + 2 \\ge 0 \\implies x \\ge -2$.",
-                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = \\sqrt{0+2} = \\sqrt{2} \\approx 1.41$. Punto $(0, \\sqrt{2})$.",
-                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> $\\sqrt{x+2} = 0 \\implies x+2 = 0 \\implies x = -2$. Punto $(-2,0)$.",
-                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> Essendo una radice quadrata aritmetica, $\\sqrt{x+2} \\ge 0$ per tutto il dominio $x \\ge -2$."
+                    "<strong>1. Dominio:</strong> $x + 2 \\ge 0 \\implies x \\ge -2$.",
+                    "<strong>2. Intersezioni Asse Y:</strong> $(0, \\sqrt{2})$. Asse X: $(-2,0)$.",
+                    "<strong>3. Studio del Segno ($y \\ge 0$):</strong> $y \\ge 0$ per $x \\ge -2$."
                 ]
             },
             3: {
@@ -605,10 +486,9 @@
                 intercepts: "Asse Y: (0,4). Asse X: (-2,0)",
                 signText: "x \\ge -2",
                 steps: [
-                    "<strong>1. Dominio:</strong> Funzione polinomiale intera definita ovunque.",
-                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = 2(0) + 4 = 4$. Punto $(0,4)$.",
-                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> $2x + 4 = 0 \\implies 2x = -4 \\implies x = -2$. Punto $(-2,0)$.",
-                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> $2x + 4 \\ge 0 \\implies 2x \\ge -4 \\implies x \\ge -2$."
+                    "<strong>1. Dominio:</strong> Definita ovunque in $\\mathbb{R}$.",
+                    "<strong>2. Intersezioni:</strong> Asse Y: $(0,4)$. Asse X: $(-2,0)$.",
+                    "<strong>3. Studio del Segno ($y \\ge 0$):</strong> $2x + 4 \\ge 0 \\implies x \\ge -2$."
                 ]
             },
             4: {
@@ -619,10 +499,9 @@
                 intercepts: "Asse Y: Nessuna. Asse X: (2,0)",
                 signText: "x \\ge 2",
                 steps: [
-                    "<strong>1. Dominio:</strong> Argomento del logaritmo $>0 \\implies x - 1 > 0 \\implies x > 1$.",
-                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> Non esiste poiché $0$ non è maggiore di $1$.",
-                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> $\\ln(x-1) = 0 \\implies x - 1 = e^0 = 1 \\implies x = 2$. Punto $(2,0)$.",
-                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> $\\ln(x-1) \\ge 0 \\implies x-1 \\ge e^0 = 1 \\implies x \\ge 2$."
+                    "<strong>1. Dominio:</strong> $x - 1 > 0 \\implies x > 1$.",
+                    "<strong>2. Intersezioni Asse X:</strong> $(2,0)$.",
+                    "<strong>3. Studio del Segno ($y \\ge 0$):</strong> $x \\ge 2$."
                 ]
             }
         };
@@ -644,7 +523,6 @@
                     }
                 }
             }
-
             updateAnalysisCard();
             redrawCanvas();
         }
@@ -689,10 +567,8 @@
 
         let canvas, ctx;
         let scale = 40;
-        let offsetX = 0;
-        let offsetY = 0;
-        let isDragging = false;
-        let startX, startY;
+        let offsetX = 0, offsetY = 0;
+        let isDragging = false, startX, startY;
 
         function initCanvas() {
             canvas = document.getElementById('mathCanvas');
@@ -730,11 +606,8 @@
             canvas.onwheel = (e) => {
                 e.preventDefault();
                 const zoomFactor = 1.1;
-                if(e.deltaY < 0) {
-                    scale *= zoomFactor;
-                } else {
-                    scale /= zoomFactor;
-                }
+                if(e.deltaY < 0) scale *= zoomFactor;
+                else scale /= zoomFactor;
                 scale = Math.max(10, Math.min(300, scale));
                 redrawCanvas();
             };
@@ -759,15 +632,8 @@
             redrawCanvas();
         }
 
-        function zoomIn() {
-            scale = Math.min(300, scale * 1.25);
-            redrawCanvas();
-        }
-
-        function zoomOut() {
-            scale = Math.max(10, scale / 1.25);
-            redrawCanvas();
-        }
+        function zoomIn() { scale = Math.min(300, scale * 1.25); redrawCanvas(); }
+        function zoomOut() { scale = Math.max(10, scale / 1.25); redrawCanvas(); }
 
         function updateCoordinates(e) {
             const rect = canvas.getBoundingClientRect();
@@ -776,9 +642,7 @@
             const x = (clientX - offsetX) / scale;
             const y = -(clientY - offsetY) / scale;
             const disp = document.getElementById('coordinates-display');
-            if(disp) {
-                disp.innerText = `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`;
-            }
+            if(disp) disp.innerText = `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`;
         }
 
         function drawDiagonalHatch(ctx, x, y, w, h, spacing = 12) {
@@ -832,7 +696,6 @@
                 const step = 4;
                 for(let px = 0; px < width; px += step) {
                     let x = (px - offsetX) / scale;
-                    
                     if(activeConfig.domainCheck && !activeConfig.domainCheck(x)) continue;
 
                     try {
@@ -967,97 +830,74 @@
         // ==========================================
         let puzzleCanvas, puzzleCtx;
         let puzzleScale = 45;
-        let puzzleOffsetX = 0;
-        let puzzleOffsetY = 0;
+        let puzzleOffsetX = 0, puzzleOffsetY = 0;
 
+        // Structured puzzles with clean sign study conditions (y >= 0)
         const puzzles = [
             {
-                title: "y \\ge 0 \\text{ per } x \\ge 2",
-                refX: 2,
-                type: "single",
-                // y >= 0 for x >= 2 means y < 0 for x < 2 (cancel lower left) AND y > 0 for x > 2 (cancel upper right)
-                correctShaded: { "left_lower": true, "right_upper": true }
+                title: "x \\ge 2",
+                latex: "y \\ge 0 \\text{ per } x \\ge 2",
+                refs: [2],
+                isPos: (x) => x >= 2
             },
             {
-                title: "y \\ge 0 \\text{ per } x \\le -1",
-                refX: -1,
-                type: "single",
-                // y >= 0 for x <= -1 means y > 0 for x < -1 (cancel upper left) AND y < 0 for x > -1 (cancel lower right)
-                correctShaded: { "left_upper": true, "right_lower": true }
+                title: "x \\le -1",
+                latex: "y \\ge 0 \\text{ per } x \\le -1",
+                refs: [-1],
+                isPos: (x) => x <= -1
             },
             {
-                title: "y \\ge 0 \\text{ per } x \\ge 1",
-                refX: 1,
-                type: "single",
-                correctShaded: { "left_lower": true, "right_upper": true }
+                title: "x \\ge 1",
+                latex: "y \\ge 0 \\text{ per } x \\ge 1",
+                refs: [1],
+                isPos: (x) => x >= 1
             },
             {
-                title: "y \\ge 0 \\text{ per } x \\le 3",
-                refX: 3,
-                type: "single",
-                correctShaded: { "left_upper": true, "right_lower": true }
+                title: "x \\le 3",
+                latex: "y \\ge 0 \\text{ per } x \\le 3",
+                refs: [3],
+                isPos: (x) => x <= 3
             },
             {
-                title: "y \\ge 0 \\text{ per } x \\ge -2",
-                refX: -2,
-                type: "single",
-                correctShaded: { "left_lower": true, "right_upper": true }
+                title: "x \\ge -2",
+                latex: "y \\ge 0 \\text{ per } x \\ge -2",
+                refs: [-2],
+                isPos: (x) => x >= -2
             },
             {
-                title: "y \\ge 0 \\text{ per } x \\le 0",
-                refX: 0,
-                type: "single",
-                correctShaded: { "left_upper": true, "right_lower": true }
+                title: "x \\le 0",
+                latex: "y \\ge 0 \\text{ per } x \\le 0",
+                refs: [0],
+                isPos: (x) => x <= 0
             },
             {
-                title: "y \\ge 0 \\text{ per } x < -2 \\lor x > 3",
-                refX: -2,
-                refX2: 3,
-                type: "exterior",
-                // y >= 0 for x < -2 or x > 3:
-                // Intervall (-2, 3): y < 0 -> cancel upper middle.
-                // Outer intervals x < -2 and x > 3: y > 0 -> cancel lower left and lower right.
-                correctShaded: { "middle_upper": true, "left_lower": true, "right_lower": true }
+                title: "x < -2 \\lor x > 3",
+                latex: "y \\ge 0 \\text{ per } x < -2 \\lor x > 3",
+                refs: [-2, 3],
+                isPos: (x) => x < -2 || x > 3
             },
             {
-                title: "y \\ge 0 \\text{ per } -1 \\le x \\le 4",
-                refX: -1,
-                refX2: 4,
-                type: "interior",
-                // y >= 0 for -1 <= x <= 4:
-                // Interval (-1, 4): y > 0 -> cancel lower middle.
-                // Outer intervals x < -1 and x > 4: y < 0 -> cancel upper left and upper right.
-                correctShaded: { "middle_lower": true, "left_upper": true, "right_upper": true }
+                title: "-1 < x < 4",
+                latex: "y \\ge 0 \\text{ per } -1 < x < 4",
+                refs: [-1, 4],
+                isPos: (x) => x > -1 && x < 4
             },
             {
-                title: "y \\ge 0 \\text{ per } -2 \\le x \\le 0 \\lor x \\ge 2",
-                refX: -2,
-                refX2: 0,
-                refX3: 2,
-                type: "cubic",
-                // Regions:
-                // 1) x < -2: y < 0 -> upper
-                // 2) -2 < x < 0: y >= 0 -> lower
-                // 3) 0 < x < 2: y < 0 -> upper
-                // 4) x > 2: y >= 0 -> lower
-                correctShaded: {
-                    "zone_left_ext_upper": true,
-                    "zone_mid_left_lower": true,
-                    "zone_mid_right_upper": true,
-                    "zone_right_ext_lower": true
-                }
+                title: "-2 \\le x \\le 0 \\lor x \\ge 2",
+                latex: "y \\ge 0 \\text{ per } -2 \\le x \\le 0 \\lor x \\ge 2",
+                refs: [-2, 0, 2],
+                isPos: (x) => (x >= -2 && x <= 0) || x >= 2
             },
             {
-                title: "y \\ge 0 \\text{ per } 1 < x \\le 5",
-                refX: 1,
-                refX2: 5,
-                type: "interior",
-                correctShaded: { "middle_lower": true, "left_upper": true, "right_upper": true }
+                title: "1 < x < 5",
+                latex: "y \\ge 0 \\text{ per } 1 < x < 5",
+                refs: [1, 5],
+                isPos: (x) => x > 1 && x < 5
             }
         ];
 
         let currentPuzzleIndex = 0;
-        let userShaded = {};
+        let userShadedCells = {};
 
         function populatePuzzleSelect() {
             const selectEl = document.getElementById('puzzle-select');
@@ -1066,9 +906,7 @@
             puzzles.forEach((p, idx) => {
                 const opt = document.createElement('option');
                 opt.value = idx;
-                // Replace \lor with \lor or symbol in option text
-                let cleanText = p.title.replace(/\\ge/g, '≥').replace(/\\le/g, '≤').replace(/\\lor/g, ' ∨ ').replace(/\\text\{/g, '').replace(/\}/g, '');
-                opt.innerText = `y ≥ 0 per ${cleanText.replace('y ≥ 0 per ', '')}`;
+                opt.innerText = `Es. ${idx + 1}: y ≥ 0 per ${p.title.replace(/\\lor/g, '∨').replace(/\\le/g, '≤').replace(/\\ge/g, '≥')}`;
                 selectEl.appendChild(opt);
             });
         }
@@ -1078,19 +916,19 @@
             const p = puzzles[currentPuzzleIndex];
             
             const spanEl = document.getElementById('puzzle-title-text');
-            spanEl.innerHTML = `$${p.title}$`;
+            spanEl.innerHTML = `$${p.latex}$`;
             renderMathInElement(spanEl, {
                 delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
                 throwOnError: false
             });
             
             document.getElementById('puzzle-feedback').classList.add('hidden');
-            userShaded = {};
+            userShadedCells = {};
             redrawPuzzleCanvas();
         }
 
         function resetPuzzle() {
-            userShaded = {};
+            userShadedCells = {};
             document.getElementById('puzzle-feedback').classList.add('hidden');
             redrawPuzzleCanvas();
         }
@@ -1109,53 +947,18 @@
                 const clientX = e.clientX - rect.left;
                 const clientY = e.clientY - rect.top;
                 
+                const x = (clientX - puzzleOffsetX) / puzzleScale;
+                const isUpper = clientY < puzzleOffsetY;
+
                 const p = puzzles[currentPuzzleIndex];
-                const keyY = clientY < puzzleOffsetY ? "upper" : "lower";
-
-                if(p.type === "cubic") {
-                    const px1 = p.refX * puzzleScale + puzzleOffsetX;
-                    const px2 = p.refX2 * puzzleScale + puzzleOffsetX;
-                    const px3 = p.refX3 * puzzleScale + puzzleOffsetX;
-
-                    let zoneKey = "";
-                    if(clientX < px1) zoneKey = "zone_left_ext_" + keyY;
-                    else if(clientX >= px1 && clientX < px2) zoneKey = "zone_mid_left_" + keyY;
-                    else if(clientX >= px2 && clientX < px3) zoneKey = "zone_mid_right_" + keyY;
-                    else zoneKey = "zone_right_ext_" + keyY;
-
-                    userShaded[zoneKey] = !userShaded[zoneKey];
-                } else if(p.type === "exterior") {
-                    const refPx = p.refX * puzzleScale + puzzleOffsetX;
-                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
-                    if(clientX > refPx && clientX < refPx2) {
-                        let regionKey = "middle_" + keyY;
-                        userShaded[regionKey] = !userShaded[regionKey];
-                    } else if(clientX <= refPx) {
-                        let regionKey = "left_" + keyY;
-                        userShaded[regionKey] = !userShaded[regionKey];
-                    } else {
-                        let regionKey = "right_" + keyY;
-                        userShaded[regionKey] = !userShaded[regionKey];
-                    }
-                } else if(p.type === "interior") {
-                    const refPx = p.refX * puzzleScale + puzzleOffsetX;
-                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
-                    if(clientX <= refPx) {
-                        let regionKey = "left_" + keyY;
-                        userShaded[regionKey] = !userShaded[regionKey];
-                    } else if(clientX >= refPx2) {
-                        let regionKey = "right_" + keyY;
-                        userShaded[regionKey] = !userShaded[regionKey];
-                    } else {
-                        let regionKey = "middle_" + keyY;
-                        userShaded[regionKey] = !userShaded[regionKey];
-                    }
-                } else {
-                    const refPx = p.refX * puzzleScale + puzzleOffsetX;
-                    let keyX = clientX < refPx ? "left" : "right";
-                    let regionKey = keyX + "_" + keyY;
-                    userShaded[regionKey] = !userShaded[regionKey];
+                let col = 0;
+                for (let i = 0; i < p.refs.length; i++) {
+                    if (x >= p.refs[i]) col = i + 1;
                 }
+                const row = isUpper ? 0 : 1;
+                const cellKey = `${col}_${row}`;
+
+                userShadedCells[cellKey] = !userShadedCells[cellKey];
                 redrawPuzzleCanvas();
             };
 
@@ -1181,146 +984,34 @@
             puzzleCtx.fillRect(0, 0, width, height);
 
             const p = puzzles[currentPuzzleIndex];
-            const refPx = p.refX * puzzleScale + puzzleOffsetX;
 
+            // Render Shaded Regions across canvas columns
             puzzleCtx.save();
-            if(p.type === "cubic") {
-                const px1 = p.refX * puzzleScale + puzzleOffsetX;
-                const px2 = p.refX2 * puzzleScale + puzzleOffsetX;
-                const px3 = p.refX3 * puzzleScale + puzzleOffsetX;
+            const boundaries = [-9999, ...p.refs, 9999];
+            for (let i = 0; i < boundaries.length - 1; i++) {
+                const xLeftCoord = boundaries[i];
+                const xRightCoord = boundaries[i+1];
+                
+                const pxLeft = xLeftCoord === -9999 ? 0 : xLeftCoord * puzzleScale + puzzleOffsetX;
+                const pxRight = xRightCoord === 9999 ? width : xRightCoord * puzzleScale + puzzleOffsetX;
+                const regionWidth = pxRight - pxLeft;
 
-                // Left exterior
-                if(userShaded["zone_left_ext_upper"]) {
+                // Upper half-plane (row 0)
+                if (userShadedCells[`${i}_0`]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, 0, px1, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, 0, px1, puzzleOffsetY, 12);
+                    puzzleCtx.fillRect(pxLeft, 0, regionWidth, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, pxLeft, 0, regionWidth, puzzleOffsetY, 12);
                 }
-                if(userShaded["zone_left_ext_lower"]) {
+                // Lower half-plane (row 1)
+                if (userShadedCells[`${i}_1`]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, puzzleOffsetY, px1, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, px1, height - puzzleOffsetY, 12);
-                }
-                // Mid left
-                if(userShaded["zone_mid_left_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px1, 0, px2 - px1, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, px1, 0, px2 - px1, puzzleOffsetY, 12);
-                }
-                if(userShaded["zone_mid_left_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px1, puzzleOffsetY, px2 - px1, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, px1, puzzleOffsetY, px2 - px1, height - puzzleOffsetY, 12);
-                }
-                // Mid right
-                if(userShaded["zone_mid_right_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px2, 0, px3 - px2, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, px2, 0, px3 - px2, puzzleOffsetY, 12);
-                }
-                if(userShaded["zone_mid_right_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px2, puzzleOffsetY, px3 - px2, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, px2, puzzleOffsetY, px3 - px2, height - puzzleOffsetY, 12);
-                }
-                // Right exterior
-                if(userShaded["zone_right_ext_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px3, 0, width - px3, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, px3, 0, width - px3, puzzleOffsetY, 12);
-                }
-                if(userShaded["zone_right_ext_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px3, puzzleOffsetY, width - px3, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, px3, puzzleOffsetY, width - px3, height - puzzleOffsetY, 12);
-                }
-            } else if(p.type === "exterior") {
-                const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
-                if(userShaded["middle_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, puzzleOffsetY, 12);
-                }
-                if(userShaded["middle_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY, 12);
-                }
-                if(userShaded["left_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, 0, refPx, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, puzzleOffsetY, 12);
-                }
-                if(userShaded["left_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, puzzleOffsetY, refPx, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, refPx, height - puzzleOffsetY, 12);
-                }
-                if(userShaded["right_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx2, 0, width - refPx2, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx2, 0, width - refPx2, puzzleOffsetY, 12);
-                }
-                if(userShaded["right_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY, 12);
-                }
-            } else if(p.type === "interior") {
-                const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
-                if(userShaded["left_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, 0, refPx, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, puzzleOffsetY, 12);
-                }
-                if(userShaded["left_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, puzzleOffsetY, refPx, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, refPx, height - puzzleOffsetY, 12);
-                }
-                if(userShaded["middle_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, puzzleOffsetY, 12);
-                }
-                if(userShaded["middle_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY, 12);
-                }
-                if(userShaded["right_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx2, 0, width - refPx2, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx2, 0, width - refPx2, puzzleOffsetY, 12);
-                }
-                if(userShaded["right_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY, 12);
-                }
-            } else {
-                if(userShaded["left_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
-                    puzzleCtx.fillRect(0, 0, refPx, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, puzzleOffsetY, 12);
-                }
-                if(userShaded["left_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
-                    puzzleCtx.fillRect(0, puzzleOffsetY, refPx, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, refPx, height - puzzleOffsetY, 12);
-                }
-                if(userShaded["right_upper"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
-                    puzzleCtx.fillRect(refPx, 0, width - refPx, puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx, 0, width - refPx, puzzleOffsetY, 12);
-                }
-                if(userShaded["right_lower"]) {
-                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
-                    puzzleCtx.fillRect(refPx, puzzleOffsetY, width - refPx, height - puzzleOffsetY);
-                    drawDiagonalHatch(puzzleCtx, refPx, puzzleOffsetY, width - refPx, height - puzzleOffsetY, 12);
+                    puzzleCtx.fillRect(pxLeft, puzzleOffsetY, regionWidth, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, pxLeft, puzzleOffsetY, regionWidth, height - puzzleOffsetY, 12);
                 }
             }
             puzzleCtx.restore();
 
+            // Render Axes & Grid Lines
             puzzleCtx.save();
             const gridInterval = 1;
             const leftX = -puzzleOffsetX / puzzleScale;
@@ -1356,26 +1047,12 @@
                 puzzleCtx.stroke();
             }
 
-            // Draw ref line 1
-            puzzleCtx.beginPath();
-            puzzleCtx.moveTo(refPx, 0);
-            puzzleCtx.lineTo(refPx, height);
-            puzzleCtx.strokeStyle = '#ef4444';
-            puzzleCtx.lineWidth = 2.5;
-            puzzleCtx.setLineDash([5, 5]);
-            puzzleCtx.stroke();
-            puzzleCtx.setLineDash([]);
-
-            puzzleCtx.fillStyle = '#ef4444';
-            puzzleCtx.font = 'bold 11px Inter';
-            puzzleCtx.fillText(`x = ${p.refX}`, refPx + 6, 25);
-
-            // Draw ref line 2 if present
-            if(p.refX2 !== undefined) {
-                const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+            // Draw Reference Lines
+            p.refs.forEach((refVal, idx) => {
+                const refPx = refVal * puzzleScale + puzzleOffsetX;
                 puzzleCtx.beginPath();
-                puzzleCtx.moveTo(refPx2, 0);
-                puzzleCtx.lineTo(refPx2, height);
+                puzzleCtx.moveTo(refPx, 0);
+                puzzleCtx.lineTo(refPx, height);
                 puzzleCtx.strokeStyle = '#ef4444';
                 puzzleCtx.lineWidth = 2.5;
                 puzzleCtx.setLineDash([5, 5]);
@@ -1384,25 +1061,8 @@
 
                 puzzleCtx.fillStyle = '#ef4444';
                 puzzleCtx.font = 'bold 11px Inter';
-                puzzleCtx.fillText(`x = ${p.refX2}`, refPx2 + 6, 40);
-            }
-
-            // Draw ref line 3 if present (cubic sign)
-            if(p.refX3 !== undefined) {
-                const refPx3 = p.refX3 * puzzleScale + puzzleOffsetX;
-                puzzleCtx.beginPath();
-                puzzleCtx.moveTo(refPx3, 0);
-                puzzleCtx.lineTo(refPx3, height);
-                puzzleCtx.strokeStyle = '#ef4444';
-                puzzleCtx.lineWidth = 2.5;
-                puzzleCtx.setLineDash([5, 5]);
-                puzzleCtx.stroke();
-                puzzleCtx.setLineDash([]);
-
-                puzzleCtx.fillStyle = '#ef4444';
-                puzzleCtx.font = 'bold 11px Inter';
-                puzzleCtx.fillText(`x = ${p.refX3}`, refPx3 + 6, 55);
-            }
+                puzzleCtx.fillText(`x = ${refVal}`, refPx + 6, 25 + idx * 15);
+            });
 
             puzzleCtx.restore();
         }
@@ -1411,17 +1071,22 @@
             const p = puzzles[currentPuzzleIndex];
             let isCorrect = true;
 
-            // Check that all required correct zones are shaded by user
-            for(let key in p.correctShaded) {
-                if(!userShaded[key]) {
-                    isCorrect = false;
-                    break;
-                }
-            }
+            const boundaries = [-9999, ...p.refs, 9999];
+            for (let i = 0; i < boundaries.length - 1; i++) {
+                let sampleX;
+                if (boundaries[i] === -9999) sampleX = boundaries[i+1] - 1;
+                else if (boundaries[i+1] === 9999) sampleX = boundaries[i] + 1;
+                else sampleX = (boundaries[i] + boundaries[i+1]) / 2;
 
-            // Check that no incorrect zones are shaded by user
-            for(let key in userShaded) {
-                if(userShaded[key] && !p.correctShaded[key]) {
+                const positive = p.isPos(sampleX);
+                
+                const shouldCancelUpper = !positive;
+                const shouldCancelLower = positive;
+
+                const userCancelledUpper = !!userShadedCells[`${i}_0`];
+                const userCancelledLower = !!userShadedCells[`${i}_1`];
+
+                if (shouldCancelUpper !== userCancelledUpper || shouldCancelLower !== userCancelledLower) {
                     isCorrect = false;
                     break;
                 }
@@ -1431,10 +1096,10 @@
             fb.classList.remove('hidden');
             if(isCorrect) {
                 fb.className = "p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200";
-                fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> <strong>Ottimo lavoro!</strong> La cancellazione dello studio del segno è perfettamente corretta.';
+                fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> <strong>Ottimo lavoro!</strong> La cancellazione per lo studio del segno è perfettamente corretta.';
             } else {
                 fb.className = "p-3 rounded-xl text-xs font-medium bg-rose-50 text-rose-800 border border-rose-200";
-                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Non corretto.</strong> Rivedi gli intervalli in cui la $y \\ge 0$ e cancella le regioni corrette.';
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Non corretto.</strong> Rivedi le zone in cui $y \\ge 0$ e cancella le regioni opposte.';
                 renderMathInElement(fb, {
                     delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
                     throwOnError: false
