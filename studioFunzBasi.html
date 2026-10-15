@@ -348,10 +348,11 @@
                 <!-- Instructions & Title Card -->
                 <div class="w-full md:w-80 space-y-4 flex-shrink-0">
                     <div class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-xl space-y-2">
-                        <div id="puzzle-title" class="font-bold text-indigo-900 text-sm flex items-center">
+                        <div class="font-bold text-indigo-900 text-sm flex items-center">
                             <i class="fa-solid fa-puzzle-piece mr-2 text-indigo-600"></i>
-                            <span id="puzzle-title-text"></span>
+                            <span>Studio del segno:</span>
                         </div>
+                        <div id="puzzle-title-text" class="text-indigo-900 font-semibold text-sm"></div>
                     </div>
 
                     <div class="space-y-2 pt-2">
@@ -455,8 +456,9 @@
             1: {
                 name: "f(x) = \\frac{x^2 - 1}{x - 3}",
                 fn: (x) => Math.abs(x - 3) > 0.0001 ? (x*x - 1) / (x - 3) : NaN,
-                domainText: "x < 3 \\lor x > 3",
+                domainText: "x \\neq 3",
                 domainCheck: (x) => Math.abs(x - 3) > 0.0001,
+                domainExcluded: [3],
                 intercepts: "Asse Y: (0, 1/3). Asse X: (-1,0) e (1,0)",
                 signText: "-1 \\le x \\le 1 \\lor x > 3",
                 steps: [
@@ -470,6 +472,7 @@
                 fn: (x) => x >= -2 ? Math.sqrt(x + 2) : NaN,
                 domainText: "x \\ge -2",
                 domainCheck: (x) => x >= -2,
+                domainExcluded: [],
                 intercepts: "Asse Y: (0, \\sqrt{2}). Asse X: (-2,0)",
                 signText: "x \\ge -2",
                 steps: [
@@ -483,6 +486,7 @@
                 fn: (x) => 2*x + 4,
                 domainText: "\\forall x \\in \\mathbb{R}",
                 domainCheck: (x) => true,
+                domainExcluded: [],
                 intercepts: "Asse Y: (0,4). Asse X: (-2,0)",
                 signText: "x \\ge -2",
                 steps: [
@@ -496,6 +500,7 @@
                 fn: (x) => x > 1 ? Math.log(x - 1) : NaN,
                 domainText: "x > 1",
                 domainCheck: (x) => x > 1,
+                domainExcluded: [1],
                 intercepts: "Asse Y: Nessuna. Asse X: (2,0)",
                 signText: "x \\ge 2",
                 steps: [
@@ -760,6 +765,27 @@
             }
             ctx.restore();
 
+            // Draw Domain Excluded Vertical Red Dashed Lines if present
+            if(showDomain && activeConfig.domainExcluded && activeConfig.domainExcluded.length > 0) {
+                ctx.save();
+                activeConfig.domainExcluded.forEach(exVal => {
+                    let px = exVal * scale + offsetX;
+                    ctx.beginPath();
+                    ctx.moveTo(px, 0);
+                    ctx.lineTo(px, height);
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2.5;
+                    ctx.setLineDash([6, 6]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = 'bold 11px Inter';
+                    ctx.fillText(`x = ${exVal}`, px + 6, 30);
+                });
+                ctx.restore();
+            }
+
             if(showCurve) {
                 ctx.save();
                 ctx.strokeStyle = '#4f46e5';
@@ -832,7 +858,6 @@
         let puzzleScale = 45;
         let puzzleOffsetX = 0, puzzleOffsetY = 0;
 
-        // Structured puzzles with clean sign study conditions (y >= 0)
         const puzzles = [
             {
                 title: "x \\ge 2",
@@ -871,16 +896,16 @@
                 isPos: (x) => x <= 0
             },
             {
-                title: "x < -2 \\lor x > 3",
-                latex: "y \\ge 0 \\text{ per } x < -2 \\lor x > 3",
+                title: "x \\le -2 \\lor x \\ge 3",
+                latex: "y \\ge 0 \\text{ per } x \\le -2 \\lor x \\ge 3",
                 refs: [-2, 3],
-                isPos: (x) => x < -2 || x > 3
+                isPos: (x) => x <= -2 || x >= 3
             },
             {
-                title: "-1 < x < 4",
-                latex: "y \\ge 0 \\text{ per } -1 < x < 4",
+                title: "-1 \\le x \\le 4",
+                latex: "y \\ge 0 \\text{ per } -1 \\le x \\le 4",
                 refs: [-1, 4],
-                isPos: (x) => x > -1 && x < 4
+                isPos: (x) => x >= -1 && x <= 4
             },
             {
                 title: "-2 \\le x \\le 0 \\lor x \\ge 2",
@@ -889,10 +914,10 @@
                 isPos: (x) => (x >= -2 && x <= 0) || x >= 2
             },
             {
-                title: "1 < x < 5",
-                latex: "y \\ge 0 \\text{ per } 1 < x < 5",
+                title: "1 \\le x \\le 5",
+                latex: "y \\ge 0 \\text{ per } 1 \\le x \\le 5",
                 refs: [1, 5],
-                isPos: (x) => x > 1 && x < 5
+                isPos: (x) => x >= 1 && x <= 5
             }
         ];
 
@@ -906,7 +931,7 @@
             puzzles.forEach((p, idx) => {
                 const opt = document.createElement('option');
                 opt.value = idx;
-                opt.innerText = `Es. ${idx + 1}: y ≥ 0 per ${p.title.replace(/\\lor/g, '∨').replace(/\\le/g, '≤').replace(/\\ge/g, '≥')}`;
+                opt.innerHTML = `Es. ${idx + 1}: y ≥ 0 per ${p.title.replace(/\\lor/g, ' ∨ ').replace(/\\le/g, '≤').replace(/\\ge/g, '≥')}`;
                 selectEl.appendChild(opt);
             });
         }
@@ -985,7 +1010,6 @@
 
             const p = puzzles[currentPuzzleIndex];
 
-            // Render Shaded Regions across canvas columns
             puzzleCtx.save();
             const boundaries = [-9999, ...p.refs, 9999];
             for (let i = 0; i < boundaries.length - 1; i++) {
@@ -996,13 +1020,11 @@
                 const pxRight = xRightCoord === 9999 ? width : xRightCoord * puzzleScale + puzzleOffsetX;
                 const regionWidth = pxRight - pxLeft;
 
-                // Upper half-plane (row 0)
                 if (userShadedCells[`${i}_0`]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
                     puzzleCtx.fillRect(pxLeft, 0, regionWidth, puzzleOffsetY);
                     drawDiagonalHatch(puzzleCtx, pxLeft, 0, regionWidth, puzzleOffsetY, 12);
                 }
-                // Lower half-plane (row 1)
                 if (userShadedCells[`${i}_1`]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
                     puzzleCtx.fillRect(pxLeft, puzzleOffsetY, regionWidth, height - puzzleOffsetY);
@@ -1011,7 +1033,6 @@
             }
             puzzleCtx.restore();
 
-            // Render Axes & Grid Lines
             puzzleCtx.save();
             const gridInterval = 1;
             const leftX = -puzzleOffsetX / puzzleScale;
@@ -1047,7 +1068,6 @@
                 puzzleCtx.stroke();
             }
 
-            // Draw Reference Lines
             p.refs.forEach((refVal, idx) => {
                 const refPx = refVal * puzzleScale + puzzleOffsetX;
                 puzzleCtx.beginPath();
