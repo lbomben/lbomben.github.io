@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispense Interattive: Studio di Funzione</title>
+    <!-- Tailwind CSS for modern, sleek UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- KaTeX for pristine LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-indigo-600 p-2.5 rounded-xl shadow font-bold text-xl">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">AnalisiMatematica.js</h1>
+                    <p class="text-xs text-indigo-200">Dispense Lineari &bull; Primi Passi dello Studio di Funzione</p>
+                </div>
+            </div>
+            <nav class="flex space-x-2 mt-2 sm:mt-0">
+                <button onclick="switchTab('teoria')" id="btn-teoria" class="px-4 py-2 rounded-lg font-medium text-sm transition bg-indigo-700 text-white shadow-inner">
+                    <i class="fa-solid fa-book-open mr-1.5"></i> Dispense & Teoria
+                </button>
+                <button onclick="switchTab('laboratorio')" id="btn-laboratorio" class="px-4 py-2 rounded-lg font-medium text-sm transition hover:bg-indigo-500 text-indigo-100">
+                    <i class="fa-solid fa-desktop mr-1.5"></i> Laboratorio Grafico
+                </button>
+                <button onclick="switchTab('quiz')" id="btn-quiz" class="px-4 py-2 rounded-lg font-medium text-sm transition hover:bg-indigo-500 text-indigo-100">
+                    <i class="fa-solid fa-circle-question mr-1.5"></i> Esercizi Interattivi
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+        <section id="tab-teoria" class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                <div class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold uppercase tracking-wider">
+                    Manuale Teorico Lineare
+                </div>
+                <h2 class="text-3xl font-bold text-slate-900 tracking-tight">I Primi Passi dello Studio di Funzione</h2>
+                <p class="text-slate-600 text-base leading-relaxed">
+                    Lo studio di una funzione $y = f(x)$ è un procedimento logico-analitico fondamentale per tracciarne il grafico probabile nel piano cartesiano. Prima di affrontare derivate o limiti, occorre completare passaggi preliminari essenziali:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">1</span>
+                        <span class="font-semibold text-slate-800 text-sm">Determinazione del Dominio</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">2</span>
+                        <span class="font-semibold text-slate-800 text-sm">Intersezioni con gli Assi</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">3</span>
+                        <span class="font-semibold text-slate-800 text-sm">Studio del Segno ($y \ge 0$)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Linear Modules with Vectorial Graphics -->
+            <div class="space-y-6">
+                <!-- Step 1: Dominio -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg">1</div>
+                        <h3 class="text-xl font-bold text-slate-900">Il Dominio (o Insieme di Esistenza)</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Il dominio $D$ è l'insieme di tutti i valori reali di $x$ per cui l'espressione $f(x)$ ha significato numerico reale. Esistono tre restrizioni principali da ricordare:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100 space-y-2">
+                            <h4 class="font-bold text-blue-900 text-sm">Funzioni Fratte</h4>
+                            <p class="text-xs text-slate-600">Se $f(x) = \frac{N(x)}{D(x)}$, si pone il denominatore diverso da zero: <br> $D(x) \neq 0$.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100 space-y-2">
+                            <h4 class="font-bold text-blue-900 text-sm">Funzioni Irrazionali (Pari)</h4>
+                            <p class="text-xs text-slate-600">Se $f(x) = \sqrt[2n]{A(x)}$, si pone l'argomento maggiore o uguale a zero: <br> $A(x) \ge 0$.</p>
+                        </div>
+                        <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100 space-y-2">
+                            <h4 class="font-bold text-blue-900 text-sm">Funzioni Logaritmiche</h4>
+                            <p class="text-xs text-slate-600">Se $f(x) = \ln(A(x))$, si pone l'argomento strettamente positivo: <br> $A(x) > 0$.</p>
+                        </div>
+                    </div>
+
+                    <!-- Examples for Domain with Vectorial Graphs -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                        <h5 class="font-semibold text-slate-800 text-xs uppercase tracking-wider">Esempi pratici di calcolo del Dominio (in forma di intervalli):</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                            
+                            <!-- Domain Example A -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                                <span class="block font-bold text-slate-800 text-xs text-center">$f(x) = \frac{x^2 - 1}{x - 3}$</span>
+                                <div class="h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 250 150" class="w-full h-full">
+                                        <line x1="20" y1="75" x2="230" y2="75" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="70" y1="20" x2="70" y2="130" stroke="#94a3b8" stroke-width="1.5" />
+                                        <rect x="140" y="20" width="20" height="110" fill="#fef2f2" fill-opacity="0.8"/>
+                                        <line x1="150" y1="20" x2="150" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
+                                        <text x="135" y="15" font-size="9" fill="#ef4444" font-weight="bold">Escluso x = 3</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>Esempio A (Fratta):</strong> Denominatore $x - 3 \neq 0 \implies x \neq 3$. In notazione ad intervalli: $D = (-\infty, 3) \cup (3, +\infty)$.
+                                </p>
+                            </div>
+
+                            <!-- Domain Example B -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                                <span class="block font-bold text-slate-800 text-xs text-center">$f(x) = \sqrt{x+2}$</span>
+                                <div class="h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 250 150" class="w-full h-full">
+                                        <line x1="20" y1="75" x2="230" y2="75" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="110" y1="20" x2="110" y2="130" stroke="#94a3b8" stroke-width="1.5" />
+                                        <rect x="20" y="20" width="60" height="110" fill="#fef2f2" fill-opacity="0.8"/>
+                                        <line x1="80" y1="20" x2="80" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
+                                        <circle cx="80" cy="75" r="4" fill="#4f46e5"/>
+                                        <text x="45" y="15" font-size="9" fill="#ef4444" font-weight="bold">Escluso x &lt; -2</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>Esempio B (Irrazionale):</strong> Si pone $x + 2 \ge 0 \implies x \ge -2$. In notazione ad intervalli: $D = [-2, +\infty)$.
+                                </p>
+                            </div>
+
+                            <!-- Domain Example C -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                                <span class="block font-bold text-slate-800 text-xs text-center">$f(x) = \ln(x-1)$</span>
+                                <div class="h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 250 150" class="w-full h-full">
+                                        <line x1="20" y1="75" x2="230" y2="75" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="100" y1="20" x2="100" y2="130" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
+                                        <rect x="20" y="20" width="80" height="110" fill="#fef2f2" fill-opacity="0.8"/>
+                                        <text x="50" y="15" font-size="9" fill="#ef4444" font-weight="bold">Escluso x &le; 1</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>Esempio C (Logaritmica):</strong> Si pone $x - 1 > 0 \implies x > 1$. In notazione ad intervalli: $D = (1, +\infty)$.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Intersezioni con gli Assi -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg">2</div>
+                        <h3 class="text-xl font-bold text-slate-900">Intersezioni con gli Assi</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Individuare i punti in cui il grafico interseca gli assi cartesiani fornisce punti di passaggio certi per la curva nel piano.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 space-y-2">
+                            <h4 class="font-bold text-emerald-900 text-sm">Intersezione con l'Asse $Y$ ($x = 0$)</h4>
+                            <p class="text-xs text-slate-600">Si calcola valutando $f(0)$, purché $0$ appartenga al dominio. Si ottiene il punto $P(0, f(0))$.</p>
+                        </div>
+                        <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 space-y-2">
+                            <h4 class="font-bold text-emerald-900 text-sm">Intersezioni con l'Asse $X$ ($y = 0$)</h4>
+                            <p class="text-xs text-slate-600">Si risolve l'equazione $f(x) = 0$. Le soluzioni reali forniscono i punti $(x_1, 0), (x_2, 0)$.</p>
+                        </div>
+                    </div>
+
+                    <!-- Examples for Intersections with Vectorial Graphs -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                        <h5 class="font-semibold text-slate-800 text-xs uppercase tracking-wider">Esempi pratici di calcolo delle Intersezioni:</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                            
+                            <!-- Intersections Example A -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                                <span class="block font-bold text-slate-800 text-xs text-center">$y = 2x + 4$</span>
+                                <div class="h-36 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 250 150" class="w-full h-full">
+                                        <line x1="20" y1="100" x2="230" y2="100" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="100" y1="20" x2="100" y2="130" stroke="#94a3b8" stroke-width="1.5" />
+                                        <circle cx="100" cy="60" r="4.5" fill="#10b981"/>
+                                        <circle cx="70" cy="100" r="4.5" fill="#10b981"/>
+                                        <text x="108" y="63" font-size="9" fill="#047857" font-weight="bold">(0, 4)</text>
+                                        <text x="65" y="115" font-size="9" fill="#047857" font-weight="bold">(-2, 0)</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>Esempio A ($y = 2x+4$):</strong> Asse $Y$ ($x=0 \implies y=4$, punto $(0,4)$). Asse $X$ ($y=0 \implies 2x+4=0 \implies x=-2$, punto $(-2,0)$).
+                                </p>
+                            </div>
+
+                            <!-- Intersections Example B -->
+                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                                <span class="block font-bold text-slate-800 text-xs text-center">$y = x^2 - 4$</span>
+                                <div class="h-36 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 250 150" class="w-full h-full">
+                                        <line x1="20" y1="90" x2="230" y2="90" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="125" y1="20" x2="125" y2="130" stroke="#94a3b8" stroke-width="1.5" />
+                                        <circle cx="125" cy="120" r="4.5" fill="#10b981"/>
+                                        <circle cx="95" cy="90" r="4.5" fill="#10b981"/>
+                                        <circle cx="155" cy="90" r="4.5" fill="#10b981"/>
+                                        <text x="132" y="123" font-size="9" fill="#047857" font-weight="bold">(0, -4)</text>
+                                        <text x="85" y="80" font-size="9" fill="#047857" font-weight="bold">(-2, 0)</text>
+                                        <text x="148" y="80" font-size="9" fill="#047857" font-weight="bold">(2, 0)</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    <strong>Esempio B ($y = x^2-4$):</strong> Asse $Y$ ($f(0)=-4$, punto $(0,-4)$). Asse $X$ ($x^2-4=0 \implies x=\pm 2$, punti $(-2,0)$ e $(2,0)$).
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Studio del Segno -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg">3</div>
+                        <h3 class="text-xl font-bold text-slate-900">Studio del Segno ($y \ge 0$) &mdash; Guida Generale Passo per Passo</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Lo studio del segno consiste nel determinare per quali valori del dominio la $y$ risulta positiva, nulla o negativa. Questo passaggio geometrico stabilisce dove il grafico si trova sopra l'asse delle ascisse e dove si trova sotto, permettendo di cancellare le regioni del piano in cui il grafico non può transitare.
+                    </p>
+
+                    <!-- General Step-by-Step Guide -->
+                    <div class="p-5 bg-amber-50/50 rounded-xl border border-amber-200 space-y-3">
+                        <h4 class="font-bold text-amber-900 text-sm uppercase tracking-wider"><i class="fa-solid fa-list-ol mr-1.5 text-amber-600"></i> Procedimento Generale da Seguire:</h4>
+                        <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
+                            <li><strong>Impostare la disequazione:</strong> Si pone sempre l'espressione algebrica maggiore o uguale a zero: <br> $f(x) \ge 0$ (ovvero $y \ge 0$).</li>
+                            <li><strong>Risolvere la disequazione:</strong> Si scompongono i fattori numerici e letterali, determinando gli intervalli in cui la disequazione è soddisfatta.</li>
+                            <li><strong>3. Rappresentare gli intervalli in cui la y è positiva ($y \ge 0$):</strong> In queste zone il grafico si trova nel semipiano superiore ($y > 0$). Geometricamente, <strong>si cancellano (con tratteggio diagonale continuo) le zone del semipiano inferiore ($y < 0$)</strong> corrispondenti agli intervalli in cui la y risulta negativa.</li>
+                            <li><strong>4. Rappresentare gli intervalli in cui la y è negativa ($y < 0$):</strong> In queste zone il grafico si trova nel semipiano inferiore ($y < 0$). Geometricamente, <strong>si cancellano le zone del semipiano superiore ($y > 0$)</strong> corrispondenti agli intervalli in cui la y risulta positiva o nulla.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Example: Linear Function -->
+                    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
+                        <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center">
+                            <i class="fa-solid fa-code text-indigo-600 mr-1.5"></i> Esempio (Funzione Lineare): $y = 2x + 4$
+                        </h5>
+                        
+                        <div class="space-y-2 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            <p><strong>1. Impostazione:</strong> $2x + 4 \ge 0$.</p>
+                            <p><strong>2. Risoluzione:</strong> $2x \ge -4 \implies x \ge -2$. La $y$ è positiva per $x \ge -2$ e negativa per $x < -2$.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                            <!-- Case y >= 0 -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                                <span class="block font-bold text-slate-800 text-xs text-center">3. Intervallo in cui la y è positiva: $x \ge -2 \implies y \ge 0$</span>
+                                <div class="h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 300 200" class="w-full h-full">
+                                        <!-- Axes -->
+                                        <line x1="20" y1="120" x2="280" y2="120" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="150" y1="20" x2="150" y2="180" stroke="#94a3b8" stroke-width="1.5" />
+                                        
+                                        <!-- x = -2 reference line placed at x=90 (150 - 60px left) -->
+                                        <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
+                                        <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
+
+                                        <!-- Hatched region below x < -2 (right side, lower half y > 120) -->
+                                        <g clip-path="url(#lower-clip-right)">
+                                            <rect x="90" y="120" width="190" height="60" fill="#fef3c7" fill-opacity="0.5"/>
+                                            <path d="M 90,130 L 150,190 M 120,130 L 180,190 M 150,130 L 210,190 M 180,130 L 240,190 M 210,130 L 270,190 M 240,130 L 300,190" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
+                                        </g>
+                                        <clipPath id="lower-clip-right">
+                                            <rect x="90" y="120" width="190" height="60"/>
+                                        </clipPath>
+                                        
+                                        <text x="195" y="145" font-size="9" fill="#b45309" font-weight="bold">Cancellato</text>
+                                        <text x="180" y="90" font-size="11" fill="#4f46e5" font-weight="bold">y &ge; 0 (Sopra)</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Poiché la $y$ è <strong>positiva</strong> ($y \ge 0$) nell'intervallo $x \ge -2$ (a destra di $x = -2$), il grafico deve trovarsi nel semipiano superiore. Di conseguenza, nel semipiano inferiore ($y < 0$), <strong>si cancella la zona situata a destra di $x = -2$</strong> (poiché lì la $y$ è negativa).
+                                </p>
+                            </div>
+
+                            <!-- Case y < 0 -->
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                                <span class="block font-bold text-slate-800 text-xs text-center">4. Intervallo in cui la y è negativa: $x < -2 \implies y < 0$</span>
+                                <div class="h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 relative">
+                                    <svg viewBox="0 0 300 200" class="w-full h-full">
+                                        <!-- Axes -->
+                                        <line x1="20" y1="120" x2="280" y2="120" stroke="#94a3b8" stroke-width="1.5" />
+                                        <line x1="150" y1="20" x2="150" y2="180" stroke="#94a3b8" stroke-width="1.5" />
+                                        
+                                        <!-- x = -2 reference line placed at x=90 -->
+                                        <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
+                                        <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
+
+                                        <!-- Retain the previous positive/negative hatch representation and add upper left cancellation -->
+                                        <g clip-path="url(#lower-clip-right-retained)">
+                                            <rect x="90" y="120" width="190" height="60" fill="#fef3c7" fill-opacity="0.3"/>
+                                            <path d="M 90,130 L 150,190 M 120,130 L 180,190 M 150,130 L 210,190 M 180,130 L 240,190 M 210,130 L 270,190 M 240,130 L 300,190" stroke="#d97706" stroke-width="1.0" stroke-opacity="0.5"/>
+                                        </g>
+                                        <clipPath id="lower-clip-right-retained">
+                                            <rect x="90" y="120" width="190" height="60"/>
+                                        </clipPath>
+
+                                        <!-- Hatched region above x >= -2 (left side, upper half y < 120) -->
+                                        <g clip-path="url(#upper-clip-left)">
+                                            <rect x="20" y="20" width="70" height="100" fill="#fef3c7" fill-opacity="0.5"/>
+                                            <path d="M 20,40 L 90,-30 M 40,40 L 110,-30 M 60,40 L 130,-30" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
+                                        </g>
+                                        <clipPath id="upper-clip-left">
+                                            <rect x="20" y="20" width="70" height="100"/>
+                                        </clipPath>
+                                        
+                                        <text x="35" y="70" font-size="10" fill="#b45309" font-weight="bold">Cancellato</text>
+                                        <text x="35" y="145" font-size="11" fill="#4f46e5" font-weight="bold">y &lt; 0 (Sotto)</text>
+                                    </svg>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Poiché la $y$ è <strong>negativa</strong> ($y < 0$) nell'intervallo $x < -2$ (a sinistra di $x = -2$), il grafico deve trovarsi nel semipiano inferiore. Di conseguenza, nel semipiano superiore ($y > 0$), <strong>si cancella la zona situata a sinistra di $x = -2$</strong> (poiché lì la $y$ è positiva), mantenendo visibile anche il precedente tratteggio.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-laboratorio" class="hidden space-y-4">
+            <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 flex flex-col lg:flex-row gap-6">
+                
+                <!-- Controls Sidebar -->
+                <div class="w-full lg:w-96 space-y-4 flex-shrink-0">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Laboratorio Grafico</h2>
+                        <p class="text-xs text-slate-500 mt-1">Seleziona una funzione di esempio per visualizzare le zone di piano bloccate ed escluse sul piano cartesiano bianco con tratteggio diagonale continuo.</p>
+                    </div>
+
+                    <!-- Preset Selector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Funzioni di Esempio</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="setPreset(1)" id="preset-btn-1" class="text-left px-3.5 py-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition flex items-center justify-between text-sm">
+                                <span class="font-medium text-slate-800">$f(x) = \frac{x^2 - 1}{x - 3}$</span>
+                                <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">Fratta</span>
+                            </button>
+                            <button onclick="setPreset(2)" id="preset-btn-2" class="text-left px-3.5 py-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition flex items-center justify-between text-sm">
+                                <span class="font-medium text-slate-800">$f(x) = \sqrt{x+2}$</span>
+                                <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Irrazionale</span>
+                            </button>
+                            <button onclick="setPreset(3)" id="preset-btn-3" class="text-left px-3.5 py-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition flex items-center justify-between text-sm">
+                                <span class="font-medium text-slate-800">$y = 2x + 4$</span>
+                                <span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">Primo Grado</span>
+                            </button>
+                            <button onclick="setPreset(4)" id="preset-btn-4" class="text-left px-3.5 py-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition flex items-center justify-between text-sm">
+                                <span class="font-medium text-slate-800">$f(x) = \ln(x-1)$</span>
+                                <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">Logaritmica</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Layer Toggles -->
+                    <div class="space-y-2.5 pt-2 border-t border-slate-200">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Visualizzazione Strati</label>
+                        
+                        <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
+                            <span class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <span class="text-slate-700 font-medium">Esclusioni di Dominio</span>
+                            </span>
+                            <input type="checkbox" id="layer-domain" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
+                            <span class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="text-slate-700 font-medium">Cancellazione Studio del Segno</span>
+                            </span>
+                            <input type="checkbox" id="layer-sign" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
+                            <span class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span class="text-slate-700 font-medium">Intersezioni Assi</span>
+                            </span>
+                            <input type="checkbox" id="layer-intercepts" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        </label>
+
+                        <label class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer text-sm">
+                            <span class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
+                                <span class="text-slate-700 font-medium">Grafico Funzione $f(x)$</span>
+                            </span>
+                            <input type="checkbox" id="layer-curve" checked onchange="redrawCanvas()" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                        </label>
+                    </div>
+
+                    <!-- Analysis breakdown card with interactive toggle for steps -->
+                    <div id="analysis-card" class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-xl space-y-3 text-xs">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-indigo-900 flex items-center"><i class="fa-solid fa-file-lines mr-1.5"></i> Report Analitico</h4>
+                            <button onclick="toggleAnalysisSteps()" id="toggle-steps-btn" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-medium transition shadow-sm">
+                                <i class="fa-solid fa-list-check mr-1"></i> Mostra Svolgimento
+                            </button>
+                        </div>
+                        <div id="analysis-content" class="text-indigo-800 space-y-1.5">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas Workspace with WHITE background -->
+                <div class="flex-grow flex flex-col">
+                    <div class="bg-white rounded-2xl overflow-hidden relative shadow-inner border border-slate-200 flex-grow flex items-center justify-center min-h-[450px]">
+                        <canvas id="mathCanvas" class="w-full h-full cursor-crosshair block"></canvas>
+                        
+                        <!-- Floating legend overlay -->
+                        <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md text-slate-800 p-3 rounded-xl border border-slate-200 shadow-md text-xs space-y-1.5 pointer-events-none">
+                            <div class="font-semibold text-indigo-700 mb-1">Legenda Grafica:</div>
+                            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span><span>Grafico $f(x)$</span></div>
+                            <div class="flex items-center space-x-2"><span class="w-3 h-3 bg-amber-500/20 border border-amber-400 inline-block rounded-sm"></span><span>Tratteggio Diagonale Continuo</span></div>
+                            <div class="flex items-center space-x-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Intersezioni Assi</span></div>
+                        </div>
+
+                        <!-- Canvas Zoom / Center controls -->
+                        <div class="absolute top-4 right-4 flex space-x-1.5 bg-white/90 backdrop-blur-md p-1 rounded-xl border border-slate-200 shadow-md">
+                            <button onclick="zoomIn()" class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition" title="Zoom In"><i class="fa-solid fa-plus text-xs"></i></button>
+                            <button onclick="zoomOut()" class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition" title="Zoom Out"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <button onclick="resetView()" class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition" title="Centra Origine"><i class="fa-solid fa-expand text-xs"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-2 px-1 text-xs text-slate-500">
+                        <span><i class="fa-solid fa-circle-info mr-1"></i> Trascina con il mouse per traslare. Usa la rotellina per lo zoom.</span>
+                        <span id="coordinates-display" class="font-mono bg-slate-100 px-2 py-1 rounded text-slate-700">X: 0.00, Y: 0.00</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="tab-quiz" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-3">
+                <div class="flex flex-wrap justify-between items-center gap-4">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full">Palestra Interattiva di Cancellazione</span>
+                        <h2 class="text-2xl font-bold text-slate-900 tracking-tight mt-1">Esercizi Interattivi</h2>
+                        <p class="text-slate-600 text-sm leading-relaxed mt-1">
+                            Seleziona un esercizio dal menu. Clicca sulle sezioni o sui riquadri del piano cartesiano per applicare il tratteggio di cancellazione corretto in base alla condizione data, quindi verifica il risultato!
+                        </p>
+                    </div>
+                    <!-- Exercise Selector with clean text -->
+                    <div class="flex items-center space-x-2">
+                        <label class="text-xs font-bold text-slate-700">Esercizio:</label>
+                        <select id="puzzle-select" onchange="loadPuzzle(this.value)" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <!-- Populated dynamically via JS -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6">
+                <!-- Instructions / Goal card -->
+                <div class="w-full md:w-80 space-y-4 flex-shrink-0">
+                    <div class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-xl space-y-2">
+                        <h3 id="puzzle-title" class="font-bold text-indigo-900 text-sm flex items-center"><i class="fa-solid fa-puzzle-piece mr-1.5"></i> <span>Condizione da Applicare</span></h3>
+                        <p id="puzzle-desc" class="text-xs text-indigo-800 leading-relaxed">
+                            Caricamento esercizio...
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <div class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Istruzioni d'Uso:</div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                            <li>Osserva le linee di riferimento sul piano cartesiano.</li>
+                            <li><strong>Clicca</strong> sulle regioni di piano o sugli intervalli che ritieni vadano cancellati.</li>
+                            <li>Puoi ricliccare per rimuovere il tratteggio.</li>
+                            <li>Premi <strong>Verifica Risposta</strong> per confrontare il tuo lavoro.</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex space-x-2 pt-2">
+                        <button onclick="verifyPuzzle()" class="flex-grow px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-check"></i> <span>Verifica Risposta</span>
+                        </button>
+                        <button onclick="resetPuzzle()" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs rounded-xl transition">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                    <div id="puzzle-feedback" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+                </div>
+
+                <!-- Puzzle Canvas Workspace -->
+                <div class="flex-grow flex flex-col">
+                    <div class="bg-white rounded-xl overflow-hidden relative shadow-inner border border-slate-200 flex-grow flex items-center justify-center min-h-[400px]">
+                        <canvas id="puzzleCanvas" class="w-full h-full cursor-pointer block"></canvas>
+                        <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] font-medium pointer-events-none shadow-sm">
+                            <i class="fa-solid fa-hand-pointer mr-1 text-indigo-600"></i> Clicca nelle zone di piano per cancellarle o ripulirle
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="message-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-slate-200 space-y-4">
+            <h3 id="modal-title" class="font-bold text-slate-900 text-lg">Notifica</h3>
+            <p id="modal-text" class="text-slate-600 text-sm leading-relaxed"></p>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs rounded-xl transition">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize KaTeX auto-rendering on load
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        });
+
+        let currentTab = 'teoria';
+        function switchTab(tabId) {
+            currentTab = tabId;
+            ['teoria', 'laboratorio', 'quiz'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('btn-' + t).classList.remove('bg-indigo-700', 'text-white', 'shadow-inner');
+                document.getElementById('btn-' + t).classList.add('hover:bg-indigo-500', 'text-indigo-100');
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('bg-indigo-700', 'text-white', 'shadow-inner');
+            document.getElementById('btn-' + tabId).classList.remove('hover:bg-indigo-500', 'text-indigo-100');
+
+            if(tabId === 'laboratorio') {
+                setTimeout(initCanvas, 50);
+            }
+            if(tabId === 'quiz') {
+                setTimeout(initPuzzleCanvas, 50);
+            }
+        }
+
+        function showMessage(title, text) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-text').innerText = text;
+            document.getElementById('message-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('message-modal').classList.add('hidden');
+        }
+
+        let currentPreset = 1;
+        let showAnalysisStepsState = false;
+        
+        const presets = {
+            1: {
+                name: "f(x) = \\frac{x^2 - 1}{x - 3}",
+                fn: (x) => Math.abs(x - 3) > 0.0001 ? (x*x - 1) / (x - 3) : NaN,
+                domainText: "x < 3 \\text{ vel } x > 3",
+                domainCheck: (x) => Math.abs(x - 3) > 0.0001,
+                intercepts: "Asse Y: (0, 1/3). Asse X: (-1,0) e (1,0)",
+                signText: "-1 \\le x \\le 1 \\text{ vel } x > 3",
+                steps: [
+                    "<strong>1. Dominio:</strong> Denominatore $x - 3 \\neq 0 \\implies x \\neq 3$.",
+                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = \\frac{0^2 - 1}{0 - 3} = \\frac{-1}{-3} = \\frac{1}{3}$. Punto $(0, 1/3)$.",
+                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> Numeratore $x^2 - 1 = 0 \\implies x = \\pm 1$. Punti $(-1,0)$ e $(1,0)$.",
+                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> Numeratore $\\ge 0$ per $x \\le -1 \\text{ vel } x \\ge 1$. Denominatore $>0$ per $x > 3$. Studio del segno: $y \\ge 0$ per $-1 \\le x \\le 1 \\text{ vel } x > 3$."
+                ]
+            },
+            2: {
+                name: "f(x) = \\sqrt{x+2}",
+                fn: (x) => x >= -2 ? Math.sqrt(x + 2) : NaN,
+                domainText: "x \\ge -2",
+                domainCheck: (x) => x >= -2,
+                intercepts: "Asse Y: (0, \\sqrt{2}). Asse X: (-2,0)",
+                signText: "x \\ge -2",
+                steps: [
+                    "<strong>1. Dominio:</strong> Argomento della radice $\\ge 0 \\implies x + 2 \\ge 0 \\implies x \\ge -2$.",
+                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = \\sqrt{0+2} = \\sqrt{2} \\approx 1.41$. Punto $(0, \\sqrt{2})$.",
+                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> $\\sqrt{x+2} = 0 \\implies x+2 = 0 \\implies x = -2$. Punto $(-2,0)$.",
+                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> Essendo una radice quadrata aritmetica, $\\sqrt{x+2} \\ge 0$ per tutto il dominio $x \\ge -2$."
+                ]
+            },
+            3: {
+                name: "y = 2x + 4",
+                fn: (x) => 2*x + 4,
+                domainText: "\\forall x \\in \\mathbb{R}",
+                domainCheck: (x) => true,
+                intercepts: "Asse Y: (0,4). Asse X: (-2,0)",
+                signText: "x \\ge -2",
+                steps: [
+                    "<strong>1. Dominio:</strong> Funzione polinomiale intera definita ovunque.",
+                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = 2(0) + 4 = 4$. Punto $(0,4)$.",
+                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> $2x + 4 = 0 \\implies 2x = -4 \\implies x = -2$. Punto $(-2,0)$.",
+                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> $2x + 4 \\ge 0 \\implies 2x \\ge -4 \\implies x \\ge -2$."
+                ]
+            },
+            4: {
+                name: "f(x) = \\ln(x-1)",
+                fn: (x) => x > 1 ? Math.log(x - 1) : NaN,
+                domainText: "x > 1",
+                domainCheck: (x) => x > 1,
+                intercepts: "Asse Y: Nessuna. Asse X: (2,0)",
+                signText: "x \\ge 2",
+                steps: [
+                    "<strong>1. Dominio:</strong> Argomento del logaritmo $>0 \\implies x - 1 > 0 \\implies x > 1$.",
+                    "<strong>2. Intersezioni Asse Y ($x=0$):</strong> Non esiste poiché $0$ non è maggiore di $1$.",
+                    "<strong>3. Intersezioni Asse X ($y=0$):</strong> $\\ln(x-1) = 0 \\implies x - 1 = e^0 = 1 \\implies x = 2$. Punto $(2,0)$.",
+                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> $\\ln(x-1) \\ge 0 \\implies x-1 \\ge e^0 = 1 \\implies x \\ge 2$."
+                ]
+            }
+        };
+
+        let activeConfig = presets[1];
+
+        function setPreset(id) {
+            currentPreset = id;
+            activeConfig = presets[id];
+            showAnalysisStepsState = false;
+            
+            for(let i=1; i<=4; i++) {
+                const btn = document.getElementById('preset-btn-' + i);
+                if(btn) {
+                    if(i === id) {
+                        btn.classList.add('border-indigo-500', 'bg-indigo-50/50', 'ring-1', 'ring-indigo-500');
+                    } else {
+                        btn.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'ring-1', 'ring-indigo-500');
+                    }
+                }
+            }
+
+            updateAnalysisCard();
+            redrawCanvas();
+        }
+
+        function toggleAnalysisSteps() {
+            showAnalysisStepsState = !showAnalysisStepsState;
+            const btn = document.getElementById('toggle-steps-btn');
+            if(showAnalysisStepsState) {
+                btn.innerHTML = '<i class="fa-solid fa-list mr-1"></i> Nascondi Svolgimento';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-list-check mr-1"></i> Mostra Svolgimento';
+            }
+            updateAnalysisCard();
+        }
+
+        function updateAnalysisCard() {
+            const container = document.getElementById('analysis-content');
+            if(!showAnalysisStepsState) {
+                container.innerHTML = `
+                    <div><strong>Dominio:</strong> $${activeConfig.domainText}$</div>
+                    <div><strong>Intersezioni:</strong> ${activeConfig.intercepts}</div>
+                    <div><strong>Studio del segno:</strong> $${activeConfig.signText}$</div>
+                `;
+            } else {
+                let stepsHtml = '<div class="space-y-1.5 pt-1 text-[11px] border-t border-indigo-200 mt-2">';
+                activeConfig.steps.forEach(step => {
+                    stepsHtml += `<div class="bg-white/80 p-1.5 rounded border border-indigo-100">${step}</div>`;
+                });
+                stepsHtml += '</div>';
+                container.innerHTML = `
+                    <div><strong>Dominio:</strong> $${activeConfig.domainText}$</div>
+                    <div><strong>Intersezioni:</strong> ${activeConfig.intercepts}</div>
+                    <div><strong>Studio del segno:</strong> $${activeConfig.signText}$</div>
+                    ${stepsHtml}
+                `;
+            }
+            renderMathInElement(container, {
+                delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
+                throwOnError: false
+            });
+        }
+
+        let canvas, ctx;
+        let scale = 40;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let startX, startY;
+
+        function initCanvas() {
+            canvas = document.getElementById('mathCanvas');
+            if(!canvas) return;
+            ctx = canvas.getContext('2d');
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            canvas.onmousedown = (e) => {
+                isDragging = true;
+                startX = e.clientX - offsetX;
+                startY = e.clientY - offsetY;
+            };
+
+            window.onmousemove = (e) => {
+                if(!isDragging) return;
+                offsetX = e.clientX - startX;
+                offsetY = e.clientY - startY;
+                redrawCanvas();
+                updateCoordinates(e);
+            };
+
+            window.onmouseup = () => { isDragging = false; };
+
+            canvas.onmousemove = (e) => {
+                if(isDragging) {
+                    offsetX = e.clientX - startX;
+                    offsetY = e.clientY - startY;
+                    redrawCanvas();
+                }
+                updateCoordinates(e);
+            };
+
+            canvas.onwheel = (e) => {
+                e.preventDefault();
+                const zoomFactor = 1.1;
+                if(e.deltaY < 0) {
+                    scale *= zoomFactor;
+                } else {
+                    scale /= zoomFactor;
+                }
+                scale = Math.max(10, Math.min(300, scale));
+                redrawCanvas();
+            };
+
+            updateAnalysisCard();
+            resetView();
+        }
+
+        function resizeCanvas() {
+            if(!canvas) return;
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+            redrawCanvas();
+        }
+
+        function resetView() {
+            if(!canvas) return;
+            offsetX = canvas.width / 2;
+            offsetY = canvas.height / 2;
+            scale = 50;
+            redrawCanvas();
+        }
+
+        function zoomIn() {
+            scale = Math.min(300, scale * 1.25);
+            redrawCanvas();
+        }
+
+        function zoomOut() {
+            scale = Math.max(10, scale / 1.25);
+            redrawCanvas();
+        }
+
+        function updateCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX - rect.left;
+            const clientY = e.clientY - rect.top;
+            const x = (clientX - offsetX) / scale;
+            const y = -(clientY - offsetY) / scale;
+            const disp = document.getElementById('coordinates-display');
+            if(disp) {
+                disp.innerText = `X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`;
+            }
+        }
+
+        function drawDiagonalHatch(ctx, x, y, w, h, spacing = 12) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x, y, w, h);
+            ctx.clip();
+
+            ctx.strokeStyle = 'rgba(217, 119, 6, 0.55)';
+            ctx.lineWidth = 1.2;
+
+            const maxDim = Math.max(w, h) + Math.abs(x) + Math.abs(y);
+            for (let d = -maxDim; d <= maxDim; d += spacing) {
+                ctx.beginPath();
+                ctx.moveTo(x + d, y);
+                ctx.lineTo(x + d + h, y + h);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function redrawCanvas() {
+            if(!ctx || !canvas) return;
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const showDomain = document.getElementById('layer-domain').checked;
+            const showIntercepts = document.getElementById('layer-intercepts').checked;
+            const showSign = document.getElementById('layer-sign').checked;
+            const showCurve = document.getElementById('layer-curve').checked;
+
+            if(showDomain && activeConfig.domainCheck) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.08)'; 
+                const step = 2;
+                for(let px = 0; px < width; px += step) {
+                    let x = (px - offsetX) / scale;
+                    if(!activeConfig.domainCheck(x)) {
+                        ctx.fillRect(px, 0, step, height);
+                    }
+                }
+                ctx.restore();
+            }
+
+            if(showSign) {
+                ctx.save();
+                const step = 4;
+                for(let px = 0; px < width; px += step) {
+                    let x = (px - offsetX) / scale;
+                    
+                    if(activeConfig.domainCheck && !activeConfig.domainCheck(x)) continue;
+
+                    try {
+                        let yVal = activeConfig.fn(x);
+                        if(isNaN(yVal) || !isFinite(yVal)) continue;
+
+                        let pyAxis = offsetY;
+
+                        if(yVal >= 0) {
+                            ctx.fillStyle = 'rgba(245, 158, 11, 0.06)';
+                            ctx.fillRect(px, pyAxis, step, height - pyAxis);
+                            drawDiagonalHatch(ctx, px, pyAxis, step, height - pyAxis, 14);
+                        } else if(yVal < 0) {
+                            ctx.fillStyle = 'rgba(245, 158, 11, 0.06)';
+                            ctx.fillRect(px, 0, step, pyAxis);
+                            drawDiagonalHatch(ctx, px, 0, step, pyAxis, 14);
+                        }
+                    } catch(e) {}
+                }
+                ctx.restore();
+            }
+
+            ctx.save();
+            const gridInterval = scale < 20 ? 2 : (scale > 100 ? 0.5 : 1);
+            const leftX = -offsetX / scale;
+            const rightX = (width - offsetX) / scale;
+            const bottomY = (height - offsetY) / scale;
+            const topY = -offsetY / scale;
+
+            let startGridX = Math.floor(leftX / gridInterval) * gridInterval;
+            for(let x = startGridX; x <= rightX; x += gridInterval) {
+                let px = x * scale + offsetX;
+                ctx.beginPath();
+                ctx.moveTo(px, 0);
+                ctx.lineTo(px, height);
+                ctx.strokeStyle = x === 0 ? '#94a3b8' : '#f1f5f9';
+                ctx.lineWidth = x === 0 ? 2 : 1;
+                ctx.stroke();
+
+                if(x !== 0 && Math.abs(x) % 1 === 0) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '10px Inter';
+                    ctx.fillText(x, px - 4, offsetY + 15 > height - 10 ? height - 10 : (offsetY + 15 < 20 ? 20 : offsetY + 15));
+                }
+            }
+
+            let startGridY = Math.floor(topY / gridInterval) * gridInterval;
+            for(let y = startGridY; y <= bottomY; y += gridInterval) {
+                let py = -y * scale + offsetY;
+                ctx.beginPath();
+                ctx.moveTo(0, py);
+                ctx.lineTo(width, py);
+                ctx.strokeStyle = y === 0 ? '#94a3b8' : '#f1f5f9';
+                ctx.lineWidth = y === 0 ? 2 : 1;
+                ctx.stroke();
+
+                if(y !== 0 && Math.abs(y) % 1 === 0) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '10px Inter';
+                    ctx.fillText(y, offsetX + 8 > width - 25 ? width - 25 : (offsetX + 8 < 5 ? 5 : offsetX + 8), py + 4);
+                }
+            }
+            ctx.restore();
+
+            if(showCurve) {
+                ctx.save();
+                ctx.strokeStyle = '#4f46e5';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                let isDrawing = false;
+                for(let px = 0; px <= width; px += 1) {
+                    let x = (px - offsetX) / scale;
+                    if(activeConfig.domainCheck && !activeConfig.domainCheck(x)) {
+                        isDrawing = false;
+                        continue;
+                    }
+
+                    try {
+                        let y = activeConfig.fn(x);
+                        if(isNaN(y) || !isFinite(y) || Math.abs(y) * scale > height * 3) {
+                            isDrawing = false;
+                            continue;
+                        }
+
+                        let py = -y * scale + offsetY;
+                        if(!isDrawing) {
+                            ctx.moveTo(px, py);
+                            isDrawing = true;
+                        } else {
+                            ctx.lineTo(px, py);
+                        }
+                    } catch(e) {
+                        isDrawing = false;
+                    }
+                }
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            if(showIntercepts) {
+                ctx.save();
+                let points = [];
+                if(currentPreset === 1) {
+                    points = [{x: -1, y: 0}, {x: 1, y: 0}, {x: 0, y: 1/3}];
+                } else if(currentPreset === 2) {
+                    points = [{x: -2, y: 0}, {x: 0, y: Math.sqrt(2)}];
+                } else if(currentPreset === 3) {
+                    points = [{x: 0, y: 4}, {x: -2, y: 0}];
+                } else if(currentPreset === 4) {
+                    points = [{x: 2, y: 0}];
+                }
+
+                points.forEach(p => {
+                    let px = p.x * scale + offsetX;
+                    let py = -p.y * scale + offsetY;
+                    
+                    ctx.fillStyle = '#10b981';
+                    ctx.beginPath();
+                    ctx.arc(px, py, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                ctx.restore();
+            }
+        }
+
+        // ==========================================
+        // Interactive Puzzle / Exercise Logic
+        // ==========================================
+        let puzzleCanvas, puzzleCtx;
+        let puzzleScale = 45;
+        let puzzleOffsetX = 0;
+        let puzzleOffsetY = 0;
+
+        const puzzles = [
+            {
+                title: "Studio del segno: $y \\ge 0$ per $x \\ge 2$",
+                plainTitle: "Studio del segno: y >= 0 per x >= 2",
+                desc: "",
+                refX: 2,
+                correctShaded: {
+                    "left_upper": true,
+                    "left_lower": false,
+                    "right_upper": false,
+                    "right_lower": true
+                }
+            },
+            {
+                title: "Studio del segno: $y \\ge 0$ per $x \\le -1$",
+                plainTitle: "Studio del segno: y >= 0 per x <= -1",
+                desc: "",
+                refX: -1,
+                correctShaded: {
+                    "left_upper": false,
+                    "left_lower": true,
+                    "right_upper": true,
+                    "right_lower": false
+                }
+            },
+            {
+                title: "Studio del segno: $y \\ge 0$ per $x \\ge 1$",
+                plainTitle: "Studio del segno: y >= 0 per x >= 1",
+                desc: "",
+                refX: 1,
+                correctShaded: {
+                    "left_upper": true,
+                    "left_lower": false,
+                    "right_upper": false,
+                    "right_lower": true
+                }
+            },
+            {
+                title: "Studio del segno: $y \\ge 0$ per $x \\le 3$",
+                plainTitle: "Studio del segno: y >= 0 per x <= 3",
+                desc: "",
+                refX: 3,
+                correctShaded: {
+                    "left_upper": false,
+                    "left_lower": true,
+                    "right_upper": true,
+                    "right_lower": false
+                }
+            },
+            {
+                title: "Studio del segno: $y \\ge 0$ per $x \\ge -2$",
+                plainTitle: "Studio del segno: y >= 0 per x >= -2",
+                desc: "",
+                refX: -2,
+                correctShaded: {
+                    "left_upper": true,
+                    "left_lower": false,
+                    "right_upper": false,
+                    "right_lower": true
+                }
+            },
+            {
+                title: "Studio del segno: $y \\ge 0$ per $x \\le 0$",
+                plainTitle: "Studio del segno: y >= 0 per x <= 0",
+                desc: "",
+                refX: 0,
+                correctShaded: {
+                    "left_upper": false,
+                    "left_lower": true,
+                    "right_upper": true,
+                    "right_lower": false
+                }
+            },
+            {
+                title: "Studio del segno (Fratta): $y \\ge 0$ per $x < -2 \\lor x > 3$",
+                plainTitle: "Segno Fratto: y >= 0 per x < -2 ∨ x > 3",
+                desc: "",
+                refX: -2,
+                refX2: 3,
+                isSignIntervalExclusion: true,
+                correctShaded: {
+                    "middle_zone": true
+                }
+            },
+            {
+                title: "Studio del segno (Prodotto): $y \\ge 0$ per $-1 \\le x \\le 4$",
+                plainTitle: "Segno Prodotto: y >= 0 per -1 <= x <= 4",
+                desc: "",
+                refX: -1,
+                refX2: 4,
+                isIntervalRangeExclusion: true,
+                correctShaded: {
+                    "range_band": true
+                },
+                isComplexExternal: true
+            },
+            {
+                title: "Studio del segno (Polinomio di 3° grado): $y \\ge 0$ per $-2 \\le x \\le 0 \\lor x \\ge 2$",
+                plainTitle: "Segno Polinomiale: y >= 0 per -2 <= x <= 0 ∨ x >= 2",
+                desc: "",
+                refX: -2,
+                refX2: 0,
+                refX3: 2,
+                isAdvancedCubicSign: true,
+                correctShaded: {
+                    "zone_left_ext": true,
+                    "zone_mid_right": true
+                }
+            },
+            {
+                title: "Studio del segno (Fratta complessa): $y \\ge 0$ per $1 < x \\le 5$",
+                plainTitle: "Segno Fratta Complessa: y >= 0 per 1 < x <= 5",
+                desc: "",
+                refX: 1,
+                refX2: 5,
+                isIntervalRangeExclusion: true,
+                correctShaded: {
+                    "range_band": true
+                },
+                isComplexExternal: true
+            }
+        ];
+
+        let currentPuzzleIndex = 0;
+        let userShaded = {};
+
+        function populatePuzzleSelect() {
+            const selectEl = document.getElementById('puzzle-select');
+            if(!selectEl) return;
+            selectEl.innerHTML = '';
+            puzzles.forEach((p, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = p.plainTitle;
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function loadPuzzle(index) {
+            currentPuzzleIndex = parseInt(index);
+            const p = puzzles[currentPuzzleIndex];
+            
+            const titleContainer = document.getElementById('puzzle-title');
+            titleContainer.innerHTML = `<i class="fa-solid fa-puzzle-piece mr-1.5"></i> <span>${p.title}</span>`;
+            
+            const descContainer = document.getElementById('puzzle-desc');
+            descContainer.innerHTML = p.desc;
+            document.getElementById('puzzle-feedback').classList.add('hidden');
+            userShaded = {};
+            redrawPuzzleCanvas();
+            
+            renderMathInElement(titleContainer, {delimiters: [{left: "$", right: "$", display: false}], throwOnError: false});
+            renderMathInElement(descContainer, {delimiters: [{left: "$", right: "$", display: false}], throwOnError: false});
+        }
+
+        function resetPuzzle() {
+            userShaded = {};
+            document.getElementById('puzzle-feedback').classList.add('hidden');
+            redrawPuzzleCanvas();
+        }
+
+        function initPuzzleCanvas() {
+            puzzleCanvas = document.getElementById('puzzleCanvas');
+            if(!puzzleCanvas) return;
+            puzzleCtx = puzzleCanvas.getContext('2d');
+
+            populatePuzzleSelect();
+            resizePuzzleCanvas();
+            window.addEventListener('resize', resizePuzzleCanvas);
+
+            puzzleCanvas.onclick = (e) => {
+                const rect = puzzleCanvas.getBoundingClientRect();
+                const clientX = e.clientX - rect.left;
+                const clientY = e.clientY - rect.top;
+                
+                const x = (clientX - puzzleOffsetX) / puzzleScale;
+                const y = -(clientY - puzzleOffsetY) / puzzleScale;
+                const p = puzzles[currentPuzzleIndex];
+
+                if(p.isAdvancedCubicSign) {
+                    if(x < p.refX) userShaded["zone_left_ext"] = !userShaded["zone_left_ext"];
+                    else if(x >= p.refX && x < p.refX2) userShaded["zone_mid_left"] = !userShaded["zone_mid_left"];
+                    else if(x >= p.refX2 && x < p.refX3) userShaded["zone_mid_right"] = !userShaded["zone_mid_right"];
+                    else userShaded["zone_right_ext"] = !userShaded["zone_right_ext"];
+                } else if(p.isComplexExternal) {
+                    if(x < p.refX || x > p.refX2) {
+                        userShaded["range_band"] = !userShaded["range_band"];
+                    }
+                } else if(p.isIntervalRangeExclusion) {
+                    if(x > p.refX && x < p.refX2) {
+                        userShaded["range_band"] = !userShaded["range_band"];
+                    }
+                } else if(p.isSignIntervalExclusion) {
+                    if(x > p.refX && x < p.refX2) {
+                        userShaded["middle_zone"] = !userShaded["middle_zone"];
+                    }
+                } else {
+                    let keyX = x < p.refX ? "left" : "right";
+                    let keyY = y > 0 ? "upper" : "lower";
+                    let regionKey = keyX + "_" + keyY;
+                    userShaded[regionKey] = !userShaded[regionKey];
+                }
+                redrawPuzzleCanvas();
+            };
+
+            loadPuzzle(0);
+        }
+
+        function resizePuzzleCanvas() {
+            if(!puzzleCanvas) return;
+            const parent = puzzleCanvas.parentElement;
+            puzzleCanvas.width = parent.clientWidth;
+            puzzleCanvas.height = parent.clientHeight;
+            puzzleOffsetX = puzzleCanvas.width / 2;
+            puzzleOffsetY = puzzleCanvas.height / 2;
+            redrawPuzzleCanvas();
+        }
+
+        function redrawPuzzleCanvas() {
+            if(!puzzleCtx || !puzzleCanvas) return;
+            const width = puzzleCanvas.width;
+            const height = puzzleCanvas.height;
+
+            puzzleCtx.fillStyle = '#ffffff';
+            puzzleCtx.fillRect(0, 0, width, height);
+
+            const p = puzzles[currentPuzzleIndex];
+            const refPx = p.refX * puzzleScale + puzzleOffsetX;
+
+            puzzleCtx.save();
+            if(p.isAdvancedCubicSign) {
+                const px1 = p.refX * puzzleScale + puzzleOffsetX;
+                const px2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                const px3 = p.refX3 * puzzleScale + puzzleOffsetX;
+
+                if(userShaded["zone_left_ext"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(0, 0, px1, height);
+                    drawDiagonalHatch(puzzleCtx, 0, 0, px1, height, 12);
+                }
+                if(userShaded["zone_mid_left"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(px1, 0, px2 - px1, height);
+                    drawDiagonalHatch(puzzleCtx, px1, 0, px2 - px1, height, 12);
+                }
+                if(userShaded["zone_mid_right"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(px2, 0, px3 - px2, height);
+                    drawDiagonalHatch(puzzleCtx, px2, 0, px3 - px2, height, 12);
+                }
+                if(userShaded["zone_right_ext"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(px3, 0, width - px3, height);
+                    drawDiagonalHatch(puzzleCtx, px3, 0, width - px3, height, 12);
+                }
+            } else if(p.isComplexExternal) {
+                if(userShaded["range_band"]) {
+                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(0, 0, refPx, height);
+                    puzzleCtx.fillRect(refPx2, 0, width - refPx2, height);
+                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, height, 12);
+                    drawDiagonalHatch(puzzleCtx, refPx2, 0, width - refPx2, height, 12);
+                }
+            } else if(p.isIntervalRangeExclusion) {
+                if(userShaded["range_band"]) {
+                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, height);
+                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, height, 12);
+                }
+            } else if(p.isSignIntervalExclusion) {
+                if(userShaded["middle_zone"]) {
+                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, height);
+                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, height, 12);
+                }
+            } else {
+                if(userShaded["left_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+                    puzzleCtx.fillRect(0, 0, refPx, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, puzzleOffsetY, 12);
+                }
+                if(userShaded["left_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+                    puzzleCtx.fillRect(0, puzzleOffsetY, refPx, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, refPx, height - puzzleOffsetY, 12);
+                }
+                if(userShaded["right_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+                    puzzleCtx.fillRect(refPx, 0, width - refPx, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx, 0, width - refPx, puzzleOffsetY, 12);
+                }
+                if(userShaded["right_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+                    puzzleCtx.fillRect(refPx, puzzleOffsetY, width - refPx, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx, puzzleOffsetY, width - refPx, height - puzzleOffsetY, 12);
+                }
+            }
+            puzzleCtx.restore();
+
+            puzzleCtx.save();
+            const gridInterval = 1;
+            const leftX = -puzzleOffsetX / puzzleScale;
+            const rightX = (width - puzzleOffsetX) / puzzleScale;
+            const bottomY = (height - puzzleOffsetY) / puzzleScale;
+            const topY = -puzzleOffsetY / puzzleScale;
+
+            let startGridX = Math.floor(leftX / gridInterval) * gridInterval;
+            for(let x = startGridX; x <= rightX; x += gridInterval) {
+                let px = x * puzzleScale + puzzleOffsetX;
+                puzzleCtx.beginPath();
+                puzzleCtx.moveTo(px, 0);
+                puzzleCtx.lineTo(px, height);
+                puzzleCtx.strokeStyle = x === 0 ? '#94a3b8' : '#f1f5f9';
+                puzzleCtx.lineWidth = x === 0 ? 2 : 1;
+                puzzleCtx.stroke();
+
+                if(x !== 0 && Math.abs(x) % 1 === 0) {
+                    puzzleCtx.fillStyle = '#64748b';
+                    puzzleCtx.font = '10px Inter';
+                    puzzleCtx.fillText(x, px - 4, puzzleOffsetY + 15 > height - 10 ? height - 10 : puzzleOffsetY + 15);
+                }
+            }
+
+            let startGridY = Math.floor(topY / gridInterval) * gridInterval;
+            for(let y = startGridY; y <= bottomY; y += gridInterval) {
+                let py = -y * puzzleScale + puzzleOffsetY;
+                puzzleCtx.beginPath();
+                puzzleCtx.moveTo(0, py);
+                puzzleCtx.lineTo(width, py);
+                puzzleCtx.strokeStyle = y === 0 ? '#94a3b8' : '#f1f5f9';
+                puzzleCtx.lineWidth = y === 0 ? 2 : 1;
+                puzzleCtx.stroke();
+            }
+
+            // Draw ref line 1
+            puzzleCtx.beginPath();
+            puzzleCtx.moveTo(refPx, 0);
+            puzzleCtx.lineTo(refPx, height);
+            puzzleCtx.strokeStyle = '#ef4444';
+            puzzleCtx.lineWidth = 2.5;
+            puzzleCtx.setLineDash([5, 5]);
+            puzzleCtx.stroke();
+            puzzleCtx.setLineDash([]);
+
+            puzzleCtx.fillStyle = '#ef4444';
+            puzzleCtx.font = 'bold 11px Inter';
+            puzzleCtx.fillText(`x = ${p.refX}`, refPx + 6, 25);
+
+            // Draw ref line 2 if present
+            if(p.refX2 !== undefined) {
+                const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                puzzleCtx.beginPath();
+                puzzleCtx.moveTo(refPx2, 0);
+                puzzleCtx.lineTo(refPx2, height);
+                puzzleCtx.strokeStyle = '#ef4444';
+                puzzleCtx.lineWidth = 2.5;
+                puzzleCtx.setLineDash([5, 5]);
+                puzzleCtx.stroke();
+                puzzleCtx.setLineDash([]);
+
+                puzzleCtx.fillStyle = '#ef4444';
+                puzzleCtx.font = 'bold 11px Inter';
+                puzzleCtx.fillText(`x = ${p.refX2}`, refPx2 + 6, 40);
+            }
+
+            // Draw ref line 3 if present (cubic sign)
+            if(p.refX3 !== undefined) {
+                const refPx3 = p.refX3 * puzzleScale + puzzleOffsetX;
+                puzzleCtx.beginPath();
+                puzzleCtx.moveTo(refPx3, 0);
+                puzzleCtx.lineTo(refPx3, height);
+                puzzleCtx.strokeStyle = '#ef4444';
+                puzzleCtx.lineWidth = 2.5;
+                puzzleCtx.setLineDash([5, 5]);
+                puzzleCtx.stroke();
+                puzzleCtx.setLineDash([]);
+
+                puzzleCtx.fillStyle = '#ef4444';
+                puzzleCtx.font = 'bold 11px Inter';
+                puzzleCtx.fillText(`x = ${p.refX3}`, refPx3 + 6, 55);
+            }
+
+            puzzleCtx.restore();
+        }
+
+        function verifyPuzzle() {
+            const p = puzzles[currentPuzzleIndex];
+            let isCorrect = true;
+
+            if(p.isAdvancedCubicSign) {
+                if(!userShaded["zone_left_ext"] || userShaded["zone_mid_left"] || !userShaded["zone_mid_right"] || userShaded["zone_right_ext"]) {
+                    isCorrect = false;
+                }
+            } else if(p.isComplexExternal) {
+                if(!userShaded["range_band"]) isCorrect = false;
+            } else if(p.isIntervalRangeExclusion) {
+                if(!userShaded["range_band"]) isCorrect = false;
+            } else if(p.isSignIntervalExclusion) {
+                if(!userShaded["middle_zone"]) isCorrect = false;
+            } else {
+                for(let key in p.correctShaded) {
+                    let userVal = !!userShaded[key];
+                    let correctVal = p.correctShaded[key];
+                    if(userVal !== correctVal) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+                for(let key in userShaded) {
+                    if(userShaded[key] && !p.correctShaded[key]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            const fb = document.getElementById('puzzle-feedback');
+            fb.classList.remove('hidden');
+            if(isCorrect) {
+                fb.className = "p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200";
+                fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> <strong>Ottimo lavoro!</strong> La cancellazione dello studio del segno è perfettamente corretta.';
+            } else {
+                fb.className = "p-3 rounded-xl text-xs font-medium bg-rose-50 text-rose-800 border border-rose-200";
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Non corretto.</strong> Rivedi gli intervalli in cui la $y \\ge 0$ e cancella le regioni errate.';
+            }
+        }
+
+        window.onload = function() {
+            setPreset(1);
+        };
+    </script>
+</body>
+</html>
