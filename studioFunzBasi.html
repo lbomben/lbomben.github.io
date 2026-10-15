@@ -274,21 +274,21 @@
                                         <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
                                         <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
 
-                                        <!-- Hatched region below x < -2 (right side, lower half y > 120) -->
-                                        <g clip-path="url(#lower-clip-right)">
-                                            <rect x="90" y="120" width="190" height="60" fill="#fef3c7" fill-opacity="0.5"/>
-                                            <path d="M 90,130 L 150,190 M 120,130 L 180,190 M 150,130 L 210,190 M 180,130 L 240,190 M 210,130 L 270,190 M 240,130 L 300,190" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
+                                        <!-- Hatched region for y < 0 when x < -2 (left side, lower half y > 120) -->
+                                        <g clip-path="url(#lower-clip-left)">
+                                            <rect x="20" y="120" width="70" height="60" fill="#fef3c7" fill-opacity="0.5"/>
+                                            <path d="M 20,130 L 80,190 M 40,130 L 100,190 M 60,130 L 120,190" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
                                         </g>
-                                        <clipPath id="lower-clip-right">
-                                            <rect x="90" y="120" width="190" height="60"/>
+                                        <clipPath id="lower-clip-left">
+                                            <rect x="20" y="120" width="70" height="60"/>
                                         </clipPath>
                                         
-                                        <text x="195" y="145" font-size="9" fill="#b45309" font-weight="bold">Cancellato</text>
+                                        <text x="32" y="145" font-size="9" fill="#b45309" font-weight="bold">Cancellato</text>
                                         <text x="180" y="90" font-size="11" fill="#4f46e5" font-weight="bold">y &ge; 0 (Sopra)</text>
                                     </svg>
                                 </div>
                                 <p class="text-xs text-slate-600 leading-relaxed">
-                                    Poiché la $y$ è <strong>positiva</strong> ($y \ge 0$) nell'intervallo $x \ge -2$ (a destra di $x = -2$), il grafico deve trovarsi nel semipiano superiore. Di conseguenza, nel semipiano inferiore ($y < 0$), <strong>si cancella la zona situata a destra di $x = -2$</strong> (poiché lì la $y$ è negativa).
+                                    Poiché la $y$ è <strong>positiva</strong> ($y \ge 0$) nell'intervallo $x \ge -2$ (a destra di $x = -2$), il grafico si trova nel semipiano superiore. Di conseguenza, nel semipiano inferiore ($y < 0$), <strong>si cancella la zona situata a sinistra di $x = -2$</strong> (poiché lì la $y$ è negativa).
                                 </p>
                             </div>
 
@@ -305,30 +305,30 @@
                                         <line x1="90" y1="20" x2="90" y2="180" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/>
                                         <text x="65" y="35" font-size="10" fill="#ef4444" font-weight="bold">x = -2</text>
 
-                                        <!-- Retain the previous positive/negative hatch representation and add upper left cancellation -->
-                                        <g clip-path="url(#lower-clip-right-retained)">
-                                            <rect x="90" y="120" width="190" height="60" fill="#fef3c7" fill-opacity="0.3"/>
-                                            <path d="M 90,130 L 150,190 M 120,130 L 180,190 M 150,130 L 210,190 M 180,130 L 240,190 M 210,130 L 270,190 M 240,130 L 300,190" stroke="#d97706" stroke-width="1.0" stroke-opacity="0.5"/>
+                                        <!-- Retain the previous lower-left cancellation -->
+                                        <g clip-path="url(#lower-clip-left-retained)">
+                                            <rect x="20" y="120" width="70" height="60" fill="#fef3c7" fill-opacity="0.3"/>
+                                            <path d="M 20,130 L 80,190 M 40,130 L 100,190 M 60,130 L 120,190" stroke="#d97706" stroke-width="1.0" stroke-opacity="0.5"/>
                                         </g>
-                                        <clipPath id="lower-clip-right-retained">
-                                            <rect x="90" y="120" width="190" height="60"/>
+                                        <clipPath id="lower-clip-left-retained">
+                                            <rect x="20" y="120" width="70" height="60"/>
                                         </clipPath>
 
-                                        <!-- Hatched region above x >= -2 (left side, upper half y < 120) -->
-                                        <g clip-path="url(#upper-clip-left)">
-                                            <rect x="20" y="20" width="70" height="100" fill="#fef3c7" fill-opacity="0.5"/>
-                                            <path d="M 20,40 L 90,-30 M 40,40 L 110,-30 M 60,40 L 130,-30" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
+                                        <!-- Hatched region above x >= -2 (right side, upper half y < 120) -->
+                                        <g clip-path="url(#upper-clip-right)">
+                                            <rect x="90" y="20" width="190" height="100" fill="#fef3c7" fill-opacity="0.5"/>
+                                            <path d="M 90,40 L 160,-30 M 120,40 L 190,-30 M 150,40 L 220,-30 M 180,40 L 250,-30 M 210,40 L 280,-30 M 240,40 L 310,-30" stroke="#d97706" stroke-width="1.2" stroke-opacity="0.7"/>
                                         </g>
-                                        <clipPath id="upper-clip-left">
-                                            <rect x="20" y="20" width="70" height="100"/>
+                                        <clipPath id="upper-clip-right">
+                                            <rect x="90" y="20" width="190" height="100"/>
                                         </clipPath>
                                         
-                                        <text x="35" y="70" font-size="10" fill="#b45309" font-weight="bold">Cancellato</text>
-                                        <text x="35" y="145" font-size="11" fill="#4f46e5" font-weight="bold">y &lt; 0 (Sotto)</text>
+                                        <text x="180" y="70" font-size="10" fill="#b45309" font-weight="bold">Cancellato</text>
+                                        <text x="32" y="145" font-size="11" fill="#4f46e5" font-weight="bold">y &lt; 0 (Sotto)</text>
                                     </svg>
                                 </div>
                                 <p class="text-xs text-slate-600 leading-relaxed">
-                                    Poiché la $y$ è <strong>negativa</strong> ($y < 0$) nell'intervallo $x < -2$ (a sinistra di $x = -2$), il grafico deve trovarsi nel semipiano inferiore. Di conseguenza, nel semipiano superiore ($y > 0$), <strong>si cancella la zona situata a sinistra di $x = -2$</strong> (poiché lì la $y$ è positiva), mantenendo visibile anche il precedente tratteggio.
+                                    Poiché la $y$ è <strong>negativa</strong> ($y < 0$) nell'intervallo $x < -2$ (a sinistra di $x = -2$), il grafico si trova nel semipiano inferiore. Di conseguenza, nel semipiano superiore ($y > 0$), <strong>si cancella la zona situata a destra di $x = -2$</strong> (poiché lì la $y$ è positiva), mantenendo visibile anche il precedente tratteggio.
                                 </p>
                             </div>
                         </div>
@@ -475,17 +475,14 @@
                 <!-- Instructions / Goal card -->
                 <div class="w-full md:w-80 space-y-4 flex-shrink-0">
                     <div class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-xl space-y-2">
-                        <h3 id="puzzle-title" class="font-bold text-indigo-900 text-sm flex items-center"><i class="fa-solid fa-puzzle-piece mr-1.5"></i> <span>Condizione da Applicare</span></h3>
-                        <p id="puzzle-desc" class="text-xs text-indigo-800 leading-relaxed">
-                            Caricamento esercizio...
-                        </p>
+                        <div id="puzzle-title" class="font-bold text-indigo-900 text-sm flex items-center"><i class="fa-solid fa-puzzle-piece mr-1.5"></i> <span id="puzzle-title-text"></span></div>
                     </div>
 
                     <div class="space-y-2 pt-2">
                         <div class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Istruzioni d'Uso:</div>
                         <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
                             <li>Osserva le linee di riferimento sul piano cartesiano.</li>
-                            <li><strong>Clicca</strong> sulle regioni di piano o sugli intervalli che ritieni vadano cancellati.</li>
+                            <li><strong>Clicca</strong> sulle regioni di piano che ritieni vadano cancellate.</li>
                             <li>Puoi ricliccare per rimuovere il tratteggio.</li>
                             <li>Premi <strong>Verifica Risposta</strong> per confrontare il tuo lavoro.</li>
                         </ul>
@@ -575,15 +572,15 @@
             1: {
                 name: "f(x) = \\frac{x^2 - 1}{x - 3}",
                 fn: (x) => Math.abs(x - 3) > 0.0001 ? (x*x - 1) / (x - 3) : NaN,
-                domainText: "x < 3 \\text{ vel } x > 3",
+                domainText: "x < 3 \\lor x > 3",
                 domainCheck: (x) => Math.abs(x - 3) > 0.0001,
                 intercepts: "Asse Y: (0, 1/3). Asse X: (-1,0) e (1,0)",
-                signText: "-1 \\le x \\le 1 \\text{ vel } x > 3",
+                signText: "-1 \\le x \\le 1 \\lor x > 3",
                 steps: [
                     "<strong>1. Dominio:</strong> Denominatore $x - 3 \\neq 0 \\implies x \\neq 3$.",
                     "<strong>2. Intersezioni Asse Y ($x=0$):</strong> $f(0) = \\frac{0^2 - 1}{0 - 3} = \\frac{-1}{-3} = \\frac{1}{3}$. Punto $(0, 1/3)$.",
                     "<strong>3. Intersezioni Asse X ($y=0$):</strong> Numeratore $x^2 - 1 = 0 \\implies x = \\pm 1$. Punti $(-1,0)$ e $(1,0)$.",
-                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> Numeratore $\\ge 0$ per $x \\le -1 \\text{ vel } x \\ge 1$. Denominatore $>0$ per $x > 3$. Studio del segno: $y \\ge 0$ per $-1 \\le x \\le 1 \\text{ vel } x > 3$."
+                    "<strong>4. Studio del Segno ($y \\ge 0$):</strong> Numeratore $\\ge 0$ per $x \\le -1 \\lor x \\ge 1$. Denominatore $>0$ per $x > 3$. Studio del segno: $y \\ge 0$ per $-1 \\le x \\le 1 \\lor x > 3$."
                 ]
             },
             2: {
@@ -975,124 +972,87 @@
 
         const puzzles = [
             {
-                title: "Studio del segno: $y \\ge 0$ per $x \\ge 2$",
-                plainTitle: "Studio del segno: y >= 0 per x >= 2",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x \\ge 2",
                 refX: 2,
-                correctShaded: {
-                    "left_upper": true,
-                    "left_lower": false,
-                    "right_upper": false,
-                    "right_lower": true
-                }
+                type: "single",
+                // y >= 0 for x >= 2 means y < 0 for x < 2 (cancel lower left) AND y > 0 for x > 2 (cancel upper right)
+                correctShaded: { "left_lower": true, "right_upper": true }
             },
             {
-                title: "Studio del segno: $y \\ge 0$ per $x \\le -1$",
-                plainTitle: "Studio del segno: y >= 0 per x <= -1",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x \\le -1",
                 refX: -1,
-                correctShaded: {
-                    "left_upper": false,
-                    "left_lower": true,
-                    "right_upper": true,
-                    "right_lower": false
-                }
+                type: "single",
+                // y >= 0 for x <= -1 means y > 0 for x < -1 (cancel upper left) AND y < 0 for x > -1 (cancel lower right)
+                correctShaded: { "left_upper": true, "right_lower": true }
             },
             {
-                title: "Studio del segno: $y \\ge 0$ per $x \\ge 1$",
-                plainTitle: "Studio del segno: y >= 0 per x >= 1",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x \\ge 1",
                 refX: 1,
-                correctShaded: {
-                    "left_upper": true,
-                    "left_lower": false,
-                    "right_upper": false,
-                    "right_lower": true
-                }
+                type: "single",
+                correctShaded: { "left_lower": true, "right_upper": true }
             },
             {
-                title: "Studio del segno: $y \\ge 0$ per $x \\le 3$",
-                plainTitle: "Studio del segno: y >= 0 per x <= 3",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x \\le 3",
                 refX: 3,
-                correctShaded: {
-                    "left_upper": false,
-                    "left_lower": true,
-                    "right_upper": true,
-                    "right_lower": false
-                }
+                type: "single",
+                correctShaded: { "left_upper": true, "right_lower": true }
             },
             {
-                title: "Studio del segno: $y \\ge 0$ per $x \\ge -2$",
-                plainTitle: "Studio del segno: y >= 0 per x >= -2",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x \\ge -2",
                 refX: -2,
-                correctShaded: {
-                    "left_upper": true,
-                    "left_lower": false,
-                    "right_upper": false,
-                    "right_lower": true
-                }
+                type: "single",
+                correctShaded: { "left_lower": true, "right_upper": true }
             },
             {
-                title: "Studio del segno: $y \\ge 0$ per $x \\le 0$",
-                plainTitle: "Studio del segno: y >= 0 per x <= 0",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x \\le 0",
                 refX: 0,
-                correctShaded: {
-                    "left_upper": false,
-                    "left_lower": true,
-                    "right_upper": true,
-                    "right_lower": false
-                }
+                type: "single",
+                correctShaded: { "left_upper": true, "right_lower": true }
             },
             {
-                title: "Studio del segno (Fratta): $y \\ge 0$ per $x < -2 \\lor x > 3$",
-                plainTitle: "Segno Fratto: y >= 0 per x < -2 ∨ x > 3",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } x < -2 \\lor x > 3",
                 refX: -2,
                 refX2: 3,
-                isSignIntervalExclusion: true,
-                correctShaded: {
-                    "middle_zone": true
-                }
+                type: "exterior",
+                // y >= 0 for x < -2 or x > 3:
+                // Intervall (-2, 3): y < 0 -> cancel upper middle.
+                // Outer intervals x < -2 and x > 3: y > 0 -> cancel lower left and lower right.
+                correctShaded: { "middle_upper": true, "left_lower": true, "right_lower": true }
             },
             {
-                title: "Studio del segno (Prodotto): $y \\ge 0$ per $-1 \\le x \\le 4$",
-                plainTitle: "Segno Prodotto: y >= 0 per -1 <= x <= 4",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } -1 \\le x \\le 4",
                 refX: -1,
                 refX2: 4,
-                isIntervalRangeExclusion: true,
-                correctShaded: {
-                    "range_band": true
-                },
-                isComplexExternal: true
+                type: "interior",
+                // y >= 0 for -1 <= x <= 4:
+                // Interval (-1, 4): y > 0 -> cancel lower middle.
+                // Outer intervals x < -1 and x > 4: y < 0 -> cancel upper left and upper right.
+                correctShaded: { "middle_lower": true, "left_upper": true, "right_upper": true }
             },
             {
-                title: "Studio del segno (Polinomio di 3° grado): $y \\ge 0$ per $-2 \\le x \\le 0 \\lor x \\ge 2$",
-                plainTitle: "Segno Polinomiale: y >= 0 per -2 <= x <= 0 ∨ x >= 2",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } -2 \\le x \\le 0 \\lor x \\ge 2",
                 refX: -2,
                 refX2: 0,
                 refX3: 2,
-                isAdvancedCubicSign: true,
+                type: "cubic",
+                // Regions:
+                // 1) x < -2: y < 0 -> upper
+                // 2) -2 < x < 0: y >= 0 -> lower
+                // 3) 0 < x < 2: y < 0 -> upper
+                // 4) x > 2: y >= 0 -> lower
                 correctShaded: {
-                    "zone_left_ext": true,
-                    "zone_mid_right": true
+                    "zone_left_ext_upper": true,
+                    "zone_mid_left_lower": true,
+                    "zone_mid_right_upper": true,
+                    "zone_right_ext_lower": true
                 }
             },
             {
-                title: "Studio del segno (Fratta complessa): $y \\ge 0$ per $1 < x \\le 5$",
-                plainTitle: "Segno Fratta Complessa: y >= 0 per 1 < x <= 5",
-                desc: "",
+                title: "y \\ge 0 \\text{ per } 1 < x \\le 5",
                 refX: 1,
                 refX2: 5,
-                isIntervalRangeExclusion: true,
-                correctShaded: {
-                    "range_band": true
-                },
-                isComplexExternal: true
+                type: "interior",
+                correctShaded: { "middle_lower": true, "left_upper": true, "right_upper": true }
             }
         ];
 
@@ -1106,7 +1066,9 @@
             puzzles.forEach((p, idx) => {
                 const opt = document.createElement('option');
                 opt.value = idx;
-                opt.innerText = p.plainTitle;
+                // Replace \lor with \lor or symbol in option text
+                let cleanText = p.title.replace(/\\ge/g, '≥').replace(/\\le/g, '≤').replace(/\\lor/g, ' ∨ ').replace(/\\text\{/g, '').replace(/\}/g, '');
+                opt.innerText = `y ≥ 0 per ${cleanText.replace('y ≥ 0 per ', '')}`;
                 selectEl.appendChild(opt);
             });
         }
@@ -1115,17 +1077,16 @@
             currentPuzzleIndex = parseInt(index);
             const p = puzzles[currentPuzzleIndex];
             
-            const titleContainer = document.getElementById('puzzle-title');
-            titleContainer.innerHTML = `<i class="fa-solid fa-puzzle-piece mr-1.5"></i> <span>${p.title}</span>`;
+            const spanEl = document.getElementById('puzzle-title-text');
+            spanEl.innerHTML = `$${p.title}$`;
+            renderMathInElement(spanEl, {
+                delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
+                throwOnError: false
+            });
             
-            const descContainer = document.getElementById('puzzle-desc');
-            descContainer.innerHTML = p.desc;
             document.getElementById('puzzle-feedback').classList.add('hidden');
             userShaded = {};
             redrawPuzzleCanvas();
-            
-            renderMathInElement(titleContainer, {delimiters: [{left: "$", right: "$", display: false}], throwOnError: false});
-            renderMathInElement(descContainer, {delimiters: [{left: "$", right: "$", display: false}], throwOnError: false});
         }
 
         function resetPuzzle() {
@@ -1148,30 +1109,50 @@
                 const clientX = e.clientX - rect.left;
                 const clientY = e.clientY - rect.top;
                 
-                const x = (clientX - puzzleOffsetX) / puzzleScale;
-                const y = -(clientY - puzzleOffsetY) / puzzleScale;
                 const p = puzzles[currentPuzzleIndex];
+                const keyY = clientY < puzzleOffsetY ? "upper" : "lower";
 
-                if(p.isAdvancedCubicSign) {
-                    if(x < p.refX) userShaded["zone_left_ext"] = !userShaded["zone_left_ext"];
-                    else if(x >= p.refX && x < p.refX2) userShaded["zone_mid_left"] = !userShaded["zone_mid_left"];
-                    else if(x >= p.refX2 && x < p.refX3) userShaded["zone_mid_right"] = !userShaded["zone_mid_right"];
-                    else userShaded["zone_right_ext"] = !userShaded["zone_right_ext"];
-                } else if(p.isComplexExternal) {
-                    if(x < p.refX || x > p.refX2) {
-                        userShaded["range_band"] = !userShaded["range_band"];
+                if(p.type === "cubic") {
+                    const px1 = p.refX * puzzleScale + puzzleOffsetX;
+                    const px2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                    const px3 = p.refX3 * puzzleScale + puzzleOffsetX;
+
+                    let zoneKey = "";
+                    if(clientX < px1) zoneKey = "zone_left_ext_" + keyY;
+                    else if(clientX >= px1 && clientX < px2) zoneKey = "zone_mid_left_" + keyY;
+                    else if(clientX >= px2 && clientX < px3) zoneKey = "zone_mid_right_" + keyY;
+                    else zoneKey = "zone_right_ext_" + keyY;
+
+                    userShaded[zoneKey] = !userShaded[zoneKey];
+                } else if(p.type === "exterior") {
+                    const refPx = p.refX * puzzleScale + puzzleOffsetX;
+                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                    if(clientX > refPx && clientX < refPx2) {
+                        let regionKey = "middle_" + keyY;
+                        userShaded[regionKey] = !userShaded[regionKey];
+                    } else if(clientX <= refPx) {
+                        let regionKey = "left_" + keyY;
+                        userShaded[regionKey] = !userShaded[regionKey];
+                    } else {
+                        let regionKey = "right_" + keyY;
+                        userShaded[regionKey] = !userShaded[regionKey];
                     }
-                } else if(p.isIntervalRangeExclusion) {
-                    if(x > p.refX && x < p.refX2) {
-                        userShaded["range_band"] = !userShaded["range_band"];
-                    }
-                } else if(p.isSignIntervalExclusion) {
-                    if(x > p.refX && x < p.refX2) {
-                        userShaded["middle_zone"] = !userShaded["middle_zone"];
+                } else if(p.type === "interior") {
+                    const refPx = p.refX * puzzleScale + puzzleOffsetX;
+                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                    if(clientX <= refPx) {
+                        let regionKey = "left_" + keyY;
+                        userShaded[regionKey] = !userShaded[regionKey];
+                    } else if(clientX >= refPx2) {
+                        let regionKey = "right_" + keyY;
+                        userShaded[regionKey] = !userShaded[regionKey];
+                    } else {
+                        let regionKey = "middle_" + keyY;
+                        userShaded[regionKey] = !userShaded[regionKey];
                     }
                 } else {
-                    let keyX = x < p.refX ? "left" : "right";
-                    let keyY = y > 0 ? "upper" : "lower";
+                    const refPx = p.refX * puzzleScale + puzzleOffsetX;
+                    let keyX = clientX < refPx ? "left" : "right";
                     let regionKey = keyX + "_" + keyY;
                     userShaded[regionKey] = !userShaded[regionKey];
                 }
@@ -1203,53 +1184,118 @@
             const refPx = p.refX * puzzleScale + puzzleOffsetX;
 
             puzzleCtx.save();
-            if(p.isAdvancedCubicSign) {
+            if(p.type === "cubic") {
                 const px1 = p.refX * puzzleScale + puzzleOffsetX;
                 const px2 = p.refX2 * puzzleScale + puzzleOffsetX;
                 const px3 = p.refX3 * puzzleScale + puzzleOffsetX;
 
-                if(userShaded["zone_left_ext"]) {
+                // Left exterior
+                if(userShaded["zone_left_ext_upper"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, 0, px1, height);
-                    drawDiagonalHatch(puzzleCtx, 0, 0, px1, height, 12);
+                    puzzleCtx.fillRect(0, 0, px1, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, 0, px1, puzzleOffsetY, 12);
                 }
-                if(userShaded["zone_mid_left"]) {
+                if(userShaded["zone_left_ext_lower"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px1, 0, px2 - px1, height);
-                    drawDiagonalHatch(puzzleCtx, px1, 0, px2 - px1, height, 12);
+                    puzzleCtx.fillRect(0, puzzleOffsetY, px1, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, px1, height - puzzleOffsetY, 12);
                 }
-                if(userShaded["zone_mid_right"]) {
+                // Mid left
+                if(userShaded["zone_mid_left_upper"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px2, 0, px3 - px2, height);
-                    drawDiagonalHatch(puzzleCtx, px2, 0, px3 - px2, height, 12);
+                    puzzleCtx.fillRect(px1, 0, px2 - px1, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, px1, 0, px2 - px1, puzzleOffsetY, 12);
                 }
-                if(userShaded["zone_right_ext"]) {
+                if(userShaded["zone_mid_left_lower"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(px3, 0, width - px3, height);
-                    drawDiagonalHatch(puzzleCtx, px3, 0, width - px3, height, 12);
+                    puzzleCtx.fillRect(px1, puzzleOffsetY, px2 - px1, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, px1, puzzleOffsetY, px2 - px1, height - puzzleOffsetY, 12);
                 }
-            } else if(p.isComplexExternal) {
-                if(userShaded["range_band"]) {
-                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                // Mid right
+                if(userShaded["zone_mid_right_upper"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(0, 0, refPx, height);
-                    puzzleCtx.fillRect(refPx2, 0, width - refPx2, height);
-                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, height, 12);
-                    drawDiagonalHatch(puzzleCtx, refPx2, 0, width - refPx2, height, 12);
+                    puzzleCtx.fillRect(px2, 0, px3 - px2, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, px2, 0, px3 - px2, puzzleOffsetY, 12);
                 }
-            } else if(p.isIntervalRangeExclusion) {
-                if(userShaded["range_band"]) {
-                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                if(userShaded["zone_mid_right_lower"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, height);
-                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, height, 12);
+                    puzzleCtx.fillRect(px2, puzzleOffsetY, px3 - px2, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, px2, puzzleOffsetY, px3 - px2, height - puzzleOffsetY, 12);
                 }
-            } else if(p.isSignIntervalExclusion) {
-                if(userShaded["middle_zone"]) {
-                    const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                // Right exterior
+                if(userShaded["zone_right_ext_upper"]) {
                     puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, height);
-                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, height, 12);
+                    puzzleCtx.fillRect(px3, 0, width - px3, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, px3, 0, width - px3, puzzleOffsetY, 12);
+                }
+                if(userShaded["zone_right_ext_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(px3, puzzleOffsetY, width - px3, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, px3, puzzleOffsetY, width - px3, height - puzzleOffsetY, 12);
+                }
+            } else if(p.type === "exterior") {
+                const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                if(userShaded["middle_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, puzzleOffsetY, 12);
+                }
+                if(userShaded["middle_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY, 12);
+                }
+                if(userShaded["left_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(0, 0, refPx, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, puzzleOffsetY, 12);
+                }
+                if(userShaded["left_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(0, puzzleOffsetY, refPx, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, refPx, height - puzzleOffsetY, 12);
+                }
+                if(userShaded["right_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx2, 0, width - refPx2, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx2, 0, width - refPx2, puzzleOffsetY, 12);
+                }
+                if(userShaded["right_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY, 12);
+                }
+            } else if(p.type === "interior") {
+                const refPx2 = p.refX2 * puzzleScale + puzzleOffsetX;
+                if(userShaded["left_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(0, 0, refPx, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, 0, refPx, puzzleOffsetY, 12);
+                }
+                if(userShaded["left_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(0, puzzleOffsetY, refPx, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, 0, puzzleOffsetY, refPx, height - puzzleOffsetY, 12);
+                }
+                if(userShaded["middle_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx, 0, refPx2 - refPx, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx, 0, refPx2 - refPx, puzzleOffsetY, 12);
+                }
+                if(userShaded["middle_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx, puzzleOffsetY, refPx2 - refPx, height - puzzleOffsetY, 12);
+                }
+                if(userShaded["right_upper"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx2, 0, width - refPx2, puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx2, 0, width - refPx2, puzzleOffsetY, 12);
+                }
+                if(userShaded["right_lower"]) {
+                    puzzleCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                    puzzleCtx.fillRect(refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY);
+                    drawDiagonalHatch(puzzleCtx, refPx2, puzzleOffsetY, width - refPx2, height - puzzleOffsetY, 12);
                 }
             } else {
                 if(userShaded["left_upper"]) {
@@ -1365,30 +1411,19 @@
             const p = puzzles[currentPuzzleIndex];
             let isCorrect = true;
 
-            if(p.isAdvancedCubicSign) {
-                if(!userShaded["zone_left_ext"] || userShaded["zone_mid_left"] || !userShaded["zone_mid_right"] || userShaded["zone_right_ext"]) {
+            // Check that all required correct zones are shaded by user
+            for(let key in p.correctShaded) {
+                if(!userShaded[key]) {
                     isCorrect = false;
+                    break;
                 }
-            } else if(p.isComplexExternal) {
-                if(!userShaded["range_band"]) isCorrect = false;
-            } else if(p.isIntervalRangeExclusion) {
-                if(!userShaded["range_band"]) isCorrect = false;
-            } else if(p.isSignIntervalExclusion) {
-                if(!userShaded["middle_zone"]) isCorrect = false;
-            } else {
-                for(let key in p.correctShaded) {
-                    let userVal = !!userShaded[key];
-                    let correctVal = p.correctShaded[key];
-                    if(userVal !== correctVal) {
-                        isCorrect = false;
-                        break;
-                    }
-                }
-                for(let key in userShaded) {
-                    if(userShaded[key] && !p.correctShaded[key]) {
-                        isCorrect = false;
-                        break;
-                    }
+            }
+
+            // Check that no incorrect zones are shaded by user
+            for(let key in userShaded) {
+                if(userShaded[key] && !p.correctShaded[key]) {
+                    isCorrect = false;
+                    break;
                 }
             }
 
@@ -1399,7 +1434,11 @@
                 fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> <strong>Ottimo lavoro!</strong> La cancellazione dello studio del segno è perfettamente corretta.';
             } else {
                 fb.className = "p-3 rounded-xl text-xs font-medium bg-rose-50 text-rose-800 border border-rose-200";
-                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Non corretto.</strong> Rivedi gli intervalli in cui la $y \\ge 0$ e cancella le regioni errate.';
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> <strong>Non corretto.</strong> Rivedi gli intervalli in cui la $y \\ge 0$ e cancella le regioni corrette.';
+                renderMathInElement(fb, {
+                    delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
+                    throwOnError: false
+                });
             }
         }
 
