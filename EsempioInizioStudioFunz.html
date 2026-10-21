@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio di Funzione Interattivo: y = (x + 5) / (x - 5)</title>
-    <!-- Tailwind CSS per uno stile moderno, responsive e ad alta visibilità -->
+    <title>Studio di Funzione Interattivo</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- KaTeX per il rendering preciso delle formule matematiche -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
@@ -34,7 +34,16 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-slate-900 leading-tight">Studio di Funzione Interattivo</h1>
-                    <p class="text-xs text-slate-500">Analisi completa passo-passo di $y = \frac{x+5}{x-5}$</p>
+                    <!-- Menu a tendina per selezione esercizio -->
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <label for="function-select" class="text-xs font-semibold text-slate-500">Seleziona Funzione:</label>
+                        <select id="function-select" onchange="changeFunction(this.value)" class="text-xs font-bold text-indigo-700 bg-indigo-50/80 border border-indigo-200 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer hover:bg-indigo-100 transition shadow-sm">
+                            <option value="ex1">Es. 1: y = (x + 5) / (x - 5)</option>
+                            <option value="ex2">Es. 2: y = 3x - 6</option>
+                            <option value="ex3">Es. 3: y = √(2x - 1)</option>
+                            <option value="ex4">Es. 4: y = (2x + 4) / (3x - 6)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             
@@ -110,11 +119,11 @@
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                         <input type="checkbox" id="toggle-asymptote" onchange="redrawCanvas()" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                        <span class="text-slate-700 font-medium">Escluso dal dominio ($x=5$)</span>
+                        <span id="label-toggle-asymptote" class="text-slate-700 font-medium">Escluso dal dominio</span>
                     </label>
                     <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                         <input type="checkbox" id="toggle-points" onchange="redrawCanvas()" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                        <span class="text-slate-700 font-medium">Punti $A$ e $B$</span>
+                        <span id="label-toggle-points" class="text-slate-700 font-medium">Punti di Intersezione</span>
                     </label>
                     <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                         <input type="checkbox" id="toggle-regions" onchange="redrawCanvas()" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
@@ -122,7 +131,7 @@
                     </label>
                     <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition">
                         <input type="checkbox" id="toggle-curve" onchange="redrawCanvas()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                        <span class="text-slate-700 font-medium">Curva Iperbole</span>
+                        <span id="label-toggle-curve" class="text-slate-700 font-medium">Curva Iperbole</span>
                     </label>
                 </div>
             </div>
@@ -170,8 +179,8 @@
                 <!-- Legend at bottom of canvas -->
                 <div class="flex flex-wrap items-center justify-around gap-2 mt-3 pt-2 border-t border-slate-200 text-[11px] text-slate-600 font-medium">
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3 h-0.5 bg-rose-600 border border-dashed border-rose-600"></span>
-                        <span>Escluso dal dominio ($x=5$)</span>
+                        <span class="w-3 h-0.5 bg-rose-600 border border-rose-600" id="legend-domain-line"></span>
+                        <span id="legend-domain-label">Escluso dal dominio</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
@@ -183,7 +192,7 @@
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="w-3 h-0.5 bg-emerald-600"></span>
-                        <span>Grafico $f(x)$</span>
+                        <span>Grafico f(x)</span>
                     </div>
                 </div>
 
@@ -195,6 +204,7 @@
     <script>
         // --- STATO DELL'APPLICAZIONE ---
         let currentStep = 0;
+        let currentExKey = 'ex1';
 
         // Configurazione Piano Cartesiano
         let scale = 30; // Pixel per unità algebrica
@@ -207,135 +217,454 @@
         const ctx = canvas.getContext('2d');
         const coordsBadge = document.getElementById('coordsBadge');
 
-        // Testi e Contenuti dei Passaggi Didattici
-        const stepsData = [
-            {
-                title: "A) Determinazione del Dominio",
-                tag: "PASSO 1 DI 4",
-                content: `
-                    <p class="text-slate-700">
-                        La funzione assegnata è una <strong>funzione algebrica razionale fratta</strong>:
-                        $$\\displaystyle y = \\frac{x + 5}{x - 5}$$
-                    </p>
-                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
-                        <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider">Regola di Esistenza</h4>
-                        <p class="text-xs text-slate-600">In una frazione, il denominatore deve essere sempre <strong>diverso da zero</strong> per evitare la divisione per zero (operazione non definita).</p>
-                        <div class="p-2 bg-white rounded-lg text-center font-mono text-indigo-700 border border-indigo-200 shadow-sm">
-                            $$x - 5 \\neq 0 \\implies x \\neq 5$$
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <h4 class="font-semibold text-slate-800">Insieme di Definizione (Dominio):</h4>
-                        <p class="text-indigo-700 font-medium">
-                            $$\\mathcal{D} = \\mathbb{R} \\setminus \\{5\\} = (-\\infty, 5) \\cup (5, +\\infty)$$
-                        </p>
-                    </div>
-                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs">
-                        <strong>Significato Grafico:</strong> La retta verticale $x = 5$ rappresenta il valore <strong>escluso dal dominio</strong>. La curva della funzione non toccherà né attraverserà mai questa retta.
-                    </div>
-                `,
-                toggles: { asymptote: true, points: false, regions: false, curve: false }
+        // Data Store Completo per tutti gli esercizi
+        const exercisesData = {
+            ex1: {
+                title: "y = (x + 5) / (x - 5)",
+                curveName: "Curva Iperbole",
+                hasDomainExclusion: true,
+                domainExclusionX: 5,
+                domainExclusionLabel: "x = 5",
+                evalFunction: (x) => (x + 5) / (x - 5),
+                points: [
+                    { x: 0, y: -1, label: 'A(0, -1)', color: '#4338ca' },
+                    { x: -5, y: 0, label: 'B(-5, 0)', color: '#4338ca' }
+                ],
+                shadedRegions: [
+                    { minX: -Infinity, maxX: -5, regionType: 'y_less_0' },
+                    { minX: -5, maxX: 5, regionType: 'y_greater_0' },
+                    { minX: 5, maxX: Infinity, regionType: 'y_less_0' }
+                ],
+                steps: [
+                    {
+                        title: "A) Determinazione del Dominio",
+                        tag: "PASSO 1 DI 4",
+                        content: `
+                            <p class="text-slate-700">
+                                La funzione assegnata è una <strong>funzione algebrica razionale fratta</strong>:
+                                $$\\displaystyle y = \\frac{x + 5}{x - 5}$$
+                            </p>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                                <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider">Regola di Esistenza</h4>
+                                <p class="text-xs text-slate-600">Poniamo il denominatore diverso da zero per evitare la divisione per zero:</p>
+                                <div class="p-2 bg-white rounded-lg text-center font-mono text-indigo-700 border border-indigo-200 shadow-sm">
+                                    $$x - 5 \\neq 0 \\implies x \\neq 5$$
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <h4 class="font-semibold text-slate-800">Insieme di Definizione (Dominio):</h4>
+                                <p class="text-indigo-700 font-medium">
+                                    $$\\mathcal{D} = \\mathbb{R} \\setminus \\{5\\} = (-\\infty, 5) \\cup (5, +\\infty)$$
+                                </p>
+                            </div>
+                            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs">
+                                <strong>Significato Grafico:</strong> La retta verticale $x = 5$ rappresenta il valore <strong>escluso dal dominio</strong>. La funzione non esiste in questo punto.
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: false, regions: false, curve: false }
+                    },
+                    {
+                        title: "B) Intersezioni con gli Assi Cartesiani",
+                        tag: "PASSO 2 DI 4",
+                        content: `
+                            <p class="text-slate-700">Troviamo i punti in cui il grafico interseca gli assi cartesiani:</p>
+                            <div class="space-y-3">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">1. Intersezione asse $y$ ($x = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800">
+                                        $$y = \\frac{0 + 5}{0 - 5} = \\frac{5}{-5} = -1$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Punto $A(0, -1)$</p>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">2. Intersezione asse $x$ ($y = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800">
+                                        $$x + 5 = 0 \\implies x = -5$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Punto $B(-5, 0)$</p>
+                                </div>
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: false, curve: false }
+                    },
+                    {
+                        title: "C) Studio del Segno della Funzione",
+                        tag: "PASSO 3 DI 4",
+                        content: `
+                            <p class="text-slate-700">Studiamo la disequazione $\\frac{x + 5}{x - 5} > 0$ per determinare dove la funzione è positiva ($y > 0$) e dove è negativa ($y < 0$):</p>
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+                                <p>• <strong>Numeratore $> 0$:</strong> $x + 5 > 0 \\implies x > -5$</p>
+                                <p>• <strong>Denominatore $> 0$:</strong> $x - 5 > 0 \\implies x > 5$</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-slate-300 shadow-sm text-xs overflow-x-auto">
+                                <div class="grid grid-cols-4 gap-1 text-center font-mono items-center">
+                                    <div class="text-left text-slate-500 font-bold">x</div>
+                                    <div class="text-indigo-700 font-bold">&lt; -5</div>
+                                    <div class="text-indigo-700 font-bold">-5 &lt; x &lt; 5</div>
+                                    <div class="text-indigo-700 font-bold">&gt; 5</div>
+
+                                    <div class="text-left text-slate-600">Num</div>
+                                    <div class="text-rose-600 font-bold">- - -</div>
+                                    <div class="text-emerald-600 font-bold">+ + +</div>
+                                    <div class="text-emerald-600 font-bold">+ + +</div>
+
+                                    <div class="text-left text-slate-600">Den</div>
+                                    <div class="text-rose-600 font-bold">- - -</div>
+                                    <div class="text-rose-600 font-bold">- - -</div>
+                                    <div class="text-emerald-600 font-bold">+ + +</div>
+
+                                    <div class="text-left text-slate-900 font-bold border-t border-slate-300 pt-1">y</div>
+                                    <div class="text-emerald-600 font-bold border-t border-slate-300 pt-1">+</div>
+                                    <div class="text-rose-600 font-bold border-t border-slate-300 pt-1">-</div>
+                                    <div class="text-emerald-600 font-bold border-t border-slate-300 pt-1">+</div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-600">Sul grafico vengono <strong>cancellate (ombreggiate)</strong> le regioni in cui la curva non può passare.</p>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: true, curve: false }
+                    },
+                    {
+                        title: "D) Sintesi e Grafico Finale",
+                        tag: "PASSO 4 DI 4",
+                        content: `
+                            <p class="text-slate-700">Sintesi completa dei risultati per $y = \\frac{x+5}{x-5}$:</p>
+                            <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <li><strong>Tipo:</strong> Funzione algebrica razionale fratta (Iperbole traslata).</li>
+                                <li><strong>Escluso dal dominio:</strong> Retta $x = 5$.</li>
+                                <li><strong>Intersezioni:</strong> $A(0, -1)$ e $B(-5, 0)$.</li>
+                                <li><strong>Segno:</strong> Positiva in $(-\\infty, -5) \\cup (5, +\\infty)$, negativa in $(-5, 5)$.</li>
+                            </ul>
+                            <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-indigo-800 text-xs">
+                                Per mostrare il tracciato della curva nel piano, spunta l'opzione <strong>"Curva Iperbole"</strong> nei controlli in basso.
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: true, curve: false }
+                    }
+                ]
             },
-            {
-                title: "B) Intersezioni con gli Assi Cartesiani",
-                tag: "PASSO 2 DI 4",
-                content: `
-                    <p class="text-slate-700">Troviamo i punti in cui il grafico della funzione incrocia gli assi $x$ e $y$.</p>
-                    
-                    <div class="space-y-3">
-                        <!-- Intersezione Asse Y -->
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                            <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">1. Intersezione con l'asse $y$ ($x = 0$)</h4>
-                            <p class="text-xs mb-1">Sostituiamo $x = 0$ nell'equazione:</p>
-                            <p class="font-mono text-center text-sm font-semibold text-slate-800">
-                                $$y = \\frac{0 + 5}{0 - 5} = \\frac{5}{-5} = -1$$
+            ex2: {
+                title: "y = 3x - 6",
+                curveName: "Retta",
+                hasDomainExclusion: false,
+                domainExclusionX: null,
+                domainExclusionLabel: "",
+                evalFunction: (x) => 3 * x - 6,
+                points: [
+                    { x: 0, y: -6, label: 'A(0, -6)', color: '#4338ca' },
+                    { x: 2, y: 0, label: 'B(2, 0)', color: '#4338ca' }
+                ],
+                shadedRegions: [
+                    { minX: -Infinity, maxX: 2, regionType: 'y_greater_0' },
+                    { minX: 2, maxX: Infinity, regionType: 'y_less_0' }
+                ],
+                steps: [
+                    {
+                        title: "A) Determinazione del Dominio",
+                        tag: "PASSO 1 DI 4",
+                        content: `
+                            <p class="text-slate-700">
+                                La funzione assegnata è una <strong>funzione algebrica polinomiale di 1° grado</strong> (lineare):
+                                $$\\displaystyle y = 3x - 6$$
                             </p>
-                            <p class="text-xs text-emerald-700 font-bold mt-1">
-                                $\\rightarrow$ Punto $A(0, -1)$
-                            </p>
-                        </div>
-
-                        <!-- Intersezione Asse X -->
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                            <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">2. Intersezione con l'asse $x$ ($y = 0$)</h4>
-                            <p class="text-xs mb-1">Poniamo l'intera frazione uguale a zero:</p>
-                            <p class="font-mono text-center text-sm font-semibold text-slate-800">
-                                $$\\frac{x + 5}{x - 5} = 0 \\implies x + 5 = 0 \\implies x = -5$$
-                            </p>
-                            <p class="text-xs text-emerald-700 font-bold mt-1">
-                                $\\rightarrow$ Punto $B(-5, 0)$
-                            </p>
-                        </div>
-                    </div>
-                `,
-                toggles: { asymptote: true, points: true, regions: false, curve: false }
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                                <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider">Regola di Esistenza</h4>
+                                <p class="text-xs text-slate-600">Non figurano frazioni (denominatori) né radici di indice pari. La funzione è definita per qualsiasi valore reale di $x$.</p>
+                            </div>
+                            <div class="space-y-1">
+                                <h4 class="font-semibold text-slate-800">Insieme di Definizione (Dominio):</h4>
+                                <p class="text-indigo-700 font-medium">
+                                    $$\\mathcal{D} = \\mathbb{R} = (-\\infty, +\\infty)$$
+                                </p>
+                            </div>
+                            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs">
+                                <strong>Significato Grafico:</strong> Non vi sono valori o rette verticali escluse dal dominio. Il grafico copre l'intero asse $x$.
+                            </div>
+                        `,
+                        toggles: { asymptote: false, points: false, regions: false, curve: false }
+                    },
+                    {
+                        title: "B) Intersezioni con gli Assi Cartesiani",
+                        tag: "PASSO 2 DI 4",
+                        content: `
+                            <p class="text-slate-700">Troviamo i punti di contatto con gli assi cartesiani:</p>
+                            <div class="space-y-3">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">1. Intersezione asse $y$ ($x = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800">
+                                        $$y = 3(0) - 6 = -6$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Punto $A(0, -6)$</p>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">2. Intersezione asse $x$ ($y = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800">
+                                        $$3x - 6 = 0 \\implies 3x = 6 \\implies x = 2$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Punto $B(2, 0)$</p>
+                                </div>
+                            </div>
+                        `,
+                        toggles: { asymptote: false, points: true, regions: false, curve: false }
+                    },
+                    {
+                        title: "C) Studio del Segno della Funzione",
+                        tag: "PASSO 3 DI 4",
+                        content: `
+                            <p class="text-slate-700">Studiamo la disequazione $y > 0$:</p>
+                            <p class="font-mono text-center text-indigo-700 font-bold">$$3x - 6 > 0 \\implies 3x > 6 \\implies x > 2$$</p>
+                            
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-2">
+                                <p>• Per $x > 2$: la funzione è <strong>positiva</strong> ($y > 0$).</p>
+                                <p>• Per $x < 2$: la funzione è <strong>negativa</strong> ($y < 0$).</p>
+                                <p>• Per $x = 2$: la funzione si annulla ($y = 0$).</p>
+                            </div>
+                        `,
+                        toggles: { asymptote: false, points: true, regions: true, curve: false }
+                    },
+                    {
+                        title: "D) Sintesi e Grafico Finale",
+                        tag: "PASSO 4 DI 4",
+                        content: `
+                            <p class="text-slate-700">Sintesi completa per la retta $y = 3x - 6$:</p>
+                            <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <li><strong>Tipo:</strong> Retta con pendenza $m = 3$ e quota $q = -6$.</li>
+                                <li><strong>Dominio:</strong> Tutto $\\mathbb{R}$.</li>
+                                <li><strong>Intersezioni:</strong> $A(0, -6)$ e $B(2, 0)$.</li>
+                                <li><strong>Segno:</strong> Positiva per $x > 2$, negativa per $x < 2$.</li>
+                            </ul>
+                        `,
+                        toggles: { asymptote: false, points: true, regions: true, curve: false }
+                    }
+                ]
             },
-            {
-                title: "C) Studio del Segno della Funzione",
-                tag: "PASSO 3 DI 4",
-                content: `
-                    <p class="text-slate-700">Determiniamo per quali valori di $x$ la funzione è positiva ($y > 0$) o negativa ($y < 0$):</p>
-                    <p class="font-mono text-center text-indigo-700 font-bold">$$\\frac{x + 5}{x - 5} > 0$$</p>
-
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-2">
-                        <p><strong>Numeratore $> 0$:</strong> $x + 5 > 0 \\implies x > -5$</p>
-                        <p><strong>Denominatore $> 0$:</strong> $x - 5 > 0 \\implies x > 5$</p>
-                    </div>
-
-                    <!-- Tabella dei Segni Schema -->
-                    <div class="bg-white p-3 rounded-xl border border-slate-300 shadow-sm text-xs overflow-x-auto">
-                        <h4 class="font-semibold text-slate-600 text-center mb-2">Grafico dei Segni</h4>
-                        <div class="grid grid-cols-4 gap-1 text-center font-mono items-center">
-                            <div class="text-left text-slate-500 font-bold">x</div>
-                            <div class="text-indigo-700 font-bold">&lt; -5</div>
-                            <div class="text-indigo-700 font-bold">-5 &lt; x &lt; 5</div>
-                            <div class="text-indigo-700 font-bold">&gt; 5</div>
-
-                            <div class="text-left text-slate-600">Num (x+5)</div>
-                            <div class="text-rose-600 font-bold">- - -</div>
-                            <div class="text-emerald-600 font-bold">+ + +</div>
-                            <div class="text-emerald-600 font-bold">+ + +</div>
-
-                            <div class="text-left text-slate-600">Den (x-5)</div>
-                            <div class="text-rose-600 font-bold">- - -</div>
-                            <div class="text-rose-600 font-bold">- - -</div>
-                            <div class="text-emerald-600 font-bold">+ + +</div>
-
-                            <div class="text-left text-slate-900 font-bold border-t border-slate-300 pt-1">y = N/D</div>
-                            <div class="text-emerald-600 font-bold border-t border-slate-300 pt-1">+</div>
-                            <div class="text-rose-600 font-bold border-t border-slate-300 pt-1">-</div>
-                            <div class="text-emerald-600 font-bold border-t border-slate-300 pt-1">+</div>
-                        </div>
-                    </div>
-
-                    <p class="text-xs text-slate-600">
-                        <strong>Regioni escluse dallo studio del segno:</strong> Nel piano cartesiano si cancellano (ombreggiano in rosso) le regioni dove la curva <em>non può passare</em>.
-                    </p>
-                `,
-                toggles: { asymptote: true, points: true, regions: true, curve: false }
+            ex3: {
+                title: "y = √(2x - 1)",
+                curveName: "Ramo di Parabola",
+                hasDomainExclusion: true,
+                domainExclusionX: 0.5,
+                domainExclusionIsRegionLeft: true, // Indica che l'esclusione è l'intera regione x < 0.5
+                domainExclusionLabel: "x < 0.5",
+                evalFunction: (x) => (2 * x - 1 >= 0 ? Math.sqrt(2 * x - 1) : NaN),
+                points: [
+                    { x: 0.5, y: 0, label: 'A(1/2, 0)', color: '#4338ca' }
+                ],
+                shadedRegions: [
+                    { minX: 0.5, maxX: Infinity, regionType: 'y_less_0' }
+                ],
+                steps: [
+                    {
+                        title: "A) Determinazione del Dominio",
+                        tag: "PASSO 1 DI 4",
+                        content: `
+                            <p class="text-slate-700">
+                                La funzione è una <strong>funzione irrazionale irriducibile</strong> con radice di indice pari (2):
+                                $$\\displaystyle y = \\sqrt{2x - 1}$$
+                            </p>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                                <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider">Regola di Esistenza</h4>
+                                <p class="text-xs text-slate-600">Il radicando di una radice quadrata deve essere <strong>maggiore o uguale a zero</strong>.</p>
+                                <div class="p-2 bg-white rounded-lg text-center font-mono text-indigo-700 border border-indigo-200 shadow-sm">
+                                    $$2x - 1 \\ge 0 \\implies 2x \\ge 1 \\implies x \\ge \\frac{1}{2}$$
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <h4 class="font-semibold text-slate-800">Insieme di Definizione (Dominio):</h4>
+                                <p class="text-indigo-700 font-medium">
+                                    $$\\mathcal{D} = \\left[\\frac{1}{2}, +\\infty\\right)$$
+                                </p>
+                            </div>
+                            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs">
+                                <strong>Esclusione dal Dominio:</strong> Tutta la regione a sinistra di $x < 1/2 = 0.5$ è <strong>esclusa dal dominio</strong> poiché la radice di un numero negativo non esiste nei numeri reali.
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: false, regions: false, curve: false }
+                    },
+                    {
+                        title: "B) Intersezioni con gli Assi Cartesiani",
+                        tag: "PASSO 2 DI 4",
+                        content: `
+                            <p class="text-slate-700">Verifichiamo le intersezioni con gli assi cartesiani:</p>
+                            <div class="space-y-3">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">1. Intersezione asse $y$ ($x = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800 my-1">
+                                        $$y = \\sqrt{2(0) - 1} = \\sqrt{-1} \\quad \\implies \\quad \\mathbf{IMPOSSIBILE}$$
+                                    </p>
+                                    <p class="text-xs text-rose-700 font-medium">Non esiste la radice quadrata di un numero negativo in $\\mathbb{R}$. Il valore $x = 0$ non appartiene al dominio ($0 < 1/2$), perciò <strong>non c'è alcuna intersezione con l'asse $y$</strong>.</p>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">2. Intersezione asse $x$ ($y = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800 my-1">
+                                        $$\\sqrt{2x - 1} = 0 \\implies 2x - 1 = 0 \\implies x = \\frac{1}{2}$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Unica intersezione (punto iniziale): $A(1/2, 0)$</p>
+                                </div>
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: false, curve: false }
+                    },
+                    {
+                        title: "C) Studio del Segno della Funzione",
+                        tag: "PASSO 3 DI 4",
+                        content: `
+                            <p class="text-slate-700">Analizziamo il segno della radice quadrata nel dominio $x \\ge 1/2$:</p>
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-2">
+                                <p>• Per $x = 1/2$: la funzione vale $y = 0$.</p>
+                                <p>• Per $x > 1/2$: la radice quadrata ha valore strettamente positivo ($y > 0$).</p>
+                            </div>
+                            <p class="text-xs text-slate-600">
+                                Dallo studio del segno si cancella (ombreggia) il semipiano inferiore $y < 0$ nel dominio.
+                            </p>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: true, curve: false }
+                    },
+                    {
+                        title: "D) Sintesi e Grafico Finale",
+                        tag: "PASSO 4 DI 4",
+                        content: `
+                            <p class="text-slate-700">Sintesi completa per la funzione irrazionale $y = \\sqrt{2x-1}$:</p>
+                            <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <li><strong>Tipo:</strong> Ramo di parabola ad asse orizzontale.</li>
+                                <li><strong>Dominio:</strong> $[1/2, +\\infty)$. Non definita per $x < 0.5$.</li>
+                                <li><strong>Intersezioni:</strong> Solamente il punto $A(1/2, 0)$.</li>
+                                <li><strong>Segno:</strong> Sempre $y \\ge 0$ nel suo dominio.</li>
+                            </ul>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: true, curve: false }
+                    }
+                ]
             },
-            {
-                title: "D) Sintesi e Grafico Finale",
-                tag: "PASSO 4 DI 4",
-                content: `
-                    <p class="text-slate-700">
-                        Riunendo tutti i risultati ottenuti, possiamo tracciare con precisione il grafico completo della funzione:
-                    </p>
-                    <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                        <li><strong>Tipo di curva:</strong> Iperbole Traslata (funzione fratta lineare).</li>
-                        <li><strong>Escluso dal dominio:</strong> Retta $x = 5$.</li>
-                        <li><strong>Passaggi per gli assi:</strong> $A(0, -1)$ e $B(-5, 0)$.</li>
-                        <li><strong>Coerenza con i segni:</strong> La curva giace interamente nei settori consentiti dal segno.</li>
-                    </ul>
-                    <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-indigo-800 text-xs">
-                        💡 <strong>Suggerimento:</strong> Muovi il mouse sul grafico a destra per esplorare i punti e i valori esatti di coordinata! Può essere attivata la spunta <em>Curva Iperbole</em> se si vuole visualizzare il grafico della funzione.
-                    </div>
-                `,
-                toggles: { asymptote: true, points: true, regions: true, curve: false }
+            ex4: {
+                title: "y = (2x + 4) / (3x - 6)",
+                curveName: "Curva Iperbole",
+                hasDomainExclusion: true,
+                domainExclusionX: 2,
+                domainExclusionLabel: "x = 2",
+                evalFunction: (x) => (2 * x + 4) / (3 * x - 6),
+                points: [
+                    { x: 0, y: -2 / 3, label: 'A(0, -2/3)', color: '#4338ca' },
+                    { x: -2, y: 0, label: 'B(-2, 0)', color: '#4338ca' }
+                ],
+                shadedRegions: [
+                    { minX: -Infinity, maxX: -2, regionType: 'y_less_0' },
+                    { minX: -2, maxX: 2, regionType: 'y_greater_0' },
+                    { minX: 2, maxX: Infinity, regionType: 'y_less_0' }
+                ],
+                steps: [
+                    {
+                        title: "A) Determinazione del Dominio",
+                        tag: "PASSO 1 DI 4",
+                        content: `
+                            <p class="text-slate-700">
+                                Funzione algebrica razionale fratta:
+                                $$\\displaystyle y = \\frac{2x + 4}{3x - 6}$$
+                            </p>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                                <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider">Regola di Esistenza</h4>
+                                <p class="text-xs text-slate-600">Poniamo il denominatore diverso da zero:</p>
+                                <div class="p-2 bg-white rounded-lg text-center font-mono text-indigo-700 border border-indigo-200 shadow-sm">
+                                    $$3x - 6 \\neq 0 \\implies 3x \\neq 6 \\implies x \\neq 2$$
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <h4 class="font-semibold text-slate-800">Insieme di Definizione (Dominio):</h4>
+                                <p class="text-indigo-700 font-medium">
+                                    $$\\mathcal{D} = \\mathbb{R} \\setminus \\{2\\} = (-\\infty, 2) \\cup (2, +\\infty)$$
+                                </p>
+                            </div>
+                            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs">
+                                <strong>Significato Grafico:</strong> La retta $x = 2$ è il valore <strong>escluso dal dominio</strong>.
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: false, regions: false, curve: false }
+                    },
+                    {
+                        title: "B) Intersezioni con gli Assi Cartesiani",
+                        tag: "PASSO 2 DI 4",
+                        content: `
+                            <p class="text-slate-700">Calcolo dei punti di intersezione:</p>
+                            <div class="space-y-3">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">1. Intersezione asse $y$ ($x = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800">
+                                        $$y = \\frac{2(0) + 4}{3(0) - 6} = \\frac{4}{-6} = -\\frac{2}{3} \\approx -0.67$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Punto $A(0, -2/3)$</p>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <h4 class="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-1">2. Intersezione asse $x$ ($y = 0$)</h4>
+                                    <p class="font-mono text-center text-sm font-semibold text-slate-800">
+                                        $$2x + 4 = 0 \\implies 2x = -4 \\implies x = -2$$
+                                    </p>
+                                    <p class="text-xs text-emerald-700 font-bold mt-1">$\\rightarrow$ Punto $B(-2, 0)$</p>
+                                </div>
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: false, curve: false }
+                    },
+                    {
+                        title: "C) Studio del Segno della Funzione",
+                        tag: "PASSO 3 DI 4",
+                        content: `
+                            <p class="text-slate-700">Studiamo la frazione $\\frac{2x + 4}{3x - 6} > 0$:</p>
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+                                <p>• <strong>Num $> 0$:</strong> $2x + 4 > 0 \\implies x > -2$</p>
+                                <p>• <strong>Den $> 0$:</strong> $3x - 6 > 0 \\implies x > 2$</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-slate-300 shadow-sm text-xs overflow-x-auto">
+                                <div class="grid grid-cols-4 gap-1 text-center font-mono items-center">
+                                    <div class="text-left text-slate-500 font-bold">x</div>
+                                    <div class="text-indigo-700 font-bold">&lt; -2</div>
+                                    <div class="text-indigo-700 font-bold">-2 &lt; x &lt; 2</div>
+                                    <div class="text-indigo-700 font-bold">&gt; 2</div>
+
+                                    <div class="text-left text-slate-600">Num</div>
+                                    <div class="text-rose-600 font-bold">- - -</div>
+                                    <div class="text-emerald-600 font-bold">+ + +</div>
+                                    <div class="text-emerald-600 font-bold">+ + +</div>
+
+                                    <div class="text-left text-slate-600">Den</div>
+                                    <div class="text-rose-600 font-bold">- - -</div>
+                                    <div class="text-rose-600 font-bold">- - -</div>
+                                    <div class="text-emerald-600 font-bold">+ + +</div>
+
+                                    <div class="text-left text-slate-900 font-bold border-t border-slate-300 pt-1">y</div>
+                                    <div class="text-emerald-600 font-bold border-t border-slate-300 pt-1">+</div>
+                                    <div class="text-rose-600 font-bold border-t border-slate-300 pt-1">-</div>
+                                    <div class="text-emerald-600 font-bold border-t border-slate-300 pt-1">+</div>
+                                </div>
+                            </div>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: true, curve: false }
+                    },
+                    {
+                        title: "D) Sintesi e Grafico Finale",
+                        tag: "PASSO 4 DI 4",
+                        content: `
+                            <p class="text-slate-700">Sintesi completa per la frazione $y = \\frac{2x+4}{3x-6}$:</p>
+                            <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <li><strong>Tipo:</strong> Iperbole Traslata.</li>
+                                <li><strong>Escluso dal dominio:</strong> $x = 2$.</li>
+                                <li><strong>Intersezioni:</strong> $A(0, -2/3)$ e $B(-2, 0)$.</li>
+                                <li><strong>Segno:</strong> Positiva per $x < -2 \\cup x > 2$, negativa in $(-2, 2)$.</li>
+                            </ul>
+                        `,
+                        toggles: { asymptote: true, points: true, regions: true, curve: false }
+                    }
+                ]
             }
-        ];
+        };
 
-        // --- INIZIALIZZAZIONE & EVENTI CANVAS ---
+        function changeFunction(exKey) {
+            currentExKey = exKey;
+            currentStep = 0;
+            
+            // Aggiorna nome della spunta nel toggle
+            const ex = exercisesData[currentExKey];
+            document.getElementById('label-toggle-curve').innerText = ex.curveName;
+
+            setStep(0);
+        }
 
         function initCanvas() {
             const container = canvas.parentElement;
@@ -351,27 +680,37 @@
 
         function setStep(stepIndex) {
             currentStep = stepIndex;
+            const ex = exercisesData[currentExKey];
+            
+            // Fallback di sicurezza se l'indice dello step non esiste
+            if (!ex || !ex.steps || !ex.steps[currentStep]) {
+                currentStep = 0;
+            }
+
+            const currentStepData = ex.steps[currentStep];
 
             // Aggiorna classi bottoni Tab
             for (let i = 0; i < 4; i++) {
                 const tab = document.getElementById(`tab-${i}`);
-                if (i === currentStep) {
-                    tab.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap bg-indigo-600 text-white shadow-md shadow-indigo-600/20 font-semibold";
-                } else {
-                    tab.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-slate-200/60";
+                if (tab) {
+                    if (i === currentStep) {
+                        tab.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap bg-indigo-600 text-white shadow-md shadow-indigo-600/20 font-semibold";
+                    } else {
+                        tab.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-slate-200/60";
+                    }
                 }
             }
 
             // Imposta stato dei checkbox visibilità in base allo step (Curva disabilitata di default)
-            const toggles = stepsData[currentStep].toggles;
+            const toggles = currentStepData.toggles;
             document.getElementById('toggle-asymptote').checked = toggles.asymptote;
             document.getElementById('toggle-points').checked = toggles.points;
             document.getElementById('toggle-regions').checked = toggles.regions;
             document.getElementById('toggle-curve').checked = false; // Disabilitata di default
 
             // Aggiorna contenuto descrittivo
-            document.getElementById('step-tag').innerText = stepsData[currentStep].tag;
-            document.getElementById('step-content').innerHTML = stepsData[currentStep].content;
+            document.getElementById('step-tag').innerText = currentStepData.tag;
+            document.getElementById('step-content').innerHTML = currentStepData.content;
 
             // Disabilita/Abilita bottoni avanti/indietro
             document.getElementById('btn-prev').disabled = (currentStep === 0);
@@ -413,43 +752,69 @@
             if (!ctx) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            const ex = exercisesData[currentExKey];
             const showAsymptote = document.getElementById('toggle-asymptote').checked;
             const showPoints = document.getElementById('toggle-points').checked;
             const showRegions = document.getElementById('toggle-regions').checked;
             const showCurve = document.getElementById('toggle-curve').checked;
 
-            // 1. Disegna Griglia e Assi (Sfondo Chiaro)
+            // 1. Disegna Griglia e Assi
             drawGrid();
 
-            // 2. Ombreggiatura Regioni Escluse (Segno)
+            // 2. Escluso dal Dominio (Linea o regione ombreggiata a sinistra per Es. 3)
+            if (showAsymptote && ex.hasDomainExclusion && ex.domainExclusionX !== null) {
+                if (ex.domainExclusionIsRegionLeft) {
+                    // Ombreggia l'intera regione non definita x < 0.5
+                    const mathMinX = toMathX(0);
+                    const mathMinY = toMathY(canvas.height);
+                    const mathMaxY = toMathY(0);
+                    const pX1 = toPixelX(mathMinX);
+                    const pX2 = toPixelX(ex.domainExclusionX);
+                    const pYMax = toPixelY(mathMaxY);
+                    const pYMin = toPixelY(mathMinY);
+                    fillAndHatchBox(pX1, pYMax, pX2, pYMin);
+
+                    // Linea di confine NETTA E PIENA per x = 0.5 (punto x=1/2 INCLUSO nel dominio)
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash([]); // Linea continua piena per es. 3
+                    ctx.strokeStyle = '#dc2626';
+                    ctx.lineWidth = 2.5;
+                    const pxX = toPixelX(ex.domainExclusionX);
+                    ctx.moveTo(pxX, 0);
+                    ctx.lineTo(pxX, canvas.height);
+                    ctx.stroke();
+                    ctx.restore();
+                } else {
+                    // Linea verticale tratteggiata per valori esclusi dal dominio (funzioni fratte)
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash([6, 6]);
+                    ctx.strokeStyle = '#dc2626';
+                    ctx.lineWidth = 2.5;
+                    const pxX = toPixelX(ex.domainExclusionX);
+                    ctx.moveTo(pxX, 0);
+                    ctx.lineTo(pxX, canvas.height);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+
+            // 3. Ombreggiatura Regioni Escluse dallo Studio del Segno
             if (showRegions) {
                 drawShadedRegions();
             }
 
-            // 3. Escluso dal Dominio (x = 5)
-            if (showAsymptote) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.setLineDash([6, 6]);
-                ctx.strokeStyle = '#dc2626'; // Rosso ad alta visibilità
-                ctx.lineWidth = 2.5;
-                const pxX5 = toPixelX(5);
-                ctx.moveTo(pxX5, 0);
-                ctx.lineTo(pxX5, canvas.height);
-                ctx.stroke();
-
-                ctx.restore();
-            }
-
-            // 4. Curva della Funzione y = (x+5)/(x-5)
+            // 4. Curva della Funzione
             if (showCurve) {
                 drawFunctionCurve();
             }
 
-            // 5. Punti di Intersezione A(0, -1) e B(-5, 0)
-            if (showPoints) {
-                drawPoint(0, -1, 'A(0, -1)', '#4338ca'); // Indigo scuro
-                drawPoint(-5, 0, 'B(-5, 0)', '#4338ca');
+            // 5. Punti di Intersezione
+            if (showPoints && ex.points) {
+                ex.points.forEach(p => {
+                    drawPoint(p.x, p.y, p.label, p.color);
+                });
             }
         }
 
@@ -543,64 +908,59 @@
         }
 
         function drawShadedRegions() {
-            ctx.save();
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.1)'; // Rosso chiaro trasparente
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.25)';
-            ctx.lineWidth = 1;
+            const ex = exercisesData[currentExKey];
+            if (!ex.shadedRegions) return;
 
-            const minX = toMathX(0);
-            const maxX = toMathX(canvas.width);
-            const minY = toMathY(canvas.height);
-            const maxY = toMathY(0);
+            const mathMinX = toMathX(0);
+            const mathMaxX = toMathX(canvas.width);
+            const mathMinY = toMathY(canvas.height);
+            const mathMaxY = toMathY(0);
 
-            // Intervallo 1: x < -5 -> y > 0, si cancella la regione y < 0
-            if (minX < -5) {
-                const pMinX = toPixelX(minX);
-                const pMaxX = toPixelX(Math.min(-5, maxX));
-                const pY0 = toPixelY(0);
-                const pYMin = toPixelY(minY);
+            ex.shadedRegions.forEach(region => {
+                const rMinX = Math.max(region.minX, mathMinX);
+                const rMaxX = Math.min(region.maxX, mathMaxX);
 
-                ctx.fillRect(pMinX, pY0, pMaxX - pMinX, pYMin - pY0);
-                drawHatching(pMinX, pMaxX, pY0, pYMin);
-            }
+                if (rMinX < rMaxX) {
+                    const pX1 = toPixelX(rMinX);
+                    const pX2 = toPixelX(rMaxX);
 
-            // Intervallo 2: -5 < x < 5 -> y < 0, si cancella la regione y > 0
-            if (maxX > -5 && minX < 5) {
-                const pMinX = toPixelX(Math.max(-5, minX));
-                const pMaxX = toPixelX(Math.min(5, maxX));
-                const pY0 = toPixelY(0);
-                const pYMax = toPixelY(maxY);
-
-                ctx.fillRect(pMinX, pYMax, pMaxX - pMinX, pY0 - pYMax);
-                drawHatching(pMinX, pMaxX, pYMax, pY0);
-            }
-
-            // Intervallo 3: x > 5 -> y > 0, si cancella la regione y < 0
-            if (maxX > 5) {
-                const pMinX = toPixelX(Math.max(5, minX));
-                const pMaxX = toPixelX(maxX);
-                const pY0 = toPixelY(0);
-                const pYMin = toPixelY(minY);
-
-                ctx.fillRect(pMinX, pY0, pMaxX - pMinX, pYMin - pY0);
-                drawHatching(pMinX, pMaxX, pY0, pYMin);
-            }
-
-            ctx.restore();
+                    if (region.regionType === 'y_less_0') {
+                        // Cancella il semipiano inferiore (y < 0)
+                        const pY0 = toPixelY(0);
+                        const pYMin = toPixelY(mathMinY);
+                        fillAndHatchBox(pX1, pY0, pX2, pYMin);
+                    } else if (region.regionType === 'y_greater_0') {
+                        // Cancella il semipiano superiore (y > 0)
+                        const pY0 = toPixelY(0);
+                        const pYMax = toPixelY(mathMaxY);
+                        fillAndHatchBox(pX1, pYMax, pX2, pY0);
+                    } else if (region.regionType === 'full') {
+                        // Cancella l'intera fascia verticale
+                        const pYMax = toPixelY(mathMaxY);
+                        const pYMin = toPixelY(mathMinY);
+                        fillAndHatchBox(pX1, pYMax, pX2, pYMin);
+                    }
+                }
+            });
         }
 
-        function drawHatching(x1, x2, y1, y2) {
+        function fillAndHatchBox(x1, y1, x2, y2) {
             ctx.save();
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+            const width = x2 - x1;
+            const height = y2 - y1;
+            ctx.fillRect(x1, y1, width, height);
+
             ctx.beginPath();
-            ctx.rect(x1, y1, x2 - x1, y2 - y1);
+            ctx.rect(x1, y1, width, height);
             ctx.clip();
 
             ctx.strokeStyle = 'rgba(239, 68, 68, 0.25)';
             ctx.lineWidth = 1;
             const step = 12;
-            for (let pos = x1 - (y2 - y1); pos < x2 + (y2 - y1); pos += step) {
+            for (let pos = x1 - Math.abs(height); pos < x2 + Math.abs(height); pos += step) {
                 ctx.moveTo(pos, y2);
-                ctx.lineTo(pos + (y2 - y1), y1);
+                ctx.lineTo(pos + Math.abs(height), y1);
             }
             ctx.stroke();
             ctx.restore();
@@ -611,33 +971,19 @@
             ctx.strokeStyle = '#059669'; // Smeraldo ad alta visibilità
             ctx.lineWidth = 3;
 
-            // Ramo Sinistro (x < 5)
-            ctx.beginPath();
+            const ex = exercisesData[currentExKey];
             let started = false;
-            for (let px = 0; px < canvas.width; px += 2) {
-                const x = toMathX(px);
-                if (x >= 4.95) break;
 
-                const y = (x + 5) / (x - 5);
-                const py = toPixelY(y);
-
-                if (!started) {
-                    ctx.moveTo(px, py);
-                    started = true;
-                } else {
-                    ctx.lineTo(px, py);
-                }
-            }
-            ctx.stroke();
-
-            // Ramo Destro (x > 5)
             ctx.beginPath();
-            started = false;
-            for (let px = 0; px < canvas.width; px += 2) {
+            for (let px = 0; px < canvas.width; px += 1.5) {
                 const x = toMathX(px);
-                if (x <= 5.05) continue;
+                const y = ex.evalFunction(x);
 
-                const y = (x + 5) / (x - 5);
+                if (isNaN(y) || !isFinite(y) || Math.abs(y) > 100) {
+                    started = false;
+                    continue;
+                }
+
                 const py = toPixelY(y);
 
                 if (!started) {
