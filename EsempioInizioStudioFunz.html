@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio di Funzione Interattivo: y = (x + 5) / (x - 5)</title>
+    <!-- Tailwind CSS per uno stile moderno e responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX per il rendering preciso delle formule matematiche -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sign-table-col {
+            min-width: 70px;
+        }
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-800/90 border-b border-slate-700/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600/30 border border-indigo-500/40 rounded-xl text-indigo-400">
+                    <i data-lucide="function-square" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-tight">Studio di Funzione Interattivo</h1>
+                    <p class="text-xs text-slate-400">Analisi completa passo-passo di $y = \frac{x+5}{x-5}$</p>
+                </div>
+            </div>
+            
+            <!-- Step Selector Tabs -->
+            <div class="flex items-center bg-slate-950/60 p-1 rounded-xl border border-slate-800 text-xs sm:text-sm font-medium overflow-x-auto max-w-full">
+                <button onclick="setStep(0)" id="tab-0" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-600 text-xs flex items-center justify-center font-bold">1</span>
+                    <span>Dominio</span>
+                </button>
+                <button onclick="setStep(1)" id="tab-1" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-600 text-xs flex items-center justify-center font-bold">2</span>
+                    <span>Intersezioni</span>
+                </button>
+                <button onclick="setStep(2)" id="tab-2" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-600 text-xs flex items-center justify-center font-bold">3</span>
+                    <span>Segno</span>
+                </button>
+                <button onclick="setStep(3)" id="tab-3" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-600 text-xs flex items-center justify-center font-bold">4</span>
+                    <span>Grafico Finale</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+
+        <!-- Left Column: Step Explanations & Theory (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-5">
+
+            <!-- Card Spiegazione Passaggio -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-xl backdrop-blur-sm flex-1 flex flex-col justify-between">
+                <div>
+                    <!-- Step Header -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-700/60 mb-4">
+                        <span id="step-tag" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                            PASSO 1 DI 4
+                        </span>
+                        <div class="flex gap-1 text-slate-400">
+                            <button onclick="prevStep()" id="btn-prev" class="p-1.5 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed" title="Precedente">
+                                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="nextStep()" id="btn-next" class="p-1.5 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed" title="Successivo">
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step Content Area -->
+                    <div id="step-content" class="space-y-4 text-slate-300 text-sm leading-relaxed">
+                        <!-- Iniettato dinamicamente da JS -->
+                    </div>
+                </div>
+
+                <!-- Step Footer Navigation -->
+                <div class="pt-4 mt-6 border-t border-slate-700/60 flex items-center justify-between">
+                    <button onclick="prevStep()" id="btn-prev-text" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-semibold text-slate-200 transition flex items-center gap-1">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i> Indietro
+                    </button>
+                    <button onclick="nextStep()" id="btn-next-text" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition shadow-lg shadow-indigo-600/30 flex items-center gap-1">
+                        Prosegui <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card dei Controlli di Visualizzazione Grafica -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
+                    Elementi nel Piano Cartesiano
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <label class="flex items-center gap-2 p-2 bg-slate-900/50 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition">
+                        <input type="checkbox" id="toggle-asymptote" onchange="redrawCanvas()" checked class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-slate-300">Escluso dal dominio ($x=5$)</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-slate-900/50 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition">
+                        <input type="checkbox" id="toggle-points" onchange="redrawCanvas()" checked class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-slate-300">Punti $A$ e $B$</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-slate-900/50 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition">
+                        <input type="checkbox" id="toggle-regions" onchange="redrawCanvas()" checked class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-slate-300">Regioni escluse dallo studio del segno</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-slate-900/50 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition">
+                        <input type="checkbox" id="toggle-curve" onchange="redrawCanvas()" class="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-slate-300">Curva Iperbole</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Cartesian Canvas (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col">
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm flex-1 flex flex-col relative overflow-hidden">
+                
+                <!-- Canvas Top Bar Controls -->
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-medium text-slate-300">Piano Cartesiano</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="resetZoom()" class="p-1.5 bg-slate-700/60 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition flex items-center gap-1" title="Ripristina Vista">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Centra
+                        </button>
+                        <button onclick="zoom(1.2)" class="p-1.5 bg-slate-700/60 hover:bg-slate-700 text-slate-300 rounded-lg transition" title="Aumenta Zoom">
+                            <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="zoom(0.8)" class="p-1.5 bg-slate-700/60 hover:bg-slate-700 text-slate-300 rounded-lg transition" title="Riduci Zoom">
+                            <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Canvas Container -->
+                <div class="relative flex-1 min-h-[380px] sm:min-h-[460px] bg-slate-950 rounded-xl border border-slate-800/80 overflow-hidden cursor-crosshair">
+                    <canvas id="cartesianCanvas" class="absolute inset-0 w-full h-full"></canvas>
+
+                    <!-- Coordinate Hover Badge -->
+                    <div id="coordsBadge" class="absolute bottom-3 left-3 bg-slate-900/90 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-mono backdrop-blur pointer-events-none hidden shadow-lg">
+                        x: 0.00, y: 0.00
+                    </div>
+
+                    <!-- Instructions Overlay for Canvas Dragging -->
+                    <div class="absolute top-3 right-3 bg-slate-900/60 border border-slate-800 text-slate-400 px-2.5 py-1 rounded-md text-[10px] pointer-events-none backdrop-blur">
+                        Trascina per spostare | Rotella per zoom
+                    </div>
+                </div>
+
+                <!-- Legend at bottom of canvas -->
+                <div class="flex flex-wrap items-center justify-around gap-2 mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-0.5 bg-amber-400 border border-dashed border-amber-400"></span>
+                        <span>Escluso dal dominio ($x=5$)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+                        <span>Punti Intersezione</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 bg-rose-500/20 border border-rose-500/40 rounded-sm"></span>
+                        <span>Regione Esclusa</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-0.5 bg-emerald-400"></span>
+                        <span>Grafico $f(x)$</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- STATO DELL'APPLICAZIONE ---
+        let currentStep = 0;
+
+        // Configurazione Piano Cartesiano
+        let scale = 30; // Pixel per unità algebrica
+        let originX = 0; // Posizione X dell'origine nei pixel del canvas
+        let originY = 0; // Posizione Y dell'origine nei pixel del canvas
+        let isDragging = false;
+        let startX, startY;
+
+        const canvas = document.getElementById('cartesianCanvas');
+        const ctx = canvas.getContext('2d');
+        const coordsBadge = document.getElementById('coordsBadge');
+
+        // Testi e Contenuti dei Passaggi Didattici
+        const stepsData = [
+            {
+                title: "A) Determinazione del Dominio",
+                tag: "PASSO 1 DI 4",
+                content: `
+                    <p class="text-slate-300">
+                        La funzione assegnata è una <strong>funzione algebrica razionale fratta</strong>:
+                        $$\\displaystyle y = \\frac{x + 5}{x - 5}$$
+                    </p>
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/70 space-y-2">
+                        <h4 class="font-semibold text-indigo-400 text-xs uppercase tracking-wider">Regola di Esistenza</h4>
+                        <p class="text-xs text-slate-300">In una frazione, il denominatore deve essere sempre <strong>diverso da zero</strong> per evitare la divisione per zero (operazione non definita).</p>
+                        <div class="p-2 bg-slate-950 rounded-lg text-center font-mono text-indigo-300 border border-indigo-500/20">
+                            $$x - 5 \\neq 0 \\implies x \\neq 5$$
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-medium text-slate-200">Insieme di Definizione (Dominio):</h4>
+                        <p class="text-indigo-300 font-medium">
+                            $$\\mathcal{D} = \\mathbb{R} \\setminus \\{5\\} = (-\\infty, 5) \\cup (5, +\\infty)$$
+                        </p>
+                    </div>
+                    <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-200/90 text-xs">
+                        <strong>Significato Grafico:</strong> La retta verticale $x = 5$ rappresenta il valore <strong>escluso dal dominio</strong>. La curva della funzione non toccherà né attraverserà mai questa retta.
+                    </div>
+                `,
+                toggles: { asymptote: true, points: false, regions: false, curve: false }
+            },
+            {
+                title: "B) Intersezioni con gli Assi Cartesiani",
+                tag: "PASSO 2 DI 4",
+                content: `
+                    <p class="text-slate-300">Troviamo i punti in cui il grafico della funzione incrocia gli assi $x$ e $y$.</p>
+                    
+                    <div class="space-y-3">
+                        <!-- Intersezione Asse Y -->
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
+                            <h4 class="font-semibold text-indigo-400 text-xs uppercase tracking-wider mb-1">1. Intersezione con l'asse $y$ ($x = 0$)</h4>
+                            <p class="text-xs mb-1">Sostituiamo $x = 0$ nell'equazione:</p>
+                            <p class="font-mono text-center text-sm">
+                                $$y = \\frac{0 + 5}{0 - 5} = \\frac{5}{-5} = -1$$
+                            </p>
+                            <p class="text-xs text-emerald-400 font-semibold mt-1">
+                                $\\rightarrow$ Punto $A(0, -1)$
+                            </p>
+                        </div>
+
+                        <!-- Intersezione Asse X -->
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
+                            <h4 class="font-semibold text-indigo-400 text-xs uppercase tracking-wider mb-1">2. Intersezione con l'asse $x$ ($y = 0$)</h4>
+                            <p class="text-xs mb-1">Poniamo l'intera frazione uguale a zero:</p>
+                            <p class="font-mono text-center text-sm">
+                                $$\\frac{x + 5}{x - 5} = 0 \\implies x + 5 = 0 \\implies x = -5$$
+                            </p>
+                            <p class="text-xs text-emerald-400 font-semibold mt-1">
+                                $\\rightarrow$ Punto $B(-5, 0)$
+                            </p>
+                        </div>
+                    </div>
+                `,
+                toggles: { asymptote: true, points: true, regions: false, curve: false }
+            },
+            {
+                title: "C) Studio del Segno della Funzione",
+                tag: "PASSO 3 DI 4",
+                content: `
+                    <p class="text-slate-300">Determiniamo per quali valori di $x$ la funzione è positiva ($y > 0$) o negativa ($y < 0$):</p>
+                    <p class="font-mono text-center text-indigo-300">$$\\frac{x + 5}{x - 5} > 0$$</p>
+
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60 text-xs space-y-2">
+                        <p><strong>Numeratore $> 0$:</strong> $x + 5 > 0 \\implies x > -5$</p>
+                        <p><strong>Denominatore $> 0$:</strong> $x - 5 > 0 \\implies x > 5$</p>
+                    </div>
+
+                    <!-- Tabella dei Segni Schema -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs overflow-x-auto">
+                        <h4 class="font-semibold text-slate-400 text-center mb-2">Grafico dei Segni</h4>
+                        <div class="grid grid-cols-4 gap-1 text-center font-mono items-center">
+                            <div class="text-left text-slate-500 font-bold">x</div>
+                            <div class="text-indigo-400 font-bold">&lt; -5</div>
+                            <div class="text-indigo-400 font-bold">-5 &lt; x &lt; 5</div>
+                            <div class="text-indigo-400 font-bold">&gt; 5</div>
+
+                            <div class="text-left text-slate-400">Num (x+5)</div>
+                            <div class="text-rose-400">- - -</div>
+                            <div class="text-emerald-400">+ + +</div>
+                            <div class="text-emerald-400">+ + +</div>
+
+                            <div class="text-left text-slate-400">Den (x-5)</div>
+                            <div class="text-rose-400">- - -</div>
+                            <div class="text-rose-400">- - -</div>
+                            <div class="text-emerald-400">+ + +</div>
+
+                            <div class="text-left text-white font-bold border-t border-slate-700 pt-1">y = N/D</div>
+                            <div class="text-emerald-400 font-bold border-t border-slate-700 pt-1">+</div>
+                            <div class="text-rose-400 font-bold border-t border-slate-700 pt-1">-</div>
+                            <div class="text-emerald-400 font-bold border-t border-slate-700 pt-1">+</div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-300">
+                        <strong>Cancellazione Regioni:</strong> Nel piano cartesiano si cancellano (ombreggiano in rosso) le regioni dove la curva <em>non può passare</em>.
+                    </p>
+                `,
+                toggles: { asymptote: true, points: true, regions: true, curve: false }
+            },
+            {
+                title: "D) Sintesi e Grafico Finale",
+                tag: "PASSO 4 DI 4",
+                content: `
+                    <p class="text-slate-300">
+                        Riunendo tutti i risultati ottenuti, possiamo tracciare con precisione il grafico completo della funzione:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-300 bg-slate-900/60 p-3 rounded-xl border border-slate-700/50">
+                        <li><strong>Tipo di curva:</strong> Iperbole Traslata (funzione fratta lineare).</li>
+                        <li><strong>Escluso dal dominio:</strong> Retta $x = 5$.</li>
+                        <li><strong>Passaggi per gli assi:</strong> $A(0, -1)$ e $B(-5, 0)$.</li>
+                        <li><strong>Coerenza con i segni:</strong> La curva giace interamente nei settori consentiti dal segno.</li>
+                    </ul>
+                    <div class="p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-300 text-xs">
+                        💡 <strong>Suggerimento:</strong> Muovi il mouse sul grafico a destra per esplorare i punti e i valori esatti di coordinata!
+                    </div>
+                `,
+                toggles: { asymptote: true, points: true, regions: true, curve: false }
+            }
+        ];
+
+        // --- INIZIALIZZAZIONE & EVENTI CANVAS ---
+
+        function initCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            // Centra l'origine sul piano cartesiano
+            originX = canvas.width / 2 - scale * 1.5; // Leggermente spostato a sinistra per vedere x=5 bene
+            originY = canvas.height / 2 + scale * 0.5;
+
+            redrawCanvas();
+        }
+
+        function setStep(stepIndex) {
+            currentStep = stepIndex;
+
+            // Aggiorna classi bottoni Tab
+            for (let i = 0; i < 4; i++) {
+                const tab = document.getElementById(`tab-${i}`);
+                if (i === currentStep) {
+                    tab.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 font-semibold";
+                } else {
+                    tab.className = "px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap text-slate-400 hover:text-slate-200 hover:bg-slate-800/60";
+                }
+            }
+
+            // Imposta stato dei checkbox visibilità in base allo step
+            const toggles = stepsData[currentStep].toggles;
+            document.getElementById('toggle-asymptote').checked = toggles.asymptote;
+            document.getElementById('toggle-points').checked = toggles.points;
+            document.getElementById('toggle-regions').checked = toggles.regions;
+            document.getElementById('toggle-curve').checked = toggles.curve;
+
+            // Aggiorna contenuto descrittivo
+            document.getElementById('step-tag').innerText = stepsData[currentStep].tag;
+            document.getElementById('step-content').innerHTML = stepsData[currentStep].content;
+
+            // Disabilita/Abilita bottoni avanti/indietro
+            document.getElementById('btn-prev').disabled = (currentStep === 0);
+            document.getElementById('btn-prev-text').disabled = (currentStep === 0);
+            document.getElementById('btn-next').disabled = (currentStep === 3);
+            document.getElementById('btn-next-text').disabled = (currentStep === 3);
+
+            // Re-render MathJax/KaTeX
+            renderMathInElement(document.getElementById('step-content'), {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+
+            redrawCanvas();
+        }
+
+        function nextStep() {
+            if (currentStep < 3) setStep(currentStep + 1);
+        }
+
+        function prevStep() {
+            if (currentStep > 0) setStep(currentStep - 1);
+        }
+
+        // Conversione Coordinate Algebriche <-> Pixel
+        function toPixelX(x) { return originX + x * scale; }
+        function toPixelY(y) { return originY - y * scale; }
+        function toMathX(px) { return (px - originX) / scale; }
+        function toMathY(py) { return (originY - py) / scale; }
+
+        // --- TRACCIAMENTO SUL CANVAS ---
+
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const showAsymptote = document.getElementById('toggle-asymptote').checked;
+            const showPoints = document.getElementById('toggle-points').checked;
+            const showRegions = document.getElementById('toggle-regions').checked;
+            const showCurve = document.getElementById('toggle-curve').checked;
+
+            // 1. Disegna Griglia e Assi
+            drawGrid();
+
+            // 2. Ombreggiatura Regioni Escluse (Segno)
+            if (showRegions) {
+                drawShadedRegions();
+            }
+
+            // 3. Asintoti (Verticale x=5 e Orizzontale y=1)
+            if (showAsymptote) {
+                // Asintoto Verticale x = 5
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([6, 6]);
+                ctx.strokeStyle = '#f59e0b'; // Amber 500
+                ctx.lineWidth = 2;
+                const pxX5 = toPixelX(5);
+                ctx.moveTo(pxX5, 0);
+                ctx.lineTo(pxX5, canvas.height);
+                ctx.stroke();
+
+                // Asintoto Orizzontale y = 1 (opzionale per completezza nell'ultimo step)
+                if (currentStep === 3) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#64748b'; // Slate 500
+                    ctx.setLineDash([4, 4]);
+                    const pxY1 = toPixelY(1);
+                    ctx.moveTo(0, pxY1);
+                    ctx.lineTo(canvas.width, pxY1);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // 4. Curva della Funzione y = (x+5)/(x-5)
+            if (showCurve) {
+                drawFunctionCurve();
+            }
+
+            // 5. Punti di Intersezione A(0, -1) e B(-5, 0)
+            if (showPoints) {
+                drawPoint(0, -1, 'A(0, -1)', '#818cf8'); // Indigo
+                drawPoint(-5, 0, 'B(-5, 0)', '#818cf8'); // Indigo
+            }
+        }
+
+        function drawGrid() {
+            ctx.save();
+            ctx.lineWidth = 1;
+
+            const minX = Math.floor(toMathX(0));
+            const maxX = Math.ceil(toMathX(canvas.width));
+            const minY = Math.floor(toMathY(canvas.height));
+            const maxY = Math.ceil(toMathY(0));
+
+            // Griglia secondaria tenue
+            ctx.strokeStyle = '#1e293b'; // Slate 800
+            ctx.beginPath();
+            for (let x = minX; x <= maxX; x++) {
+                ctx.moveTo(toPixelX(x), 0);
+                ctx.lineTo(toPixelX(x), canvas.height);
+            }
+            for (let y = minY; y <= maxY; y++) {
+                ctx.moveTo(0, toPixelY(y));
+                ctx.lineTo(canvas.width, toPixelY(y));
+            }
+            ctx.stroke();
+
+            // Assi Cartesiani
+            ctx.strokeStyle = '#64748b'; // Slate 500
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // Asse X
+            ctx.moveTo(0, originY);
+            ctx.lineTo(canvas.width, originY);
+            // Asse Y
+            ctx.moveTo(originX, 0);
+            ctx.lineTo(originX, canvas.height);
+            ctx.stroke();
+
+            // Numeri ed etichette graduazione
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            const step = scale < 15 ? 5 : scale < 25 ? 2 : 1;
+
+            for (let x = minX; x <= maxX; x += step) {
+                if (x !== 0) {
+                    const px = toPixelX(x);
+                    ctx.beginPath();
+                    ctx.moveTo(px, originY - 3);
+                    ctx.lineTo(px, originY + 3);
+                    ctx.stroke();
+                    ctx.fillText(x.toString(), px, originY + 5);
+                }
+            }
+
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let y = minY; y <= maxY; y += step) {
+                if (y !== 0) {
+                    const py = toPixelY(y);
+                    ctx.beginPath();
+                    ctx.moveTo(originX - 3, py);
+                    ctx.lineTo(originX + 3, py);
+                    ctx.stroke();
+                    ctx.fillText(y.toString(), originX - 6, py);
+                }
+            }
+
+            // Etichetta Origine O
+            ctx.fillText('0', originX - 6, originY + 12);
+
+            ctx.restore();
+        }
+
+        function drawShadedRegions() {
+            ctx.save();
+            ctx.fillStyle = 'rgba(244, 63, 94, 0.12)'; // Rose/Red trasparente per cancellazione
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.25)';
+            ctx.lineWidth = 1;
+
+            const minX = toMathX(0);
+            const maxX = toMathX(canvas.width);
+            const minY = toMathY(canvas.height);
+            const maxY = toMathY(0);
+
+            // Intervallo 1: x < -5 -> Funzione Positiva (y > 0), si cancella la regione sotto l'asse x (y < 0)
+            if (minX < -5) {
+                const pMinX = toPixelX(minX);
+                const pMaxX = toPixelX(Math.min(-5, maxX));
+                const pY0 = toPixelY(0);
+                const pYMin = toPixelY(minY);
+
+                ctx.fillRect(pMinX, pY0, pMaxX - pMinX, pYMin - pY0);
+                drawHatching(pMinX, pMaxX, pY0, pYMin);
+            }
+
+            // Intervallo 2: -5 < x < 5 -> Funzione Negativa (y < 0), si cancella la regione sopra l'asse x (y > 0)
+            if (maxX > -5 && minX < 5) {
+                const pMinX = toPixelX(Math.max(-5, minX));
+                const pMaxX = toPixelX(Math.min(5, maxX));
+                const pY0 = toPixelY(0);
+                const pYMax = toPixelY(maxY);
+
+                ctx.fillRect(pMinX, pYMax, pMaxX - pMinX, pY0 - pYMax);
+                drawHatching(pMinX, pMaxX, pYMax, pY0);
+            }
+
+            // Intervallo 3: x > 5 -> Funzione Positiva (y > 0), si cancella la regione sotto l'asse x (y < 0)
+            if (maxX > 5) {
+                const pMinX = toPixelX(Math.max(5, minX));
+                const pMaxX = toPixelX(maxX);
+                const pY0 = toPixelY(0);
+                const pYMin = toPixelY(minY);
+
+                ctx.fillRect(pMinX, pY0, pMaxX - pMinX, pYMin - pY0);
+                drawHatching(pMinX, pMaxX, pY0, pYMin);
+            }
+
+            ctx.restore();
+        }
+
+        // Genera tratteggio/tratte per la regione cancellata
+        function drawHatching(x1, x2, y1, y2) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x1, y1, x2 - x1, y2 - y1);
+            ctx.clip();
+
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.2)';
+            ctx.lineWidth = 1;
+            const step = 12;
+            for (let pos = x1 - (y2 - y1); pos < x2 + (y2 - y1); pos += step) {
+                ctx.moveTo(pos, y2);
+                ctx.lineTo(pos + (y2 - y1), y1);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawFunctionCurve() {
+            ctx.save();
+            ctx.strokeStyle = '#34d399'; // Emerald 400
+            ctx.lineWidth = 2.5;
+
+            // Ramo Sinistro (x < 5)
+            ctx.beginPath();
+            let started = false;
+            for (let px = 0; px < canvas.width; px += 2) {
+                const x = toMathX(px);
+                if (x >= 4.95) break; // Interrompi prima dell'asintoto
+
+                const y = (x + 5) / (x - 5);
+                const py = toPixelY(y);
+
+                if (!started) {
+                    ctx.moveTo(px, py);
+                    started = true;
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+
+            // Ramo Destro (x > 5)
+            ctx.beginPath();
+            started = false;
+            for (let px = 0; px < canvas.width; px += 2) {
+                const x = toMathX(px);
+                if (x <= 5.05) continue; // Inizia subito dopo l'asintoto
+
+                const y = (x + 5) / (x - 5);
+                const py = toPixelY(y);
+
+                if (!started) {
+                    ctx.moveTo(px, py);
+                    started = true;
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawPoint(x, y, label, color) {
+            const px = toPixelX(x);
+            const py = toPixelY(y);
+
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Etichetta del punto
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(label, px + 8, py - 6);
+
+            ctx.restore();
+        }
+
+        // --- CONTROLLI INTERATTIVI CANVAS (PAN & ZOOM) ---
+
+        function zoom(factor) {
+            scale *= factor;
+            scale = Math.max(10, Math.min(150, scale)); // Limiti di zoom
+            redrawCanvas();
+        }
+
+        function resetZoom() {
+            scale = 30;
+            originX = canvas.width / 2 - scale * 1.5;
+            originY = canvas.height / 2 + scale * 0.5;
+            redrawCanvas();
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - originX;
+            startY = e.clientY - originY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                originX = e.clientX - startX;
+                originY = e.clientY - startY;
+                redrawCanvas();
+            }
+
+            // Tracciamento Coordinate Mouse
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            if (mouseX >= 0 && mouseX <= canvas.width && mouseY >= 0 && mouseY <= canvas.height) {
+                const mathX = toMathX(mouseX);
+                const mathY = toMathY(mouseY);
+
+                coordsBadge.classList.remove('hidden');
+                coordsBadge.innerHTML = `x: <span class="text-indigo-400 font-bold">${mathX.toFixed(2)}</span>, y: <span class="text-indigo-400 font-bold">${mathY.toFixed(2)}</span>`;
+            } else {
+                coordsBadge.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+            
+            // Zoom puntato sul cursore del mouse
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const mathX = toMathX(mouseX);
+            const mathY = toMathY(mouseY);
+
+            scale *= zoomFactor;
+            scale = Math.max(10, Math.min(150, scale));
+
+            originX = mouseX - mathX * scale;
+            originY = mouseY + mathY * scale;
+
+            redrawCanvas();
+        }, { passive: false });
+
+        // Gestione Resize Finestra
+        window.addEventListener('resize', () => {
+            initCanvas();
+        });
+
+        // Inizializzazione all'avvio
+        window.onload = function() {
+            lucide.createIcons();
+            initCanvas();
+            setStep(0);
+        };
+    </script>
+</body>
+</html>
